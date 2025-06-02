@@ -278,7 +278,7 @@
   .input-label {
     position: absolute;
     left: 10px;
-    top: 14px;
+    top: 18px;
     color: #80B9F1;
     transition: all 0.2s ease-out;
     border-radius: 3px;
@@ -348,7 +348,7 @@
   
   @media screen and (min-width: 270px) {
     .showing-password {
-      margin-left: -0.9rem;
+      margin-left: -1.9rem;
     }
   }
   
