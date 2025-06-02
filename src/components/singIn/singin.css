@@ -1,0 +1,126 @@
+.input-group a {
+  color: var(--primary-color);
+}
+
+.forgot-password-link {
+  color: var(--secondary-color);
+  text-decoration: none;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+  display: flex;
+  width: 125px;
+}
+
+/* .button-content-or::after {
+  content: "OR";
+  position: absolute;
+  top: 97px;
+  left: 47%;
+  color: var(--button);
+} */
+
+
+.errorLogin{
+  position: absolute;
+  color: red;
+  font-size: 1rem;
+  bottom: 6rem;
+  left: 4rem;
+  padding: .2rem 1.1rem;
+  border-radius: 8px;
+}
+.buttonSubmit:hover {
+  color: var(--button);
+  border-color: var(--button);
+}
+
+.links-signIn {
+  margin-left: 10px;
+}
+
+.arrowRight{
+  width: 24px;
+  height: 16px;
+}
+.loadingSubmit {
+  /* Add your desired styles for the loading animation */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+.link-register-back {
+  display: inline-flex;
+  align-items: center;
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  color: #fff;
+  background-color: #222;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.register-login-box{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 4rem;
+}
+
+  .signup-label {
+        font-size: 18px;
+        position: relative;
+  }
+
+
+
+.signup-label::after {
+    content: '';
+    position: absolute;
+    width: 78px;
+    height: 9px;
+    background-color: #80B9F1;
+    left: 0px;
+    top: 16px;
+}
+ .forget-password{
+    font-size: 18px;
+    position: relative;
+}
+
+ .forget-password::after {
+    content: '';
+    position: absolute;
+    width: 151px;
+    height: 9px;
+    background-color: #E5F1FC;
+    left: 0px;
+    top: 16px;
+}
+
+.link-register-back:hover {
+  background-color: #333;
+}
+
+.link-register-back .back-arrow {
+  margin-right: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.link-register-back:hover .back-arrow {
+  transform: translateX(-2px);
+}
+
+.have-account {
+  display: flex;
+  color:white;
+  margin: 0 auto;
+}
