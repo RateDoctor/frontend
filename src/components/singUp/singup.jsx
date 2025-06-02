@@ -4,8 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 // import axios from "axios";
 import Logo from "../../imgs/rateLogo.png";
-import "./sing1.css";
-import "./singin.css";  
+import "./singup.css";
 // import cookie from "react-cookies";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
@@ -153,9 +152,9 @@ const Signup = () => {
 
  
   return (
-    <div className="register-form">
+    <div className="register-form-singup">
 
-      <h2 className="title-head">Welcome Back!</h2>
+      <h2 className="title-head">Create Account</h2>
      
       {isLoading && (
         <>
@@ -170,7 +169,7 @@ const Signup = () => {
         </div>
       ) : (
         <form
-          className={`register-inputs ${isLoading ? "disabled" : ""}`}
+          className={`register-inputs-singup ${isLoading ? "disabled" : ""}`}
         //   onSubmit={handleSubmit}
         >
 
@@ -220,10 +219,10 @@ const Signup = () => {
             {passwordError && <div className="error">{passwordError}</div>}
           </div>
 
-          <div className="register-buttons">
+          <div className="register-buttons-singup">
             
 
-             <h1 className="signup signin">Sign in</h1>
+             <h1 className="signup signin">Sign Up</h1>
 
              <button
               className="buttonSubmit-content-or"
@@ -236,17 +235,10 @@ const Signup = () => {
             </button>
           </div>
 
-
-
-
              <div className="register-login-box">
-            
+             <h1 className="signup-label">Sign in</h1>
 
-             <h1 className="signup-label">Sign Up</h1>
 
-             <h3 className="forget-password">Forgot Password</h3>
-
-    
           </div>
 
 
