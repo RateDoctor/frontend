@@ -173,6 +173,8 @@ const Login = () => {
           className={`register-inputs ${isLoading ? "disabled" : ""}`}
         //   onSubmit={handleSubmit}
         >
+
+        <p className="enter-id-password">Please enter your unique ID number and password.</p>
           <div className="input-group">
             <input
               type="username"
