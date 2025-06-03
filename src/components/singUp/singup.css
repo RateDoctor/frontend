@@ -1,12 +1,15 @@
-.register-form-singup {
-    padding: 2rem;
+.register-formSingup {
+    /* padding: 2rem; */
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     width: 420px;
-    margin: 2rem auto;
-    height: 92vh;
+    margin: auto auto;
+    /* height: 92vh; */
+    position: relative;
+    height: 100vh;         
+    overflow-x: hidden;
   }
 
 
@@ -40,7 +43,7 @@
     color: var(--secondary-color);
   }
   
-  .register-inputs-singup {
+  .register-inputsSingup {
     display: flex;
     flex-direction: column;
     width: 420px;
@@ -56,7 +59,7 @@
   .input-group .input:focus {
     border-color: var(--font-color);
   }
-  .register-inputs-singup .input-group input {
+  .register-inputsSingup .input-group input {
     border: 1px solid var(--font-color);
     border-radius: 20px;
     margin-bottom: 18px;
@@ -132,16 +135,16 @@
       display: none;
     } */
 
-    .register-inputs-singup {
+    .register-inputsSingup {
       position: relative;
     }
 
-    /* .register-inputs-singup::after{
+    /* .register-inputsSingup::after{
     content: '';
     position: absolute;
     width: 60vw;
     height: 60vw;
-    background-color: #E5F1FC;
+    background-color: #80B9F1;
     border-radius: 50%;
     left: 15vw;
     top: -87vw;
@@ -149,14 +152,14 @@
   } */
 
   
-    .register-inputs-singup {
+    .register-inputsSingup {
     width: 87%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 0 0 40px;
     margin-left: 0;
-    margin-top: 27rem;
+    margin-top: 5rem;
     }
     .register-links {
       display: flex;
@@ -169,12 +172,12 @@
       margin-top: 50px;
     }
   
-    .register-form-singup {
+   .register-formSingup {
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 80vh;
+      /* height: 80vh; */
       padding: 0 0;
       position: relative;
     }
@@ -190,16 +193,18 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
    }
 
-  .register-form-singup::after{
+ .register-formSingup::after{
   content: '';
   position: absolute;
   width: 100vw;
   height: 100vw;
   background-color: #0074E4;
   border-radius: 50%;
-  top: -60vw;
-  left: -30vw;
-  z-index: 2;
+  top: -30vw;
+  left: -20vw;
+  z-index: 0;
+  pointer-events: none;
+
   }
 
   /* .register-form::before{
@@ -225,25 +230,13 @@
 
 
   @media screen and (max-width: 480px) {
-  .register-form-singup::after {
-    width: 120vw;
-    top: -30vw;
-    left: -10vw;
-  }
-  /* .register-form-singup::before {
-    width: 80vw;
-    top: -44vw;
-    left: -24vw;
-  } */
-
-  .register-form-singup::after {
+ .register-formSingup::after {
     width: 170vw;
     height: 150vw;
     top: -86vw;
     left: -70vw;
   }
 }
-
 
 
   .login-singUp {
@@ -345,15 +338,16 @@
    .register-buttons-singup button::after{
        content: '';
     position: absolute;
-    max-width: 459px;
-    max-height: 398px;
-    width: 93.647vw;
-    height: 99.5vw;
+    width: 75vw;
+    height: 75vw;
     background-color: #80B9F1;
     border-radius: 50%;
-    top: 0vw;
-    left: -19vw;
+    top: 8vw;
+    left: -29vw;
     z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+
    }
 
   .register-buttons-singup button:hover {

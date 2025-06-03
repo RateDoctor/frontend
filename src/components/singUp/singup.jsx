@@ -152,7 +152,7 @@ const Signup = () => {
 
  
   return (
-    <div className="register-form-singup">
+    <div className="register-formSingup">
 
       <h2 className="title-head">Create Account</h2>
      
@@ -169,7 +169,7 @@ const Signup = () => {
         </div>
       ) : (
         <form
-          className={`register-inputs-singup ${isLoading ? "disabled" : ""}`}
+          className={`register-inputsSingup ${isLoading ? "disabled" : ""}`}
         //   onSubmit={handleSubmit}
         >
 
@@ -234,11 +234,8 @@ const Signup = () => {
 
             </button>
           </div>
-
              <div className="register-login-box">
              <h1 className="signup-label">Sign in</h1>
-
-
           </div>
 
 

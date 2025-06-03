@@ -10,6 +10,8 @@ function App() {
   return (
   <BrowserRouter>
       <SignUp />
+
+      {/* <SignIn/> */}
   </BrowserRouter>
   );
 }

@@ -170,7 +170,7 @@ const Login = () => {
         </div>
       ) : (
         <form
-          className={`register-inputs ${isLoading ? "disabled" : ""}`}
+          className={`register-inputsLogin ${isLoading ? "disabled" : ""}`}
         //   onSubmit={handleSubmit}
         >
 
