@@ -9,9 +9,9 @@ import SignUp from './components/singUp/singup.jsx';
 function App() {
   return (
   <BrowserRouter>
-      <SignUp />
+      {/* <SignUp /> */}
 
-      {/* <SignIn/> */}
+      <SignIn/>
   </BrowserRouter>
   );
 }

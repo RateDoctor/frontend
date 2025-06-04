@@ -67,18 +67,9 @@
   text-decoration: none;
 }
 
-.register-login-box{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-top: 4rem;
-}
 
-  .signup-label {
-        font-size: 18px;
-        position: relative;
-  }
+
+  
 
 
 

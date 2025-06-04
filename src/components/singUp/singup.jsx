@@ -154,7 +154,7 @@ const Signup = () => {
   return (
     <div className="register-formSingup">
 
-      <h2 className="title-head">Create Account</h2>
+      <p className="title-head">Create Account</p>
      
       {isLoading && (
         <>
@@ -235,7 +235,7 @@ const Signup = () => {
             </button>
           </div>
              <div className="register-login-box">
-             <h1 className="signup-label">Sign in</h1>
+             <h1 className="signupForm-label">Sign in</h1>
           </div>
 
 

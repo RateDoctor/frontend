@@ -155,7 +155,7 @@ const Login = () => {
   return (
     <div className="register-form">
 
-      <h2 className="title-head">Welcome Back!</h2>
+      <h2 className="title-headLogin">Welcome Back!</h2>
      
       {isLoading && (
         <>
