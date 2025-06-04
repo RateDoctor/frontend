@@ -234,7 +234,9 @@ const Signup = () => {
 
             </button>
           </div>
-             <div className="register-login-box">
+
+          
+             <div className="register-loginSingUp-box">
              <h1 className="signupForm-label">Sign in</h1>
           </div>
 
