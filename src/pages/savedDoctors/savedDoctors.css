@@ -1,0 +1,61 @@
+.saved-doctors-container {
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.saved-doctors-header {
+  display: flex;
+  align-items: center;
+  background-color: var(--main-color);
+  color: white;
+  padding: 1rem;
+  height: 80px;
+}
+
+.saved-doctors-header h2 {
+  margin-left: 10px;
+  font-size: 24px;
+}
+
+.back-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.doctors-list {
+  padding: 1rem;
+}
+
+.doctor-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 1rem 0;
+border-bottom: 1px solid #6C757D;
+}
+
+.doctor-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.doctor-name {
+  flex: 1;
+  margin-left: 1rem;
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+}
+
+.remove-button {
+  color: #0074E4;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+

@@ -139,6 +139,10 @@ body {
   color: #fff;
   margin-top: auto;
   height: 80px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+
 }
 
 .footer .icon {
