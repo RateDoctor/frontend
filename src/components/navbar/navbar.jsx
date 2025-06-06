@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FiArrowLeft, FiMoreVertical } from "react-icons/fi";
-import "./navbar.css"; // Create a separate CSS file
+import { useNavigate } from "react-router-dom";
+import "./navbar.css";
 
 const Navbar = ({ title = "Explore", onBack }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
+  const navigate = useNavigate();
 
-  // Close menu if clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -31,10 +32,10 @@ const Navbar = ({ title = "Explore", onBack }) => {
         />
         {menuOpen && (
           <ul className="dropdown-menu">
-            <li>Settings</li>
-            <li>Saved Doctors</li>
-            <li>My Ratings</li>
-            <li>Contact Us</li>
+            <li onClick={() => navigate("/settings")}>Settings</li>
+            <li onClick={() => navigate("/saved-doctors")}>Saved Doctors</li>
+            <li onClick={() => navigate("/my-ratings")}>My Ratings</li>
+            <li onClick={() => navigate("/contact")}>Contact Us</li>
           </ul>
         )}
       </div>

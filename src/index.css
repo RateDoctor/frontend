@@ -35,4 +35,12 @@ body {
   /* --font-color: #100261; */
   --font-color: #0071b4;
   --icons-color: #fe6a58;
+
+
+
+
+  --main-color: #0074e4;
+  --text-dark: #222;
+  --bg-light: #f9f9f9;
+  --border-color: #ccc;
 }
