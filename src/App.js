@@ -9,6 +9,8 @@ import ChangeEmail from './pages/changeEmail/changeEmail.jsx';
 import ChangePassword from "./pages/changePassword/changePassword.jsx";
 import SavedDoctors  from "./pages/savedDoctors/savedDoctors.jsx";
 import ContactUs  from "./pages/contactUs/contactUs.jsx";
+import MyRatings from './components/myRatings/myRatings.jsx';
+import EditRating from './components/editRating/editRating.jsx';
 
 
 
@@ -22,10 +24,10 @@ function App() {
         <Route path="/settings/change-password" element={<ChangePassword />} />
         <Route path="/saved-doctors" element={<SavedDoctors />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/my-ratings" element={<MyRatings />} />
+        <Route path="/edit-rating/:id" element={<EditRating />} />
 
-        {/* <Route path="/SignIn-doctors" element={<div>Saved Doctors</div>} />
-        <Route path="/SignUp" element={<div>My Ratings</div>} />
-        <Route path="/Explore" element={<div>Contact Us</div>} /> */}
+
       </Routes>
     </Router>
   );

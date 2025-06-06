@@ -1,0 +1,53 @@
+/* Sample CSS */
+.back-icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.ratings-header,
+.edit-header {
+  background-color: var(--main-color);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem;
+  height: 80px;
+}
+
+.ratings-item,
+.doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem;
+}
+
+.doctor-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.rating-question,
+.question-block label {
+  display: block;
+  margin: 0.5rem 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 60px;
+  margin-bottom: 1rem;
+}
+
+.save-edits-btn {
+  float: right;
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
