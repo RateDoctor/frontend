@@ -41,13 +41,3 @@ textarea {
   margin-bottom: 1rem;
 }
 
-.save-edits-btn {
-  float: right;
-  background-color: var(--main-color);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}

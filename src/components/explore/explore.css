@@ -1,16 +1,4 @@
-:root {
-  --main-color: #0074E4;
-  --text-dark: #222;
-  --text-light: #777;
-  --card-bg: #fff;
-  --bg-light: #f2f2f2;
-}
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--bg-light);
-}
 
 /* New scrollable wrapper */
 .scrollable-section {
