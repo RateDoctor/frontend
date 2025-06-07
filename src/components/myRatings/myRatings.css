@@ -249,6 +249,10 @@
     color: #0074E4;
 }
 
+.delete-icon{
+   color: #0074E4;
+}
+
 /* Overlay covers entire screen */
 .modal-overlay {
   position: fixed;
@@ -308,7 +312,7 @@
 .question-fieldParagraph{
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #6C757D;
     border-radius: 5px;
     resize: vertical;
     font-size: 1rem;
