@@ -19,6 +19,12 @@ function App() {
   return (
 <Router>
       <Routes>
+        <Route path="/login" element={<SignIn />} />
+        <Route path="/signUp" element={<SignUp />} />
+        <Route path="/upload" element={<Upload />} /> 
+
+
+
         <Route path="/" element={<Explore />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/change-email" element={<ChangeEmail />} /> 
@@ -28,9 +34,6 @@ function App() {
         <Route path="/my-ratings" element={<MyRatings />} />
         <Route path="/edit-rating/:id" element={<EditRating />} />
         <Route path="/results" element={<SearchResults />} />
-
-
-
       </Routes>
     </Router>
   );

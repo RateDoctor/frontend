@@ -18,7 +18,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showAnimation, setShowAnimation] = useState(true);
+  // const [showAnimation, setShowAnimation] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
  
@@ -33,10 +33,10 @@ const Signup = () => {
   //   return () => clearTimeout(timer);
   // }, [navigate]);
 
-   useEffect(() => {
-    const timer = setTimeout(() => setShowAnimation(false), 2000);
-    return () => clearTimeout(timer);
-  }, [navigate]);
+  //  useEffect(() => {
+  //   const timer = setTimeout(() => setShowAnimation(false), 2000);
+  //   return () => clearTimeout(timer);
+  // }, [navigate]);
 
   const handleTogglePassword = () => setVisible(!visible);
 
@@ -152,97 +152,76 @@ const Signup = () => {
 
  
   return (
-    <div className="register-formSingup">
+    <div className="signup-wrapper">
+      <div className="signup-form">
+        <p className="title-head-signup">Create Account</p>
+          <form
+            className="singup-inputs"
+          //   onSubmit={handleSubm}it
+          >
+          <p className="label-singup">Enter your email address</p>
+            <div className="singup-input-group">
+              <input
+                type="username"
+                autoComplete="username"
+                className="input"
+                value={username}
+                required
+                onChange={(e) => setUsername(e.target.value)} 
+                />
 
-      <p className="title-head">Create Account</p>
-     
-      {isLoading && (
-        <>
-          <div className="overlay"></div>
-          <div className="loading-circle"></div>
-        </>
-      )}
-
-      {showAnimation ? (
-        <div className="animation">
-          <img className="register-img" src={Logo} alt="Logo" />
-        </div>
-      ) : (
-        <form
-          className={`register-inputsSingup ${isLoading ? "disabled" : ""}`}
-        //   onSubmit={handleSubmit}
-        >
-
-        <p className="enter-id-password">Please enter your unique ID number and password.</p>
-          <div className="input-group">
-            <input
-              type="username"
-              autoComplete="username"
-              className="input"
-              value={username}
-              required
-              onChange={(e) => setUsername(e.target.value)} 
-              />
-
-            <label htmlFor="username" className="input-label">
-              id number
-            </label>
-            {usernameError && <div className="error">{usernameError}</div>}
-          </div>
-
-          <div className="input-group">
-            <input
-              className="input"
-              type={visible ? "text" : "password"}
-              name="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {visible ? (
-              <AiOutlineEye
-                className="showing-password"
-                size={25}
-                onClick={handleTogglePassword}
-              />
-            ) : (
-              <AiOutlineEyeInvisible
-                className="showing-password"
-                size={25}
-                onClick={handleTogglePassword}
-              />
-            )}
-            <label htmlFor="password" className="input-label">
-              Password
-            </label>
-            {passwordError && <div className="error">{passwordError}</div>}
-          </div>
-
-          <div className="register-buttons-singup">
+              <label htmlFor="username" className="singup-input-label">
+                Your Email
+              </label>
+              {usernameError && <div className="error">{usernameError}</div>}
+            </div>
             
+            <p className="label-singup">Choose a secure password for your account</p>
+            <div className="singup-input-group">
+              <input
+                className="input"
+                type={visible ? "text" : "password"}
+                name="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            
+                <AiOutlineEye
+                  className="showing-password"
+                  size={25}
+                  onClick={handleTogglePassword}
+                />
+      
+                <AiOutlineEyeInvisible
+                  className="showing-password"
+                  size={25}
+                  onClick={handleTogglePassword}
+                />
+      
+              <label htmlFor="password" className="singup-input-label">
+                Password
+              </label>
+              {passwordError && <div className="error">{passwordError}</div>}
+            </div>
 
-             <h1 className="signup signin">Sign Up</h1>
+            <div className="register-buttons-singup">
+              <h1 className="signup signin">Sign Up</h1>
+              <button
+                className="buttonSubmit-content-or"
+                type="submit"
+                disabled={isLoading}>
+                <FaArrowRight className="arrowRight" />
+              </button>
+            </div>
 
-             <button
-              className="buttonSubmit-content-or"
-              type="submit"
-              disabled={isLoading}
-            >
-              {/* {isLoading ? "Logging in..." : "Login"} */}
-              <FaArrowRight className="arrowRight" />
-
-            </button>
-          </div>
-
-          
-             <div className="register-loginSingUp-box">
-             <h1 className="signupForm-label">Sign in</h1>
-          </div>
-
-
-        </form>
-      )}
+            
+              <div className="register-loginSingUp-box">
+              <h1 className="signupForm-label">Sign in</h1>
+            </div>
+          </form>
+      </div>
     </div>
   );
 };

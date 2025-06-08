@@ -229,12 +229,12 @@
   }
 
 
-    .showing-password {
-      position: absolute;
-      left: 96%;
-      top: 10px;
-      width: 20px;
-    }
+  .showing-password {
+    position: absolute;
+    left: 96%;
+    top: 10px;
+    width: 20px;
+  }
   }
 
 
