@@ -1,0 +1,49 @@
+
+
+.paragraphs-welcome-box{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    padding: 0 12px;
+    width: 100%;
+    max-width: 354px;
+}
+
+.congratulation-title{
+    font-size: 18px;
+}
+
+.id-hyperlink{
+font-weight: bold;
+font-size: 16px;
+}
+
+.info-paragraph{
+position: relative;
+top: 1.7rem;
+color: #6C757D;
+}
+
+.link-id{
+   margin-left: 0.4rem;
+}
+@media (max-width: 390px){
+    .title-welcome {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 376px){
+    .info-paragraph {
+        top: 0.2rem;
+   }
+}
+
+@media (max-width:430px) {
+    .title-welcome {
+        font-size: 25px;
+    }
+        
+}
