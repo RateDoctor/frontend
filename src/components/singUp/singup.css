@@ -269,9 +269,8 @@ left: 6rem;
   padding: 14px 40px 14px 16px;
   background-color: var(--input-bg);
   border: none;
-  border-radius: var(--input-radius);
   font-size: 1rem;
-  transition: var(--transition);
+  border-radius: 20px;
 }
 
 .form-password{
@@ -392,9 +391,11 @@ left: 6rem;
 
 
 .remember-password-char{
-  color: #0074E4;
-  font-size: 12px;
-  margin-top: 4px;
+    color: #0074E4;
+    font-size: 12px;
+    margin-top: 4px;
+    width: 100%;
+    max-width: 363px;
 }
 
 
