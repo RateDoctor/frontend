@@ -153,6 +153,20 @@ const Signup = () => {
  
   return (
     <div className="signup-wrapper">
+
+        <div className="circle-container">  {/* NEW wrapper */}
+        <div className="circle-right"></div>
+        <div className="singup-arrowButton">
+           <h1 className="signup">Sign Up</h1>
+          <button
+            className="circle-button"
+            type="submit"
+            disabled={isLoading}>
+            <FaArrowRight className="arrowRight" />
+          </button>
+          </div>
+  
+      </div>
       <div className="signup-form">
         <p className="title-head-signup">Create Account</p>
           <form
@@ -176,10 +190,10 @@ const Signup = () => {
               {usernameError && <div className="error">{usernameError}</div>}
             </div>
             
-            <p className="label-singup">Choose a secure password for your account</p>
+            <p className="label-singup  form-password">Choose a secure password for your account</p>
             <div className="singup-input-group">
               <input
-                className="input"
+                className="input  "
                 type={visible ? "text" : "password"}
                 name="password"
                 autoComplete="current-password"
@@ -189,13 +203,13 @@ const Signup = () => {
               />
             
                 <AiOutlineEye
-                  className="showing-password"
+                  className="showing-singup-password"
                   size={25}
                   onClick={handleTogglePassword}
                 />
       
                 <AiOutlineEyeInvisible
-                  className="showing-password"
+                  className="showing-singup-password"
                   size={25}
                   onClick={handleTogglePassword}
                 />
@@ -204,17 +218,19 @@ const Signup = () => {
                 Password
               </label>
               {passwordError && <div className="error">{passwordError}</div>}
+              <p className="remember-password-char">Your password should be at least 8 characters long and include a mix of letters, numbers, and special characters.</p>
             </div>
+            
 
-            <div className="register-buttons-singup">
+            {/* <div className="singup-circle-button">
               <h1 className="signup signin">Sign Up</h1>
               <button
-                className="buttonSubmit-content-or"
+                className="circle-button"
                 type="submit"
                 disabled={isLoading}>
                 <FaArrowRight className="arrowRight" />
               </button>
-            </div>
+            </div> */}
 
             
               <div className="register-loginSingUp-box">

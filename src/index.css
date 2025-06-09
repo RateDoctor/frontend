@@ -26,9 +26,6 @@ body {
 
 
 :root {
-  --primary-color: #c2aac0;
-  --secondary-color: #0071b4;
-  --accent-colors: #f3deb3;
 
   --button: #000000;
   --font: #f3abaa;
@@ -38,4 +35,15 @@ body {
   --text-dark: #222;
   --bg-light: #ffffff;
   --border-color: #ccc;
+
+
+  --primary-color: #0074e4;
+  --secondary-color: #80b9f1;
+  --background-color: #f7fbff;
+  --input-bg: #E5F1FC;
+  --text-color: #333;
+  --label-color: #6c757d;
+  --error-color: #ff6b6b;
+  --input-radius: 12px;
+  --transition: all 0.2s ease-out;
 }
