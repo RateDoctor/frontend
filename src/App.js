@@ -4,6 +4,8 @@ import SignIn from './components/singIn/singin.jsx';
 import SignUp from './components/singUp/singup.jsx';
 import Upload from './components/uploadFile/uploadfile.jsx';
 import Welcome from './components/welcome/welcome.jsx';
+import Logout from './components/logout/logout.jsx';
+
 import Explore from './components/explore/explore.jsx';
 import Settings from "./pages/Settings/settings.jsx";
 import ChangeEmail from './pages/changeEmail/changeEmail.jsx';
@@ -24,6 +26,7 @@ function App() {
         <Route path="/signUp" element={<SignUp />} />
         <Route path="/upload" element={<Upload />} /> 
         <Route path="/welcome" element={<Welcome />} /> 
+        <Route path="/logout" element={<Logout />} /> 
 
 
 
