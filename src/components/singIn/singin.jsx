@@ -150,6 +150,10 @@ const Login = () => {
  
   return (
     <div className="register-form">
+      <div className="big-circle"></div>
+      <div className="top-circle"></div>
+      <div className="down-circle"></div>
+      <div className="form-wrapper">
 
       <h2 className="title-headLogin">Welcome Back!</h2>
        <>
@@ -168,7 +172,7 @@ const Login = () => {
             <input
               type="username"
               autoComplete="username"
-              className="input"
+              className="login-input"
               value={username}
               required
               onChange={(e) => setUsername(e.target.value)} 
@@ -182,7 +186,7 @@ const Login = () => {
 
           <div className="input-group">
             <input
-              className="input"
+              className="login-input"
               type={visible ? "text" : "password"}
               name="password"
               autoComplete="current-password"
@@ -210,36 +214,28 @@ const Login = () => {
           </div>
 
           <div className="register-buttons">
-            
-
-             <h1 className="signup signin">Sign in</h1>
-
-             <button
-              className="buttonSubmit-content-or"
-              type="submit"
-              disabled={isLoading}
-            >
-              <FaArrowRight className="arrowRight" />
-
-            </button>
+            <divw className="button-register-box">
+              <h1 className="label-signin">Sign in</h1>
+                <button
+                  className="buttonSubmit-login"
+                  type="submit"
+                  disabled={isLoading}>
+                  <FaArrowRight className="arrowRight" /> 
+                </button>
+            </divw>    
           </div>
 
 
 
 
              <div className="register-login-box">
-            
-
              <h1 className="signup-label">Sign Up</h1>
-
              <h3 className="forget-password">Forgot Password</h3>
-
-    
-          </div>
+             </div>
 
 
         </form>
-      
+      </div>
     </div>
   );
 };
