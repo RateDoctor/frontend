@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 // import axios from "axios";
 import Logo from "../../imgs/rateLogo.png";
-import "./sing1.css";
 import "./singin.css";  
 // import cookie from "react-cookies";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -19,7 +18,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showAnimation, setShowAnimation] = useState(true);
+  // const [showAnimation, setShowAnimation] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
  
@@ -34,10 +33,7 @@ const Login = () => {
   //   return () => clearTimeout(timer);
   // }, [navigate]);
 
-   useEffect(() => {
-    const timer = setTimeout(() => setShowAnimation(false), 2000);
-    return () => clearTimeout(timer);
-  }, [navigate]);
+
 
   const handleTogglePassword = () => setVisible(!visible);
 
@@ -156,21 +152,14 @@ const Login = () => {
     <div className="register-form">
 
       <h2 className="title-headLogin">Welcome Back!</h2>
-     
-      {isLoading && (
-        <>
+       <>
           <div className="overlay"></div>
           <div className="loading-circle"></div>
-        </>
-      )}
-
-      {showAnimation ? (
-        <div className="animation">
-          <img className="register-img" src={Logo} alt="Logo" />
-        </div>
-      ) : (
+       </>
+    
+  
         <form
-          className={`register-inputsLogin ${isLoading ? "disabled" : ""}`}
+          className="register-inputsLogin"
         //   onSubmit={handleSubmit}
         >
 
@@ -201,19 +190,19 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {visible ? (
+      
               <AiOutlineEye
                 className="showing-password"
                 size={25}
                 onClick={handleTogglePassword}
               />
-            ) : (
+        
               <AiOutlineEyeInvisible
                 className="showing-password"
                 size={25}
                 onClick={handleTogglePassword}
               />
-            )}
+      
             <label htmlFor="password" className="input-label">
               Password
             </label>
@@ -230,7 +219,6 @@ const Login = () => {
               type="submit"
               disabled={isLoading}
             >
-              {/* {isLoading ? "Logging in..." : "Login"} */}
               <FaArrowRight className="arrowRight" />
 
             </button>
@@ -251,7 +239,7 @@ const Login = () => {
 
 
         </form>
-      )}
+      
     </div>
   );
 };
