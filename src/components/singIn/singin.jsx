@@ -153,14 +153,11 @@ const Login = () => {
       <div className="big-circle"></div>
       <div className="top-circle"></div>
       <div className="down-circle"></div>
-      <div className="form-wrapper">
+
+
+    <div className="form-wrapper">
 
       <h2 className="title-headLogin">Welcome Back!</h2>
-       <>
-          <div className="overlay"></div>
-          <div className="loading-circle"></div>
-       </>
-    
   
         <form
           className="register-inputsLogin"
