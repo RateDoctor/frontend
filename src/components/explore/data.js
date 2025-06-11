@@ -7,7 +7,7 @@ export const supervisors = [
     rating: 3.0,
     university: "University XYZ",
     field: "Computer Science",
-    topics: ["AI", "Machine Learning"],
+    topics: ["Organic Chemistry", "Materials Science"],
     image: men,
   },
  {

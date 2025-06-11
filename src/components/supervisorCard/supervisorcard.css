@@ -4,7 +4,17 @@
   margin: 4px 0;
 }
 
+ .info .university{
+  margin-top: 10px;
+}
 .star-display {
   font-family: Arial, sans-serif;
   color: #0074E4;
 }
+
+.five-star{
+  margin-left: 4px;
+  color: #0074E4;
+  font-size: 13px;
+}
+

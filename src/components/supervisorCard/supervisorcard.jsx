@@ -13,7 +13,7 @@ const SupervisorCard = ({ name, rating, university, field, topics, image }) => {
         {"★".repeat(fullStars)}
         {halfStar ? "☆" : ""}
         {"☆".repeat(emptyStars)}
-        <span style={{ marginLeft: "4px", color: "#0074E4", fontSize: "13px" }}>
+        <span className="five-star" >
           ({rating.toFixed(1)}/5)
         </span>
       </span>
@@ -25,10 +25,13 @@ const SupervisorCard = ({ name, rating, university, field, topics, image }) => {
       <img src={image} alt={name} className="doctor-img" />
       <div className="info">
         <h3>{name}</h3>
+        <div className="parent-paragraphs">
         <p className="rating">{renderStars(rating)}</p>
-        <p>{university}</p>
-        <p>{field}</p>
+        <p className="university">{university}</p>
+        <p className="field">{field}</p>
         <p className="topics">{topics.join(", ")}</p>
+        </div>
+       
       </div>
     </div>
   );
