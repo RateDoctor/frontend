@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiArrowLeft, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { ratedDoctors, sections } from './data';
 import "./myRatings.css";
 
 const MyRatings = () => {
@@ -11,18 +12,7 @@ const MyRatings = () => {
     "Choosing Dr. Tomas Tillman as my mentor was one of the best decisions I made during my PhD. Their commitment to excellence, ability to provide constructive criticism, and genuine interest in my success made for a fulfilling research experience. 😄"
   );
 
-  const ratedDoctors = [
-    {
-      id: 1,
-      name: "Dr. Tomas Tillman",
-      image: "/doctor1.jpg",
-    },
-    {
-      id: 2,
-      name: "Dr. Sarah Connor",
-      image: "/doctor2.jpg",
-    },
-  ];
+
 
   useEffect(() => {
   if (feedbackEditable) {
@@ -35,7 +25,7 @@ const MyRatings = () => {
   return () => document.body.classList.remove("no-scroll");
 }, [feedbackEditable]);
 
-  const renderPerformanceSection = () => {
+const renderPerformanceSection = () => {
     return (
       <div className="performance-section">
         <h4>Edit Tomas’s Performance</h4>
@@ -61,7 +51,7 @@ const MyRatings = () => {
         )}
       </div>
     );
-  };
+};
 
 const renderFeedbackSection = () => (
   <>
@@ -100,52 +90,7 @@ const renderFeedbackSection = () => (
 
 
 const renderQuestionnaireSection = () => {
-  const sections = [
-    {
-      title: "Teaching Style",
-      description:
-        "How would you describe your supervisor's teaching style during your PhD program?",
-      firstPlaceholder:
-        "Choosing [Supervisor's Name] as my mentor was one of the...",
-      questions: [
-        "Did your supervisor effectively communicate complex concepts and methodologies?",
-        "To what extent did your supervisor encourage critical thinking and independent research?",
-      ],
-    },
-    {
-      title: "Responsiveness",
-      description:
-        "How responsive was your supervisor to your emails, messages, or requests for meetings?",
-      firstPlaceholder:
-        "Choosing [Supervisor's Name] as my mentor was one of the...",
-      questions: [
-        "Were you satisfied with the turnaround time for feedback on your work or queries?",
-        "Did your supervisor provide constructive feedback in a timely manner?",
-      ],
-    },
-    {
-      title: "Mentorship",
-      description:
-        "To what extent did your supervisor provide guidance and support in defining your research objectives?",
-      firstPlaceholder:
-        "Choosing [Supervisor's Name] as my mentor was one of the... ",
-      questions: [
-        "How well did your supervisor mentor you in terms of research methodology and data analysis?",
-        "Did your supervisor actively support your academic and professional development?",
-      ],
-    },
-    {
-      title: "Overall Support",
-      description:
-        "How would you rate the overall support you received from your supervisor throughout your PhD program?",
-      firstPlaceholder: "",
-      questions: [
-        "Did your supervisor provide assistance in navigating academic challenges or administrative issues?",
-        "In what ways did your supervisor contribute to your overall success as a PhD student?",
-      ],
-    },
-  ];
-
+  
   return (
     <div className="questionnaire-section">
       <h4 className="title-questionnaire">Questionnaire</h4>
@@ -154,6 +99,7 @@ const renderQuestionnaireSection = () => {
         helping us enhance the overall academic experience.
       </p>
       {sections.map((section, index) => (
+
         <div key={index} className="question-block">
           <h5>{section.title}</h5>
           <p className="section-description">{section.description}</p>
@@ -161,7 +107,7 @@ const renderQuestionnaireSection = () => {
             <textarea
               placeholder={section.firstPlaceholder}
             />
-            <FiTrash2 className="delete-icon" />
+          {index !== sections.length - 1 && <FiTrash2 className="delete-icon" />}
           </div>
           {section.questions.map((q, i) => (
             <div key={i} className="question-field">
@@ -176,7 +122,7 @@ const renderQuestionnaireSection = () => {
 };
 
 
-  return (
+return (
     <div className="ratings-container">
       <div className="ratings-header">
         <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} />
@@ -199,7 +145,7 @@ const renderQuestionnaireSection = () => {
           ))}
         </div>
       ) : (
-        <div className="edit-section">
+        <div className="edit-section-scrollable edit-section">
           <div className="doctor-info">
             <div className="doctor-infoBox">
                 <img src={selectedDoctor.image} alt={selectedDoctor.name} className="doctor-img" />

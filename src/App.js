@@ -15,7 +15,7 @@ import SavedDoctors  from "./pages/savedDoctors/savedDoctors.jsx";
 import ContactUs  from "./pages/contactUs/contactUs.jsx";
 import MyRatings from './components/myRatings/myRatings.jsx';
 import EditRating from './components/editRating/editRating.jsx';
-import SearchResults from "./components/searchBar/searchResults.jsx";
+// import SearchResults from "./components/searchBar/searchResults.jsx";
 
 
 
@@ -38,7 +38,7 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/my-ratings" element={<MyRatings />} />
         <Route path="/edit-rating/:id" element={<EditRating />} />
-        <Route path="/results" element={<SearchResults />} />
+        {/* <Route path="/results" element={<SearchResults />} /> */}
       </Routes>
     </Router>
   );

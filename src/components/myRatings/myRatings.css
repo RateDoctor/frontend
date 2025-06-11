@@ -1,5 +1,19 @@
 /* MyRatings.css */
 
+
+.ratings-container{
+   height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-section-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 100px; /* For spacing below Save button */
+  scroll-behavior: smooth;
+}
+
 .my-ratings-container {
   display: flex;
   flex-direction: column;
@@ -359,19 +373,9 @@
 
 
 
-/* Mobile tweaks */
-@media (max-width: 500px) {
-  .rating-options {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
 
-  .rating-option {
-    flex: 1 1 45%;
-    margin-bottom: 10px;
-  }
-}
+
+
 
 
 .performance-section {
@@ -428,4 +432,26 @@
   font-size: 14px;
   font-weight: 500;
   color: #6C757D;
+}
+
+
+
+@media (max-width: 391px) {
+  .rating-options{
+    gap:1rem;
+  }
+}
+
+@media (max-width: 280px) {
+  .rating-option {
+    flex: 1 1;
+    min-width: 78px;
+    max-width: 120px;
+    padding: 2px;
+    border-radius: 10px;
+    background-color: #f2f2f2;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
 }
