@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
 import { FiSearch, FiUsers, FiInfo } from "react-icons/fi";
@@ -19,6 +19,18 @@ const Explore = () => {
   const [searchContext, setSearchContext] = useState("doctor");
   const [listViewResults, setListViewResults] = useState([]);
   const [viewState, setViewState] = useState("home");
+  const [isUniversityOpen, setIsUniversityOpen] = useState(false);
+  const [isFieldOpen, setIsFieldOpen] = useState(false);
+  const [isTopicOpen, setIsTopicOpen] = useState(false);
+
+  const universityRef = useRef(null);
+  const fieldRef = useRef(null);
+  const topicRef = useRef(null);
+
+
+  useOutsideClick(universityRef, () => setIsUniversityOpen(false));
+  useOutsideClick(fieldRef, () => setIsFieldOpen(false));
+  useOutsideClick(topicRef, () => setIsTopicOpen(false));
 
   const navigate = useNavigate();
 
@@ -61,7 +73,19 @@ const Explore = () => {
 
   const filtered = applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic);
 
-
+function useOutsideClick(ref, callback) {
+  useEffect(() => {
+    function handleClick(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [ref, callback]);
+}
  
   return (
 
@@ -101,7 +125,7 @@ const Explore = () => {
       {isSearchFocused && (
         <div className="search-overlay">
           {/* Filters */}
-          <div className="filter-bar">
+          {/* <div className="filter-bar">
             <select
               value={selectedUniversity}
               onChange={(e) => {
@@ -149,7 +173,143 @@ const Explore = () => {
                 ))}
               </select>
             )}
+          </div> */}
+
+          <div className="filter-bar">
+
+          {/* University Dropdown */}
+          <div className={`custom-select ${isUniversityOpen ? "open" : ""}`} ref={universityRef}>
+            <div 
+            className={`select-header ${selectedUniversity ? "selected-header" : ""}`}
+             onClick={() => setIsUniversityOpen(!isUniversityOpen)}>
+              {selectedUniversity || "All Universities"} <span className="arrow">&#9662;</span>
+            </div>
+            {isUniversityOpen && (
+                 <div className="dropdown-overlay" style={{ zIndex: 300 }}>
+              <ul className="doctor-list custom-dropdown">
+                <li
+                  className={!selectedUniversity ? "lists selected" : "lists"}
+                  onClick={() => {
+                    setSelectedUniversity("");
+                    setSelectedField("");
+                    setSelectedTopic("");
+                    setIsUniversityOpen(false);
+                    handleSearch(query);
+                  }}
+                >
+                  All Universities
+                </li>
+                {universities.map((uni, index) => (
+                  <li
+                    key={index}
+                    className={`lists ${selectedUniversity === uni ? "selected" : ""}`}
+                    onClick={() => {
+                      setSelectedUniversity(uni);
+                      setSelectedField("");
+                      setSelectedTopic("");
+                      setIsUniversityOpen(false);
+                      handleSearch(query);
+                    }}
+                  >
+                    {uni}
+                  </li>
+                ))}
+              </ul>
+             </div>
+            )}
           </div>
+
+          {/* Field Dropdown */}
+          {selectedUniversity && (
+          <div className={`custom-select ${isFieldOpen ? "open" : ""}`} ref={fieldRef}>
+              <div 
+              className={`select-header ${selectedField ? "selected-header" : ""}`}
+              onClick={() => setIsFieldOpen(!isFieldOpen)}>
+                {selectedField || "All Fields"} <span className="arrow">&#9662;</span>
+              </div>
+              {isFieldOpen && (
+                 <div className="dropdown-overlay" style={{ zIndex: 300 }}>
+                <ul className="doctor-list custom-dropdown">
+                  <li
+                    className={!selectedField ? "lists selected" : "lists"}
+                    onClick={() => {
+                      setSelectedField("");
+                      setSelectedTopic("");
+                      setIsFieldOpen(false);
+                      handleSearch(query);
+    
+                    }}
+                  >
+                    All Fields
+                  </li>
+                  {fields.map((field, index) => (
+                    <li
+                      key={index}
+                      
+                      className={selectedField === field ? "lists selected" : "lists"}
+                      onClick={() => {
+                            setSelectedField(field);
+                            setSelectedTopic(""); // Only clear downstream filters
+                            setIsFieldOpen(false);
+                            handleSearch(query);
+
+                      }}
+                    >
+                      {field}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              )}
+            </div>
+          )}
+
+          {/* Topic Dropdown */}
+          {selectedField && (
+            <div className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
+              <div 
+               className={`select-header ${selectedTopic ? "selected-header" : ""}`}
+               onClick={() => setIsTopicOpen(!isTopicOpen)}>
+                {selectedTopic || "All Topics"} <span className="arrow">&#9662;</span>
+              </div>
+              {isTopicOpen && (
+                 <div className="dropdown-overlay" style={{ zIndex: 300 }}>
+                <ul className="doctor-list custom-dropdown">
+                  <li
+                    className={!selectedTopic ? "lists selected" : "lists"}
+                    onClick={() => {
+                    setSelectedTopic("");      
+                    setIsTopicOpen(false);     
+                    handleSearch(query);       
+                    }}
+                  >
+                    All Topics
+                  </li>
+                  {topics.map((topic, index) => (
+                    <li
+                      key={index}
+                      className={selectedTopic === topic ? "lists selected" : "lists"}
+                      onClick={() => {
+                          setSelectedTopic(topic);
+                          setIsTopicOpen(false);
+                          handleSearch(query);
+                      }}
+                    >
+                      {topic}
+                    </li>
+                  ))}
+                </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+            {!query && !selectedUniversity && !selectedField && !selectedTopic && (
+            <p className="recent">Recent</p>
+            )}
+
+        </div>
+
 
           {/* Filtered search results */}
           {listViewResults.length > 0 ? (
