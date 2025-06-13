@@ -6,6 +6,8 @@ import Upload from './components/uploadFile/uploadfile.jsx';
 import Welcome from './components/welcome/welcome.jsx';
 import Logout from './components/logout/logout.jsx';
 import ForgotPassword from './components/forgot-password/forgotPassword.jsx';
+import AddDoctor from './components/addDoctor/addDoctor.jsx';
+import HelpFAQ from './components/HelpFAQ/Helpfaq.jsx';
 
 import Explore from './components/explore/explore.jsx';
 import Settings from "./pages/Settings/settings.jsx";
@@ -29,6 +31,9 @@ function App() {
         <Route path="/welcome" element={<Welcome />} /> 
         <Route path="/logout" element={<Logout />} /> 
         <Route path="/forgot-password" element={<ForgotPassword />} /> 
+        <Route path="/addDoctor" element={<AddDoctor />} /> 
+        <Route path="/helpFAQ" element={<HelpFAQ />} /> 
+
 
         <Route path="/" element={<Explore />} />
         <Route path="/settings" element={<Settings />} />
