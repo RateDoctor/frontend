@@ -199,6 +199,7 @@ function useOutsideClick(ref, callback) {
                 >
                   All Universities
                 </li>
+                
                 {universities.map((uni, index) => (
                   <li
                     key={index}
@@ -213,7 +214,19 @@ function useOutsideClick(ref, callback) {
                   >
                     {uni}
                   </li>
-                ))}
+                ))
+                }
+
+                 <div className="not-found">
+                  <p className="paragraph-not-found">University not found.</p>
+                 <li
+                 className="hyperlink-not-found"
+                  style={{ color: "#0074E4", cursor: "pointer",  }}
+                  onClick={() => navigate("/create-university")}
+                >
+                  Create University
+                </li>
+                </div>
               </ul>
              </div>
             )}
@@ -334,7 +347,16 @@ function useOutsideClick(ref, callback) {
           </ul>
 
         ) : (
-          <p style={{ marginTop: "1rem" }}>No matching supervisors found.</p>
+         <p style={{ marginTop: "1rem" }}>
+          Supervisor not found.{" "}
+          <span
+            style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+            onClick={() => navigate("/add-doctor")}
+          >
+            Add doctor
+          </span>
+        </p>
+
         )}
         </div>
       )}
@@ -353,7 +375,16 @@ function useOutsideClick(ref, callback) {
             <SupervisorCard key={index} {...sup} />
           ))
         ) : (
-          <p>No supervisor found.</p>
+         <p style={{ marginTop: "1rem" }}>
+          Supervisor not found.{" "}
+          <span
+            style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+            onClick={() => navigate("/add-doctor")}
+          >
+            Add doctor
+          </span>
+        </p>
+
         )}
       </div>
     </div>

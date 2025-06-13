@@ -40,7 +40,7 @@ export const supervisors = [
    {
     name: "Mr. Olivia Windler",
     rating: 4.5,
-    university: "University XYZ",
+    university: "University of Paris",
     field: "Chemistry",
     topics: ["Organic Chemistry", "Materials Science"],
     image: menMuslim,

@@ -53,7 +53,6 @@
   margin: 1rem 1.4rem;
   gap: 1rem;
   font-weight: bold;
-  overflow-y: auto;
 }
 
 
@@ -424,23 +423,43 @@
 }
 @media (max-width: 430px) {
   .custom-dropdown{
-      top: 52%;
+      top: 48%;
       width: 100%;
       height: 100vh;
   }
 }
 
 
+@media (max-width: 376px){
+.custom-dropdown {
+    top: 54%;
+    width: 100%;
+    height: 100vh;
+}
+}
 
 
+.paragraph-not-found{
+  width: 100%;
+}
 
+.not-found{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 86%;
+    margin-left: 10px;
+    border-bottom: none;
+}
 
+.hyperlink-not-found{
+margin-left: 12px;
+}
 
-
-
-
-
-
+.search-overlay{
+   overflow-y: auto;
+   margin-bottom: 100px;
+}
 
 /* ############3 */
 
@@ -454,11 +473,7 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* When selected */
-.lists.selected {
-  background-color: #0074E4;
-  color: white;
-}
+
 
 /* Special style for "All University" */
 .lists.all-uni {
@@ -477,5 +492,5 @@
     background-color: #0074E4;
     border: 2px solid #007bff;
     color: #ffffff;
-    border-radius: 10px;
+    border-radius: 20px;
 }
