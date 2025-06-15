@@ -6,6 +6,7 @@ import "../explore/explore.css";
 import { supervisors } from "./data.js";
 import SearchBar from "../searchBar/searchBar";
 import Navbar from "../navbar/navbar";
+import DoctorList from "../DoctorList/DoctorList.jsx";
 
 const getUnique = (arr, key) => [...new Set(arr.map(item => item[key]))];
 
@@ -279,7 +280,7 @@ function useOutsideClick(ref, callback) {
 
           {/* Topic Dropdown */}
           {selectedField && (
-            <div className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
+            <div1111 className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
               <div 
                className={`select-header ${selectedTopic ? "selected-header" : ""}`}
                onClick={() => setIsTopicOpen(!isTopicOpen)}>
@@ -314,7 +315,7 @@ function useOutsideClick(ref, callback) {
                 </ul>
                 </div>
               )}
-            </div>
+            </div1111>
           )}
 
             {!query && !selectedUniversity && !selectedField && !selectedTopic && (
@@ -325,30 +326,36 @@ function useOutsideClick(ref, callback) {
 
 
           {/* Filtered search results */}
-          {listViewResults.length > 0 ? (
-         <ul className="doctor-list">
-            {listViewResults.map((doc, index) => (
-              <li
-                key={index}
-                onClick={() => {
-                  navigate(`/doctor/${doc.name}`);
-                  setIsSearchFocused(false); // close overlay
-                }}
-                className="lists"
-              >
-                <img
-                  src={doc.image}
-                  alt={doc.name}
-                 className="doctor-list-img"
-                />
-                {doc.name}
-              </li>
-            ))}
-          </ul>
+        {listViewResults.length > 0 ? (
+
+
+
+        //  <ul className="doctor-list">
+        //     {listViewResults.map((doc, index) => (
+        //       <li
+        //         key={index}
+        //         onClick={() => {
+        //           navigate(`/doctor/${doc.name}`);
+        //           setIsSearchFocused(false); // close overlay
+        //         }}
+        //         className="lists"
+        //       >
+        //         <img
+        //           src={doc.image}
+        //           alt={doc.name}
+        //          className="doctor-list-img"
+        //         />
+        //         {doc.name}
+        //       </li>
+        //     ))}
+        //   </ul>
+
+        <DoctorList doctors={listViewResults} onSelect={() => setIsSearchFocused(false)} />
+
 
         ) : (
          <p style={{ marginTop: "1rem" }}>
-          Supervisor not found.{" "}
+          Supervisor not found.
           <span
             style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
             onClick={() => navigate("/add-doctor")}

@@ -1,0 +1,58 @@
+.input-number{
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+
+.form-createUniversity{
+    flex: 1 1 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 280px;
+}
+
+
+.title-phone{
+    font-size: 12px;
+}
+
+.theNumber{
+    font-size: 14px;
+    margin-top: 7px;
+
+}
+
+.title-phone,
+.theNumber{
+color: #6F7482;
+}
+
+.add-doctor{
+display: flex;
+align-items: center;
+width: 111px;
+height: 34px;
+gap: 2px;
+padding: 10px 8px;
+border-radius: 20px;
+font-size: 14px;
+color: #0074E4;
+border: 1px solid #0074E4;
+background-color: #ffffff;
+}
+.plus-add-doc{
+ color: #0074E4;
+}
+
+.add-doc{
+    width: 71px;
+}
+
+
+.phd-label{
+    font-size: 16px;
+    color: #010101;
+}

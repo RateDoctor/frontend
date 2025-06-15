@@ -67,12 +67,12 @@ const AddDoctor = () => {
         <input
           className="inputAddDoctor"
           name="doctorName"
-          placeholder="Enter Doctor's Name"
+          placeholder="Text"
           value={formData.doctorName}
           onChange={handleChange}
         />
 
-       <label className='top-one-line label-addDoctor'>Profile</label>
+       <label className='top-one-line label-addDoctor'>Profile *</label>
         <div className="profile-input-wrapper">
         <input
             id="profile-upload"
@@ -91,7 +91,7 @@ const AddDoctor = () => {
           <input
             className="inputAddDoctor"
             name="affiliations"
-            placeholder="Enter affiliation"
+            placeholder="Text"
             value={formData.affiliations}
             onChange={handleChange}
           />
@@ -103,7 +103,7 @@ const AddDoctor = () => {
         <input
           className="inputAddDoctor"
           name="background"
-          placeholder="Enter background"
+          placeholder="Text"
           value={formData.background}
           onChange={handleChange}
         />
@@ -112,7 +112,7 @@ const AddDoctor = () => {
         <input
           className="inputAddDoctor"
           name="teaching"
-          placeholder="Enter teaching"
+          placeholder="Text"
           value={formData.teaching}
           onChange={handleChange}
         />
@@ -121,7 +121,7 @@ const AddDoctor = () => {
         <input
           className="inputAddDoctor"
           name="supervision"
-          placeholder="Enter supervision"
+          placeholder="Text"
           value={formData.supervision}
           onChange={handleChange}
         />
@@ -131,7 +131,7 @@ const AddDoctor = () => {
           <input
             className="inputAddDoctor"
             name="experience"
-            placeholder="Enter experience"
+            placeholder="Text"
             value={formData.experience}
             onChange={handleChange}
           />
@@ -142,10 +142,10 @@ const AddDoctor = () => {
         <p className="note">
           Before completing the profile creation process, we kindly ask you to provide an initial rating for Dr. {formData.doctorName || '[Doctor\'s Name]'}.
         </p>
-<div className='flex'>
-<button className="rate-button" onClick={handleSubmit}>Rate Doctor</button>
+        <div className='flex'>
+        <button className="rate-button" onClick={handleSubmit}>Rate Doctor</button>
         <button className="confirm-button">Confirm</button>
-</div>
+        </div>
         
 
       </div>

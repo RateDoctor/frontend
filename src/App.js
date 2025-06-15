@@ -7,6 +7,7 @@ import Welcome from './components/welcome/welcome.jsx';
 import Logout from './components/logout/logout.jsx';
 import ForgotPassword from './components/forgot-password/forgotPassword.jsx';
 import AddDoctor from './components/addDoctor/addDoctor.jsx';
+import CreateUniversity from './/components/createUniversity/createUniversity.jsx';
 import HelpFAQ from './components/HelpFAQ/Helpfaq.jsx';
 
 import Explore from './components/explore/explore.jsx';
@@ -33,6 +34,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} /> 
         <Route path="/addDoctor" element={<AddDoctor />} /> 
         <Route path="/helpFAQ" element={<HelpFAQ />} /> 
+        <Route path="/create-university" element={<CreateUniversity />} /> 
 
 
         <Route path="/" element={<Explore />} />
