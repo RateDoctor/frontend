@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiArrowLeft, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { ratedDoctors, sections } from './data';
 import "./myRatings.css";
 
@@ -25,33 +26,39 @@ const MyRatings = () => {
   return () => document.body.classList.remove("no-scroll");
 }, [feedbackEditable]);
 
-const renderPerformanceSection = () => {
-    return (
-      <div className="performance-section">
-        <h4>Edit Tomas’s Performance</h4>
-        {["Communication", "Support", "Guidance", "Availability"].map(
-          (category) => (
-            <div key={category} className="rating-category">
-              <label>{category}</label>
-              <div className="rating-options">
-                {[
-                { label: "Excellent", emoji: "😄" },
-                { label: "Good", emoji: "🙂" },
-                { label: "Fair", emoji: "😐" },
-                { label: "Poor", emoji: "😞" },
-                  ].map((option) => (
-                    <div key={option.label} className="rating-option">
-                    <div className="emoji">{option.emoji}</div>
-                    <div className="label">{option.label}</div>
-                   </div>
-                ))}
-              </div>
-            </div>
-          )
-        )}
-      </div>
-    );
-};
+// const renderPerformanceSection = () => {
+//     return (
+//       <div className="performance-section">
+//         <h4>Edit Tomas’s Performance</h4>
+//         {["Communication", "Support", "Guidance", "Availability"].map(
+//           (category) => (
+//             <div key={category} className="rating-category">
+//               <label>{category}</label>
+//               <div className="rating-options">
+//                 {[
+//                 { label: "Excellent", emoji: "😄" },
+//                 { label: "Good", emoji: "🙂" },
+//                 { label: "Fair", emoji: "😐" },
+//                 { label: "Poor", emoji: "😞" },
+//                   ].map((option) => (
+//                     <div key={option.label} className="rating-option">
+//                     <div className="emoji">{option.emoji}</div>
+//                     <div className="label">{option.label}</div>
+//                    </div>
+//                 ))}
+//               </div>
+//             </div>
+//           )
+//         )}
+//       </div>
+//     );
+// };
+
+ <PerformanceSection/> 
+
+
+
+
 
 const renderFeedbackSection = () => (
   <>
@@ -154,7 +161,7 @@ return (
            
             <button className="delete-btn"> Delete </button>
           </div>
-          {renderPerformanceSection()}
+          <PerformanceSection doctorName={selectedDoctor?.name} />
           {renderFeedbackSection()}
           {renderQuestionnaireSection()}
           <button className="save-edits-btn">Save Edits</button>

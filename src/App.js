@@ -9,6 +9,7 @@ import ForgotPassword from './components/forgot-password/forgotPassword.jsx';
 import AddDoctor from './components/addDoctor/addDoctor.jsx';
 import CreateUniversity from './/components/createUniversity/createUniversity.jsx';
 import HelpFAQ from './components/HelpFAQ/Helpfaq.jsx';
+import SupervisorDrProfile from './components/supervisorDrProfile/supervisorDrProfile.jsx';
 
 import Explore from './components/explore/explore.jsx';
 import Settings from "./pages/Settings/settings.jsx";
@@ -35,7 +36,7 @@ function App() {
         <Route path="/addDoctor" element={<AddDoctor />} /> 
         <Route path="/helpFAQ" element={<HelpFAQ />} /> 
         <Route path="/create-university" element={<CreateUniversity />} /> 
-
+        <Route path="/supervisor-dr-profile" element={<SupervisorDrProfile />} /> 
 
         <Route path="/" element={<Explore />} />
         <Route path="/settings" element={<Settings />} />

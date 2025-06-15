@@ -1,0 +1,142 @@
+.container-superdrprofile {
+  height: 100vh;              
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-superdrprofile {
+  flex: 1;
+  overflow-y: auto;          
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.doctor-name-superdrprofile {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.section-superdrprofile {
+  margin-bottom: 1.5rem;
+}
+
+.section-superdrprofile h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.section-superdrprofile ul {
+  list-style-type: none;
+  padding-left: 1rem;
+}
+
+.section-superdrprofile li {
+  margin-bottom: 0.3rem;
+  color: #555;
+}
+
+
+
+.drProfile-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  max-width: 600px; 
+  margin: 0 auto;
+}
+
+.drProfile-left {
+  flex: 0 0 120px; /* fixed width for image container */
+}
+
+.doctor-image {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.drProfile-right {
+  flex: 1; /* take remaining space */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rating-stars {
+  font-size: 1rem;
+  color: #ffb400; /* gold color for stars */
+}
+
+.doctor-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.doctor-fields {
+  color: #6C757D;
+  font-style: italic;
+}
+
+.bookmark-icons {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.rate-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  align-self: flex-start; /* align left */
+}
+
+.rate-btn:hover {
+  background-color: #0056b3;
+}
+
+
+
+.name-and-bookmark {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* pushes bookmark icon to the right */
+  margin-bottom: 0.3rem;
+}
+
+.doctor-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.bookmark-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.8rem;
+  color: #007bff;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.bookmark-button:hover {
+  color: #0056b3;
+}
+
+
+.overallRating{
+  font-size: 6px;
+}
