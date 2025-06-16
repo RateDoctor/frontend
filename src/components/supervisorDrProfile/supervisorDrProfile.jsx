@@ -99,7 +99,8 @@ const SupervisorDrProfile = () => {
 
         <section className="section-superdrprofile">
           <h3>Rating Distribution</h3>
-         <PerformanceSection/>
+         <PerformanceSection showPercentage={true} />
+
         </section>
       </div>
     </div>

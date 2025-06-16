@@ -17,6 +17,17 @@
   margin-bottom: 1rem;
 }
 
+
+.superVisor-doctor-name{
+  font-size: 20px;
+}
+
+.imgProfile{
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+}
+
 .section-superdrprofile {
   margin-bottom: 1.5rem;
 }
@@ -42,16 +53,17 @@
 .drProfile-box {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: self-start;
   gap: 1rem;
-  padding: 1rem;
   border-radius: 0.75rem;
   max-width: 600px; 
-  margin: 0 auto;
+  margin: 0 auto 1.2rem auto;
 }
 
 .drProfile-left {
-  flex: 0 0 120px; /* fixed width for image container */
+
+  width: 100px;
+  height: 100px;
 }
 
 .doctor-image {
@@ -62,15 +74,14 @@
 }
 
 .drProfile-right {
-  flex: 1; /* take remaining space */
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .rating-stars {
-  font-size: 1rem;
-  color: #ffb400; /* gold color for stars */
+  font-size: 16px;
+  color: #0074E4;
+  margin-bottom: 0.5rem;
 }
 
 .doctor-name {
@@ -81,7 +92,7 @@
 
 .doctor-fields {
   color: #6C757D;
-  font-style: italic;
+  font-size: 10px;
 }
 
 .bookmark-icons {
@@ -92,14 +103,23 @@
 }
 
 .rate-btn {
-  margin-top: 0.5rem;
-  padding: 0.5rem 1.2rem;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  align-self: flex-start; /* align left */
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-start;
+    width: 63px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+.rate-button-span{
+  font-size: 16px;
 }
 
 .rate-btn:hover {
@@ -122,14 +142,16 @@
 }
 
 .bookmark-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.8rem;
-  color: #007bff;
-  display: flex;
-  align-items: center;
-  padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #171717;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    width: 18px;
+    height: 18px;
+    margin-left: 5.2rem;
 }
 
 .bookmark-button:hover {
@@ -139,4 +161,13 @@
 
 .overallRating{
   font-size: 6px;
+  margin-left: 8px;
+  color: #6C757D;
+}
+
+.percentage-text {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #0074E4;
+  font-weight: bold;
 }
