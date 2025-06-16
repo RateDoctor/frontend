@@ -12,6 +12,7 @@
     flex-direction: column;
     gap: 16px;
     min-width: 280px;
+    padding: 14px;
 }
 
 

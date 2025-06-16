@@ -3,9 +3,9 @@ import { CiBookmarkPlus, CiBookmarkCheck } from "react-icons/ci";
 import { renderStars } from "../../utils/renderStars"; 
 import imageDrSupervisor from "../../imgs/men-muslim.jpeg";
 import './supervisorDrProfile.css'; 
+import { doctorData } from './data.js';
 
-
-const DoctorProfileBox = ({ doctorData }) => {
+const DoctorProfileBox = () => {
   const [bookmarked, setBookmarked] = useState(false);
 
   if (!doctorData) {

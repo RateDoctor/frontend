@@ -21,8 +21,6 @@ export const ratedDoctors = [
 
 
 
-
-
  export const sections = [
     {
       title: "Teaching Style",

@@ -1,0 +1,62 @@
+.universityProfile-parent-box{
+position: relative;
+display: flex;
+flex-direction: column;
+}
+.universityProfile-parent-box::after{
+content: '';
+position: absolute;
+width: 87%;
+height: 0.8px;
+background-color: #6C757D;
+bottom: -4px;
+left: 23px;
+}
+
+.universityProfile-box{
+display: flex;
+flex-direction: row;
+align-items: self-start;
+justify-content: center;
+gap: 1rem;
+border-radius: 0.75rem;
+max-width: 600px;
+margin: 1rem auto 1.2rem auto;
+}
+
+.universityImgProfile{
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    aspect-ratio: auto 3 / 4;
+    background: black;
+}
+
+.universityProfile-left{
+    width: 130px;
+    height: 150px;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.uni-rate-btn {
+    background: #0074E4;
+    border: none;
+    color: #ffffff;
+    border-radius: 20px;
+    width: 63px;
+    height: 27px;
+    margin-top: 24px;
+}
+.university-fields {
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
+}
+
+.phone-university {
+    margin-top: 12px;
+}
