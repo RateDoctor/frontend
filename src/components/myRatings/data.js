@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 export const ratedDoctors = [
     {
       id: 1,

@@ -184,7 +184,7 @@
   width: 100%;
   padding: 1rem;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #6C757D;
   font-size: 1rem;
   resize: none;
   min-height: 120px;
@@ -325,7 +325,7 @@
 
 .question-fieldParagraph{
     width: 100%;
-    padding: 10px;
+    /* padding: 10px; */
     border: 1px solid #6C757D;
     border-radius: 5px;
     resize: vertical;

@@ -54,6 +54,7 @@ const EditRating = () => {
         </div>
         {feedbackEditable ? (
           <textarea
+          className="edit-rating"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
           />

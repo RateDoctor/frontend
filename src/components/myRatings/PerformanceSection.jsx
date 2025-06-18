@@ -1,7 +1,7 @@
 import React from "react";
 
 const PerformanceSection = ({
-  title = "Edit Performance",
+  title = "Erick’s Performance",
   doctorName = "Tomas",
   hideTitle = false,
   showPercentage = false,
