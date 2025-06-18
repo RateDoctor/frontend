@@ -19,3 +19,18 @@ src/components/doctorList/doctorList.css
   border-radius: 50%;
   margin-right: 1rem;
 }
+
+
+.doctor-rank {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0074E4;
+    margin-right: 10px;
+    -webkit-user-select: none;
+    user-select: none;
+}

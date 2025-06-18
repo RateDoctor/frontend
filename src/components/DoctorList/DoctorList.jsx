@@ -1,10 +1,8 @@
-// src/components/doctorList/DoctorList.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import "./doctorList.css";
+import "./doctorList.css"; // Use this for custom styling
 
 const DoctorList = ({ doctors, onSelect }) => {
-    
   const navigate = useNavigate();
 
   return (
@@ -13,13 +11,14 @@ const DoctorList = ({ doctors, onSelect }) => {
         <li
           key={index}
           onClick={() => {
-            if (onSelect) onSelect(); // close overlay, etc.
+            if (onSelect) onSelect();
             navigate(`/doctor/${doc.name}`);
           }}
-          className="lists"
+          className="lists doctor-item"
         >
+          <span className="doctor-rank">{doc.rank}</span>
           <img src={doc.image} alt={doc.name} className="doctor-list-img" />
-          {doc.name}
+          <span className="doctor-name">{doc.name}</span>
         </li>
       ))}
     </ul>

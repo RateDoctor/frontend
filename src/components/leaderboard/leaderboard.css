@@ -1,0 +1,8 @@
+.search-overlay{
+    height: 100vh;
+    overflow-y: auto;
+}
+.container-leaderboard{
+    margin-top: 1.4rem;
+}
+

@@ -125,56 +125,6 @@ function useOutsideClick(ref, callback) {
       {/* Overlay when search is focused */}
       {isSearchFocused && (
         <div className="search-overlay">
-          {/* Filters */}
-          {/* <div className="filter-bar">
-            <select
-              value={selectedUniversity}
-              onChange={(e) => {
-                const value = e.target.value;
-                setSelectedUniversity(e.target.value);
-                setSelectedField("");
-                setSelectedTopic("");
-                handleSearch(query);
-              }}
-            >
-              <option value="">All Universities</option>
-              {universities.map((uni, index) => (
-                <option key={index} value={uni}>{uni}</option>
-              ))}
-            </select>
-            <p className="recent">Recent</p>
-
-            {selectedUniversity && (
-              <select
-                value={selectedField}
-                onChange={(e) => {
-                  setSelectedField(e.target.value);
-                  setSelectedTopic("");
-                  handleSearch(query);
-                }}
-              >
-                <option value="">All Fields</option>
-                {fields.map((field, index) => (
-                  <option key={index} value={field}>{field}</option>
-                ))}
-              </select>
-            )}
-
-            {selectedField && (
-              <select
-                value={selectedTopic}
-                onChange={(e) => {
-                  setSelectedTopic(e.target.value);
-                  handleSearch(query);
-                }}
-              >
-                <option value="">All Topics</option>
-                {topics.map((topic, index) => (
-                  <option key={index} value={topic}>{topic}</option>
-                ))}
-              </select>
-            )}
-          </div> */}
 
           <div className="filter-bar">
 
