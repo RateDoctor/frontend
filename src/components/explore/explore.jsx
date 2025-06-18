@@ -328,28 +328,6 @@ function useOutsideClick(ref, callback) {
           {/* Filtered search results */}
         {listViewResults.length > 0 ? (
 
-
-
-        //  <ul className="doctor-list">
-        //     {listViewResults.map((doc, index) => (
-        //       <li
-        //         key={index}
-        //         onClick={() => {
-        //           navigate(`/doctor/${doc.name}`);
-        //           setIsSearchFocused(false); // close overlay
-        //         }}
-        //         className="lists"
-        //       >
-        //         <img
-        //           src={doc.image}
-        //           alt={doc.name}
-        //          className="doctor-list-img"
-        //         />
-        //         {doc.name}
-        //       </li>
-        //     ))}
-        //   </ul>
-
         <DoctorList doctors={listViewResults} onSelect={() => setIsSearchFocused(false)} />
 
 

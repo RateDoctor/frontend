@@ -3,7 +3,7 @@ import men from "../../imgs/men.jpg";
 import woman from "../../imgs/woman.jpg";
 export const supervisors = [
    {
-    name: "Madeline Konopelski",
+    name: "Leticia Buckridge",
     rating: 3.0,
     university: "University XYZ",
     field: "Computer Science",
@@ -11,7 +11,7 @@ export const supervisors = [
     image: men,
   },
  {
-    name: "Mr. Olivia Windler",
+    name: "Franklin Spinka",
     rating: 4.5,
     university: "University XYZ",
     field: "Chemistry",
@@ -19,7 +19,7 @@ export const supervisors = [
     image: menMuslim,
   },
  {
-    name: "Mr. Olivia Windler",
+    name: "Leticia Buckridge",
     rating: 4.5,
     university: "University XYZ",
     field: "Chemistry",
@@ -38,7 +38,7 @@ export const supervisors = [
  
    
    {
-    name: "Mr. Olivia Windler",
+    name: "Franklin Spinka",
     rating: 4.5,
     university: "University of Paris",
     field: "Chemistry",
@@ -49,7 +49,7 @@ export const supervisors = [
   
 
     {
-    name: "Madeline Konopelski",
+    name: "Edwin Williamson",
     rating: 3.0,
     university: "University XYZ",
     field: "Computer Science",
