@@ -118,7 +118,7 @@ const UniversityProfile = () => {
 
   return (
 <div className='universityProfile-parent-box'>
-     <Navbar
+     {/* <Navbar
             title="Explore"
             onBack={() => {
              if (window.history.length > 2) {
@@ -127,7 +127,7 @@ const UniversityProfile = () => {
             navigate("/");
           }
         }}
-      />
+      /> */}
       <div className="university-container">
            <div className="universityProfile-box">
           <div className="universityProfile-left">

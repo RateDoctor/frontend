@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { FaPlus } from "react-icons/fa6";
 import { RxCalendar } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
+import { FiArrowLeft } from "react-icons/fi";
+
 import './addDoctor.css';
-import Navbar from "../navbar/navbar";
 const AddDoctor = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -52,8 +53,8 @@ const AddDoctor = () => {
 
   return (
     <div className="form-container">
-        <Navbar
-        title="Explore"
+        {/* <Navbar
+        title="addDoctor"
         onBack={() => {
           if (window.history.length > 2) {
             navigate(-1);
@@ -61,7 +62,12 @@ const AddDoctor = () => {
             navigate("/");
           }
         }}
-      />
+      /> */}
+
+       <div className="settings-header">
+              <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+              <h2>Add Doctor</h2>
+        </div>
       <div className="form-left">
         <label htmlFor="doctorName" className='top-one-line label-addDoctor'>Doctor Name *</label>
         <input

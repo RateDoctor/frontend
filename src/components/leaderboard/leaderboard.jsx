@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 import { supervisors } from "../explore/data.js";
 import "./leaderboard.css";
-import Navbar from "../navbar/navbar";
+import { FiArrowLeft } from "react-icons/fi";
 
 // Utility: Get unique values from an array of objects by key
 const getUnique = (arr, key) => [...new Set(arr.map(item => item[key]))];
@@ -98,16 +98,10 @@ const LeaderBoard = () => {
     isSearchFocused && (
       <div className="search-overlay">
 
-         <Navbar
-            title="Explore"
-            onBack={() => {
-             if (window.history.length > 2) {
-            navigate(-1);
-              } else {
-            navigate("/");
-          }
-        }}
-      />
+       <div className="settings-header">
+            <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+            <h2>Leaderboard</h2>
+       </div>
 
       <div className="container-leaderboard">
   <div className="filter-bar">

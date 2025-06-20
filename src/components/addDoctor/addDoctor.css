@@ -15,6 +15,7 @@
   flex-direction: column;
   gap: 16px;
   min-width: 280px;
+  padding: 1rem;
 }
 
 .form-right {

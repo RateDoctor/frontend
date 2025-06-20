@@ -18,6 +18,10 @@ const Navbar = ({ title = "Explore", onBack }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+
+
+
   return (
     <div className="navbar">
       <div className="nav-left" onClick={onBack}>

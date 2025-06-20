@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from './layout/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SignUp from './components/singUp/singup.jsx';
 import Upload from './components/uploadFile/uploadfile.jsx';
@@ -13,7 +14,6 @@ import SupervisorDrProfile from './components/supervisorDrProfile/supervisorDrPr
 import UniversityProfile from './components/universityPage/universityPage.jsx';
 import RateSupervisor from './components/rateSupervisor/ratesupervisor.jsx';
 import LeaderBoard from './components/leaderboard/leaderboard.jsx';
-
 import Explore from './components/explore/explore.jsx';
 import Settings from "./pages/Settings/settings.jsx";
 import ChangeEmail from './pages/changeEmail/changeEmail.jsx';
@@ -30,29 +30,32 @@ function App() {
   return (
 <Router>
       <Routes>
-        <Route path="/login" element={<SignIn />} />
-        <Route path="/signUp" element={<SignUp />} />
-        <Route path="/upload" element={<Upload />} /> 
-        <Route path="/welcome" element={<Welcome />} /> 
-        <Route path="/logout" element={<Logout />} /> 
-        <Route path="/forgot-password" element={<ForgotPassword />} /> 
-        <Route path="/addDoctor" element={<AddDoctor />} /> 
-        <Route path="/helpFAQ" element={<HelpFAQ />} /> 
-        <Route path="/create-university" element={<CreateUniversity />} /> 
-        <Route path="/supervisor-dr-profile" element={<SupervisorDrProfile />} /> 
-        <Route path="/university-profile" element={<UniversityProfile />} /> 
-        <Route path="/leaderboard" element={<LeaderBoard />} /> 
-        <Route path="/rate-supervisor" element={<RateSupervisor />} /> 
-        <Route path="/" element={<Explore />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/settings/change-email" element={<ChangeEmail />} /> 
-        <Route path="/settings/change-password" element={<ChangePassword />} />
-        <Route path="/saved-doctors" element={<SavedDoctors />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/my-ratings" element={<MyRatings />} />
-        <Route path="/edit-rating/:id" element={<EditRating />} />
-        {/* <Route path="/results" element={<SearchResults />} /> */}
+        <Route path="/" element={<Layout />}>
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/upload" element={<Upload />} /> 
+            <Route path="/welcome" element={<Welcome />} /> 
+            <Route path="/logout" element={<Logout />} /> 
+            <Route path="/forgot-password" element={<ForgotPassword />} /> 
+            <Route path="/addDoctor" element={<AddDoctor />} /> 
+            <Route path="/helpFAQ" element={<HelpFAQ />} /> 
+            <Route path="/create-university" element={<CreateUniversity />} /> 
+            <Route path="/supervisor-dr-profile" element={<SupervisorDrProfile />} /> 
+            <Route path="/university-profile" element={<UniversityProfile />} /> 
+            <Route path="/leaderboard" element={<LeaderBoard />} /> 
+            <Route path="/rate-supervisor" element={<RateSupervisor />} /> 
+            <Route path="/" element={<Explore />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/change-email" element={<ChangeEmail />} /> 
+            <Route path="/settings/change-password" element={<ChangePassword />} />
+            <Route path="/saved-doctors" element={<SavedDoctors />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/my-ratings" element={<MyRatings />} />
+            <Route path="/edit-rating/:id" element={<EditRating />} />
+            {/* <Route path="/results" element={<SearchResults />} /> */}
+          </Route>
       </Routes>
+      
     </Router>
   );
 }

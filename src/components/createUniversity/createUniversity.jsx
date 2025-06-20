@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import './createUniversity.css';
-import Navbar from "../navbar/navbar";
+import { FiArrowLeft } from "react-icons/fi";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 import { supervisors } from "../explore/data.js";
 
@@ -44,16 +44,10 @@ const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
     <div className="form-container">
-        <Navbar
-        title="Explore"
-        onBack={() => {
-          if (window.history.length > 2) {
-            navigate(-1);
-          } else {
-            navigate("/");
-          }
-        }}
-      />
+        <div className="settings-header">
+                    <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+                    <h2>Create University</h2>
+              </div>
       <div className="form-createUniversity">
         <label htmlFor="doctorName" className='top-one-line label-addDoctor'>Official university name *</label>
         <input

@@ -13,7 +13,7 @@ const SupervisorDrProfile = () => {
 
   return (
     <div className="container-superdrprofile">
-      <Navbar
+      {/* <Navbar
         title="Explore"
         onBack={() => {
           if (window.history.length > 2) {
@@ -22,7 +22,7 @@ const SupervisorDrProfile = () => {
             navigate("/");
           }
         }}
-      />
+      /> */}
 
       <div className="profile-superdrprofile">
 

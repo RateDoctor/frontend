@@ -1,6 +1,6 @@
 import React from 'react';
 import './Helpfaq.css';
-import Navbar from "../navbar/navbar";
+import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 
@@ -10,7 +10,7 @@ const HelpFAQ = () => {
   return (
     <div className="faq-container  ">
 
-          <Navbar
+          {/* <Navbar
           title="Help/FAQ"
           onBack={() => {
           if (window.history.length > 2) {
@@ -19,7 +19,14 @@ const HelpFAQ = () => {
             navigate("/");
           }
         }}
-      />
+      /> */}
+
+       <div className="settings-header">
+                    <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+                    <h2>Help/FAQ</h2>
+       </div>
+
+     <section className="faq-child-container">
       <section className="">
         <h2 className="faq-title">Contact and Support</h2>
         <div className="faq-item">
@@ -50,6 +57,8 @@ const HelpFAQ = () => {
             A: Once a rating is submitted, it cannot be edited or deleted. Ensure accuracy before submitting.
           </p>
         </div>
+      </section>
+
       </section>
     </div>
   );

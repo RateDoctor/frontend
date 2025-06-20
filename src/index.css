@@ -10,7 +10,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
    overflow: hidden; /* Adjust for content */
-   overflow-y: hidden;
+   overflow-y: auto;
 }
 
 

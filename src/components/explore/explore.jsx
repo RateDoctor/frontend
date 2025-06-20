@@ -1,7 +1,6 @@
 import React, { useState,useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
-import { FiSearch, FiUsers, FiInfo } from "react-icons/fi";
 import "../explore/explore.css";
 import { supervisors } from "./data.js";
 import SearchBar from "../searchBar/searchBar";
@@ -93,7 +92,7 @@ function useOutsideClick(ref, callback) {
     <div className="explore-container">
 
 
-      <Navbar
+      {/* <Navbar
         title="Explore"
         onBack={() => {
           if (window.history.length > 2) {
@@ -102,7 +101,7 @@ function useOutsideClick(ref, callback) {
             navigate("/");
           }
         }}
-      />
+      /> */}
 
 
       <div className="search-wrapper" style={{ position: "relative" }}>
@@ -327,12 +326,7 @@ function useOutsideClick(ref, callback) {
 )}
 
 
-      {/* Footer Navigation */}
-      <footer className="footer">
-        <FiSearch className="icon" />
-        <FiUsers className="icon" />
-        <FiInfo className="icon" />
-      </footer>
+    
     </div>
   );};
 
