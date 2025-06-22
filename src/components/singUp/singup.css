@@ -402,3 +402,27 @@ left: 6rem;
 
 
 
+
+
+/* singup.css */
+
+.singup-input-group {
+  position: relative;
+}
+
+
+
+.input {
+  padding: 14px 10px;
+  font-size: 1rem;
+}
+
+/* When field is filled, move label up */
+.singup-input-group.filled .singup-input-label,
+.singup-input-group input:focus + .singup-input-label {
+  /* top: -10px;
+  font-size: 0.75rem;
+  color: #0077ff; */
+
+  text-indent: -999px;
+}

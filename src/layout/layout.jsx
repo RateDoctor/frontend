@@ -10,10 +10,35 @@ const Layout = () => {
 
 
   // Define routes that should NOT show the default Navbar
-  const customNavbarRoutes = ["/my-ratings","/settings","/settings/change-email","/settings/change-password","/addDoctor","/saved-doctors","/contact","/create-university","/rate-supervisor","/leaderboard","/helpFAQ"];
+  const customNavbarRoutes = [
+    "/my-ratings",
+    "/settings",
+    "/settings/change-email",
+    "/settings/change-password",
+    "/addDoctor",
+    "/saved-doctors",
+    "/contact",
+    "/create-university",
+    "/rate-supervisor",
+    "/leaderboard",
+    "/helpFAQ",
+    "/login",
+    "/signUp",
+    "/checking",
+    "/Upload"
+  ];
+
+  const customFooterRoutes = 
+  [
+  "/login",
+  "/signUp",
+  "/Upload",
+  "/checking",
+  ]
   
 
   const shouldHideDefaultNavbar = customNavbarRoutes.includes(location.pathname);
+  const shouldHideDefaultFooter = customFooterRoutes.includes(location.pathname);
 
   return (
     <div className="app">
@@ -32,7 +57,9 @@ const Layout = () => {
       <div className="content">
         <Outlet />
       </div>
+        {!shouldHideDefaultFooter && (
       <Footer />
+      )}
     </div>
   );
 };

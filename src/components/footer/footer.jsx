@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FiSearch, FiUsers, FiInfo } from "react-icons/fi";
+import { FiSearch, FiInfo } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { TbChartBar } from "react-icons/tb";
+
 import "./footer.css";
 
 const Footer = ({ title = "Explore", onBack }) => {
@@ -21,7 +23,7 @@ const Footer = ({ title = "Explore", onBack }) => {
   return (
         <footer className="footer">
         <FiSearch className="icon" />
-        <FiUsers className="icon" />
+        <TbChartBar className="icon" />
         <FiInfo className="icon" />
       </footer>
   );

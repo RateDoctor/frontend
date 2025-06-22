@@ -1,45 +1,75 @@
-.paragraphs-box{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 14px;
-  position: relative;
-  padding: 0 0px;
-  width: 100%;
-  max-width: 354px;
-}
-
-.hyperlink{
-    position: relative;
-    top: 6rem;
-    left: -1.2rem;
-    font-size: 14px;
-    color: #6C757D;
-}
-
-.link-lickble{
-  color: #0074E4;
-  margin-left: 4px;
-}
-
-
-
-
-@media (max-width: 390px) {
-    .paragraphs-box{
+.paragraphs-upload-box{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 14px;
     position: relative;
     padding: 0 0px;
     width: 100%;
-    max-width: 291px;
-  }
+    max-width: 354px;
+    align-items: flex-start;
+}
 
-    .hyperlink{
-    position: relative;
-    top: 2rem;
-    left: -0.2rem;
+.upload-middle-paragraph{
+     color: var(--label-color);
+     margin-left: 12px;
+}
+
+.upload-file-container{
+    width: 327px;
+    height: 222px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 117px 83px;
+    border-radius: 12px;
+    box-shadow: 0 9px 12px rgba(34, 34, 34, 0.1), 0 0 0 1px rgba(34, 34, 34, 0.05), 0 0px 6px rgba(200, 0, 0, 0.1);
+
+}
+
+.container-upload-lists{
+    display: flex;
+    text-decoration: none;
+    list-style: none;
+    gap: 12px;
+    margin-left: 12px;
+    color: var(--primary-color);
+}
+
+#megabyte{
+   background-color: rgba(34, 34, 34, 0.05);
+}
+.container-upload-lists .type-upload{
+    font-size: 12px;
+    background-color: #E5F1FC;
+    padding: 8px 4px;
+    border-radius: 6px;
+}
+
+
+.title-upload-file{
     font-size: 14px;
-    color: #6C757D;
-    }
+    color: var(--label-color);
+}
 
+.child-upload-file-container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.upload-file{
+    width: 30px;
+    height: 30px;
+    color: var(--primary-color);
+}
+
+@media (max-width: 376px){
+.upload-file-container {
+    width: 90%; 
+    height: auto; 
+    padding: 40px 20px; 
+  }
 }

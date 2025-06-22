@@ -1,242 +1,138 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-// import axios from "axios";
-import Logo from "../../imgs/rateLogo.png";
-import "./singup.css";
-// import cookie from "react-cookies";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
-
-// import { useAuth } from "../utils/AuthProvider";
+import "./singup.css";
 
 const Signup = () => {
-//   const { login } = useAuth();
-  const [loginError, setLoginError] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  // const [showAnimation, setShowAnimation] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
- 
   const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  
 
-  // useEffect(() => {
-  //   const token = cookie.load("token");
-  //   if (token) {
-  //     navigate("/dashboard");
-  //   }
-  //   const timer = setTimeout(() => setShowAnimation(false), 2000);
-  //   return () => clearTimeout(timer);
-  // }, [navigate]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
 
-  //  useEffect(() => {
-  //   const timer = setTimeout(() => setShowAnimation(false), 2000);
-  //   return () => clearTimeout(timer);
-  // }, [navigate]);
+  const validate = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
 
-  const handleTogglePassword = () => setVisible(!visible);
+    if (!form.email || !emailRegex.test(form.email))
+      newErrors.email = "Enter a valid email";
 
-  const validateUsername  = () => {
-    if (!username) {
-      setUsernameError("id is required");
-      return false;
-    } 
-    // Add your username validation rules
-  const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/; // Allows letters, numbers, underscores, 3-15 characters
-  if (!usernameRegex.test(username)) {
-    setUsernameError("Username must be 3-15 characters long and can include letters, numbers, and underscores.");
-      return false;
-    } else {
-      setUsernameError("");
-      return true;
+    if (!form.password || !passwordRegex.test(form.password))
+      newErrors.password =
+        "Password must be at least 6 chars, include uppercase, lowercase, number, and special character";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setIsLoading(true);
+    try {
+      await axios.post("http://localhost:5000/api/auth/register", form);
+      alert("Registered! Check your email to verify.");
+      navigate("/login");
+    } catch (err) {
+      setSubmitError(err?.response?.data?.error || "Registration failed");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const validatePassword = () => {
-    if (!password) {
-      setPasswordError("Password is required");
-      return false;
-    }
-    // Modern password validation: At least 6 characters, one uppercase letter, one lowercase letter, one number, and one special character
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
-    if (!passwordRegex.test(password)) {
-      setPasswordError(
-        "Password must be at least 6 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character"
-      );
-      return false;
-    } else {
-      setPasswordError("");
-      return true;
-    }
-  };
-  
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     if (!validateUsername()) {
-//       setLoginError("Invalid Username format.");
-//       return;
-//     }
-//     if (!validatePassword()) {
-//       setLoginError("Password must meet the required criteria.");
-//       return;
-//     }
-//     setIsLoading(true); // Start the loading spinner
-
-//       try {
-//         // Send a POST request to the backend with username and password
-//         const response = await axios.post("http://localhost:5000/api/user/login", {
-//           username,
-//           password,
-//         });
-      
-
-  
-//         const { token, user } = response.data;
-
-//         if (!token || !user?.role) {
-//           throw new Error("Invalid login response: Missing department information");
-//         }
-//          // ✅ Store Token Securely in HTTP-Only Cookie (HIGH SECURITY)
-
-//         // document.cookie = `authToken=${token}; path=/; secure; HttpOnly; SameSite=Strict`;
-//        // ✅ Store User Role in Local Storage
- 
-//         localStorage.setItem("authToken", token);
-//         localStorage.setItem('role', user.role);
-
-//         // Only save department for nurses
-//     if (user.role === "nurse" && user.department) {
-//       localStorage.setItem("nurseDepartment", user.department._id);
-//       localStorage.setItem("nurseId", user._id);
-//     } else {
-//       localStorage.removeItem("nurseDepartment");
-//       localStorage.removeItem("nurseId",user._id || user.id);
-//     }
-
-     
-
-//         login(token);
-
-       
-
-//         // Redirect to dashboard on successful login
-//           if (user.role === "superAdmin") {
-//             navigate("/admin"); // Redirect to the admin path for superAdmin
-//           } else {
-//             navigate("/patient"); // Redirect to the dashboard path for other roles
-//           }
-
-//           // ✅ Redirect User Based on Role
-//       // navigate(user.role === "superAdmin" ? "/admin" : "/patient");
-         
-//       } catch (error) {
-//          // Handle API errors or unexpected issues
-//         setLoginError(error.response?.data?.message || "Login failed. Please try again");
-//         setIsLoading(false);
-//         // Handle errors from the backend (e.g., wrong username/password)
-//         if (error.response && error.response.data) {
-//           alert(error.response.data.message || "Login failed. Please try again.");
-//         } else {
-//           alert("An unexpected error occurred. Please check your connection and try again.");
-//         }
-//       }finally{
-//         setIsLoading(false); // Always stop the loading spinner
-//       }
-//   };
-
-
- 
   return (
     <div className="signup-wrapper">
+     
 
-        <div className="circle-container">  {/* NEW wrapper */}
-        <div className="circle-right"></div>
-        <div className="singup-arrowButton">
-           <h1 className="signup">Sign Up</h1>
-          <button
-            className="circle-button"
-            type="submit"
-            disabled={isLoading}>
-            <FaArrowRight className="arrowRight" />
-          </button>
-          </div>
-  
-      </div>
       <div className="signup-form">
         <p className="title-head-signup">Create Account</p>
-          <form
-            className="singup-inputs"
-          //   onSubmit={handleSubm}it
-          >
+        <form className="singup-inputs" onSubmit={handleSubmit}>
+          {/* Email */}
           <p className="label-singup">Enter your email address</p>
-            <div className="singup-input-group">
-              <input
-                type="username"
-                autoComplete="username"
-                className="input"
-                value={username}
-                required
-                onChange={(e) => setUsername(e.target.value)} 
-                />
+          <div className={`singup-input-group ${form.email ? "filled" : ""}`}>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="input"
+              autoComplete="email"
+            />
+            <label className="singup-input-label">Your Email</label>
+            {errors.email && <div className="error">{errors.email}</div>}
+          </div>
 
-              <label htmlFor="username" className="singup-input-label">
-                Your Email
-              </label>
-              {usernameError && <div className="error">{usernameError}</div>}
-            </div>
-            
-            <p className="label-singup  form-password">Choose a secure password for your account</p>
-            <div className="singup-input-group">
-              <input
-                className="input  "
-                type={visible ? "text" : "password"}
-                name="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+          {/* Password */}
+          <p className="label-singup form-password">
+            Choose a secure password for your account
+          </p>
+          <div
+            className={`singup-input-group ${form.password ? "filled" : ""}`}
+          >
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className="input"
+              autoComplete="new-password"
+            />
+            {showPassword ? (
+              <AiOutlineEyeInvisible
+                className="showing-singup-password"
+                size={25}
+                onClick={() => setShowPassword(false)}
               />
-            
-                <AiOutlineEye
-                  className="showing-singup-password"
-                  size={25}
-                  onClick={handleTogglePassword}
-                />
-      
-                <AiOutlineEyeInvisible
-                  className="showing-singup-password"
-                  size={25}
-                  onClick={handleTogglePassword}
-                />
-      
-              <label htmlFor="password" className="singup-input-label">
-                Password
-              </label>
-              {passwordError && <div className="error">{passwordError}</div>}
-              <p className="remember-password-char">Your password should be at least 8 characters long and include a mix of letters, numbers, and special characters.</p>
-            </div>
-            
+            ) : (
+              <AiOutlineEye
+                className="showing-singup-password"
+                size={25}
+                onClick={() => setShowPassword(true)}
+              />
+            )}
 
-            {/* <div className="singup-circle-button">
-              <h1 className="signup signin">Sign Up</h1>
-              <button
-                className="circle-button"
-                type="submit"
-                disabled={isLoading}>
-                <FaArrowRight className="arrowRight" />
-              </button>
-            </div> */}
+            <label className="singup-input-label">Password</label>
+            {errors.password && <div className="error">{errors.password}</div>}
+            <p className="remember-password-char">
+              Your password should be at least 6 characters long and include a
+              mix of letters, numbers, and special characters.
+            </p>
+          </div>
 
-            
-              <div className="register-loginSingUp-box">
-              <h1 className="signupForm-label">Sign in</h1>
+          {/* Submission Error */}
+          {submitError && <div className="error">{submitError}</div>}
+
+          <div className="register-loginSingUp-box">
+            <h1 className="signupForm-label">Sign in</h1>
+          </div>
+
+
+
+           <div className="circle-container">
+              <div className="circle-right"></div>
+              <div className="singup-arrowButton">
+                <h1 className="signup">Sign Up</h1>
+                <button className="circle-button" type="submit" disabled={isLoading}>
+                  <FaArrowRight className="arrowRight" />
+                </button>
+              </div>
             </div>
-          </form>
+        </form>
       </div>
     </div>
   );

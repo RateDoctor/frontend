@@ -1,26 +1,37 @@
 import { useNavigate } from "react-router-dom";
+import { LuFilePlus2 } from "react-icons/lu";
 import { FaArrowRight } from "react-icons/fa6";
-import "./uploadfile.css";
+import "./uploadFile.css";
 
 const handleResend = () => {
   // Your logic to resend the verification email
   console.log("Resend email triggered");
 };
 
-const upload = () => {
+const Upload = () => {
   return (
     <div className="signup-wrapper">
-  <div className="paragraphs-box"> 
-                    <p className="middle-paragraph">An email has been sent to the address provided. Please check your inbox.</p>
-                    <p className="middle-paragraph">Click the link in the email to confirm your account and complete the sign-up process.</p>
-                    <p className="middle-paragraph hyperlink"> Haven't received the email?
-                      <a href="#" onClick={handleResend} className="link-lickble">Click here to resend.</a></p> 
-      </div>
+        <div className="paragraphs-upload-box"> 
+            <p className="upload-middle-paragraph">Upload a file containing your information.</p>
+            <div className="upload-file-container">
+                <div className="child-upload-file-container">
+                    <LuFilePlus2 className="upload-file"/>
+                    <p className="title-upload-file">Click to upload</p> 
+               </div>
+            </div>
+                       <ul className="container-upload-lists">
+                        <li className="type-upload">PDF</li>
+                        <li className="type-upload">DOCX</li>
+                        <li className="type-upload">TXT</li>
+                        <li className="type-upload " id="megabyte"> > 10 MB</li>
+                       </ul>
+        </div>
         <div className="circle-container">  
            <div className="circle-right"></div>
               <div className="singup-arrowButton">
 
               
+
       
 
 
@@ -39,4 +50,4 @@ const upload = () => {
   );
 };
 
-export default upload;
+export default Upload;

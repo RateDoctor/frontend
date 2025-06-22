@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from './layout/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SignUp from './components/singUp/singup.jsx';
-import Upload from './components/uploadFile/uploadfile.jsx';
+import Upload from './components/uploadFile/uploadFile.jsx';
+
+import Checking from './components/checking/checking.jsx';
 import Welcome from './components/welcome/welcome.jsx';
 import Logout from './components/logout/logout.jsx';
 import ForgotPassword from './components/forgot-password/forgotPassword.jsx';
@@ -33,6 +35,7 @@ function App() {
         <Route path="/" element={<Layout />}>
             <Route path="/login" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
+            <Route path="/checking" element={<Checking />} /> 
             <Route path="/upload" element={<Upload />} /> 
             <Route path="/welcome" element={<Welcome />} /> 
             <Route path="/logout" element={<Logout />} /> 
