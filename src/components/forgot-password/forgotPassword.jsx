@@ -1,10 +1,14 @@
 import "./forgotPassword.css";  
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+
 
 const Forgot = () => {
   return (
     <div className="register-form">
+        <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
+
       <div className="big-circle"></div>
       <div className="top-circle"></div>
       <div className="down-circle"></div>

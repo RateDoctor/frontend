@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa6";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+
 import "./checking.css";
 
 const handleResend = () => {
@@ -10,6 +12,8 @@ const handleResend = () => {
 const Checking = () => {
   return (
     <div className="signup-wrapper">
+      <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
+      
   <div className="paragraphs-box"> 
                     <p className="middle-paragraph">An email has been sent to the address provided. Please check your inbox.</p>
                     <p className="middle-paragraph">Click the link in the email to confirm your account and complete the sign-up process.</p>

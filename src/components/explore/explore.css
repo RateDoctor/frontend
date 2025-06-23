@@ -195,7 +195,7 @@
 
 /* Footer */
 .footer {
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   padding: 0.7rem;
   display: flex;
   justify-content: space-around;

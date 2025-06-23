@@ -92,7 +92,7 @@ function useOutsideClick(ref, callback) {
     <div className="explore-container">
 
 
-      {/* <Navbar
+   {/* <Navbar
         title="Explore"
         onBack={() => {
           if (window.history.length > 2) {
@@ -101,7 +101,7 @@ function useOutsideClick(ref, callback) {
             navigate("/");
           }
         }}
-      /> */}
+      />  */}
 
 
       <div className="search-wrapper" style={{ position: "relative" }}>

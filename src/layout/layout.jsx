@@ -25,7 +25,10 @@ const Layout = () => {
     "/login",
     "/signUp",
     "/checking",
-    "/Upload"
+    "/Upload",
+    "/forgot-password",
+    "/Welcome",
+    "/logout"
   ];
 
   const customFooterRoutes = 
@@ -34,6 +37,9 @@ const Layout = () => {
   "/signUp",
   "/Upload",
   "/checking",
+  "/forgot-password",
+  "/Welcome",
+  "/logout"
   ]
   
 
@@ -59,7 +65,7 @@ const Layout = () => {
       </div>
         {!shouldHideDefaultFooter && (
       <Footer />
-      )}
+      )}      
     </div>
   );
 };

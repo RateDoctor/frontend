@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+
 import "./singup.css";
 
 const Signup = () => {
@@ -56,6 +58,7 @@ const Signup = () => {
   return (
     <div className="signup-wrapper">
      
+      <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
 
       <div className="signup-form">
         <p className="title-head-signup">Create Account</p>

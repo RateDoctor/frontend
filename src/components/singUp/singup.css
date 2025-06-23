@@ -8,7 +8,16 @@
   background-color: var(--background-color);
   overflow: hidden;
 }
-
+.wrapper-arrow-left {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 38px;
+    color: var(--bg-light);
+    opacity: 40%;
+    z-index: 999;
+}
 .circle-container {
   position: absolute;
   width: min(106.7vw, 459px);
@@ -110,7 +119,6 @@ left: 6rem;
     align-items: center;
     cursor: pointer;
     pointer-events: all;
-    /* position: relative; */
     bottom: 23rem;
 }
 
@@ -237,6 +245,7 @@ left: 6rem;
   left: 14px;
   top: 20px;
   color: #80B9F1;
+  text-indent: 999;
 
 }
 

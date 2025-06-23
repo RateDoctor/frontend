@@ -32,12 +32,13 @@ function App() {
   return (
 <Router>
       <Routes>
-        <Route path="/" element={<Layout />}>
+         <Route path="/" element={<Layout />}>
+            <Route index element={<Explore />} />
             <Route path="/login" element={<SignIn />} />
             <Route path="/signUp" element={<SignUp />} />
             <Route path="/checking" element={<Checking />} /> 
             <Route path="/upload" element={<Upload />} /> 
-            <Route path="/welcome" element={<Welcome />} /> 
+            <Route path="/welcome/:id" element={<Welcome />} /> 
             <Route path="/logout" element={<Logout />} /> 
             <Route path="/forgot-password" element={<ForgotPassword />} /> 
             <Route path="/addDoctor" element={<AddDoctor />} /> 
@@ -47,7 +48,7 @@ function App() {
             <Route path="/university-profile" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-supervisor" element={<RateSupervisor />} /> 
-            <Route path="/" element={<Explore />} />
+            {/* <Route path="/" element={<Explore />} /> */}
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/change-email" element={<ChangeEmail />} /> 
             <Route path="/settings/change-password" element={<ChangePassword />} />
