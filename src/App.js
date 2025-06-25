@@ -25,17 +25,25 @@ import ContactUs  from "./pages/contactUs/contactUs.jsx";
 import MyRatings from './components/myRatings/myRatings.jsx';
 import EditRating from './components/editRating/editRating.jsx';
 // import SearchResults from "./components/searchBar/searchResults.jsx";
-
-
+import PrivateRoutes from "./utils/PrivateRoutes.jsx";
+import { AuthProvider } from "./utils/AuthProvider.jsx";
 
 function App() {
   return (
 <Router>
+  <AuthProvider>
       <Routes>
          <Route path="/" element={<Layout />}>
+
+         
+             <Route path="/login" element={<SignIn />} />
+             <Route path="/signUp" element={<SignUp />} />
+         
+           
+
+
+         <Route element={<PrivateRoutes />}>
             <Route index element={<Explore />} />
-            <Route path="/login" element={<SignIn />} />
-            <Route path="/signUp" element={<SignUp />} />
             <Route path="/checking" element={<Checking />} /> 
             <Route path="/upload" element={<Upload />} /> 
             <Route path="/welcome/:token" element={<Welcome />} /> 
@@ -58,8 +66,9 @@ function App() {
             <Route path="/edit-rating/:id" element={<EditRating />} />
             {/* <Route path="/results" element={<SearchResults />} /> */}
           </Route>
+         </Route>
       </Routes>
-      
+      </AuthProvider>
     </Router>
   );
 }
