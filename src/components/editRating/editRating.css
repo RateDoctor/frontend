@@ -6,7 +6,7 @@
 
 .ratings-header,
 .edit-header {
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: #fff;
   display: flex;
   align-items: center;

@@ -10,7 +10,7 @@ const Layout = () => {
 
 
   // Define routes that should NOT show the default Navbar
-  const customNavbarRoutes = [
+  const hideNavbarRoutes  = [
     "/my-ratings",
     "/settings",
     "/settings/change-email",
@@ -28,10 +28,11 @@ const Layout = () => {
     "/Upload",
     "/forgot-password",
     "/Welcome",
-    "/logout"
+    "/logout",
+    "/welcome/*"
   ];
 
-  const customFooterRoutes = 
+  const hideFooterRoutes  = 
   [
   "/login",
   "/signUp",
@@ -39,12 +40,16 @@ const Layout = () => {
   "/checking",
   "/forgot-password",
   "/Welcome",
-  "/logout"
+  "/logout",
+  "/welcome/*"
   ]
   
 
-  const shouldHideDefaultNavbar = customNavbarRoutes.includes(location.pathname);
-  const shouldHideDefaultFooter = customFooterRoutes.includes(location.pathname);
+const shouldHideDefaultNavbar =
+  location.pathname.startsWith("/welcome") || hideNavbarRoutes.includes(location.pathname);
+
+const shouldHideDefaultFooter =
+  location.pathname.startsWith("/welcome") || hideFooterRoutes.includes(location.pathname);
 
   return (
     <div className="app">

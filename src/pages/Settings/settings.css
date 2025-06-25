@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   padding: 1rem;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: white;
   font-size: 20px;
   gap: 10px;

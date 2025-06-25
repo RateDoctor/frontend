@@ -25,7 +25,7 @@
 .my-ratings-header {
   display: flex;
   align-items: center;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   padding: 1rem;
   color: white;
   font-size: 1.5rem;
@@ -87,8 +87,8 @@
   font-size: 16px;
   border-radius: 20px;
   padding: 20px;
-  color: #0074E4;
-  border-color: #0074E4;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
   background-color: white;
   height: 19px;
   align-items: center;
@@ -117,7 +117,7 @@
 .edit-title {
   font-size: 18px;
   font-weight: bold;
-  color: var(--main-color);
+  color: var(--primary-color);
   margin: 1rem 0;
 }
 
@@ -162,7 +162,7 @@
 }
 
 .rating-options button.active {
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: white;
 }
 
@@ -176,7 +176,7 @@
   top: 5px;
   right: 10px;
   cursor: pointer;
-  color: var(--main-color);
+  color: var(--primary-color);
 }
 
 .feedback-section textarea,
@@ -197,7 +197,7 @@
 }
 
 .questionnaire-section h3 {
-  color: var(--main-color);
+  color: var(--primary-color);
   margin-bottom: 1rem;
 }
 
@@ -224,7 +224,7 @@
   margin: 2rem 0 4rem 0;
   align-self: flex-start;
   padding: 0.7rem 1.5rem;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 6px;
@@ -294,7 +294,7 @@
   top: 20px;
   right: 30px;
   z-index: 1000;
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 10px 16px;
@@ -304,7 +304,7 @@
 }
 
 .floating-done-button:hover {
-  background-color: #0056b3;
+  background-color: var(--primary-color);
 }
 
 /* Textarea inside modal */
@@ -343,7 +343,7 @@
 
 .save-edits-btn {
   float: left;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 10px 20px;

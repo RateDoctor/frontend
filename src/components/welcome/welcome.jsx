@@ -1,23 +1,48 @@
-import { useParams } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
-// import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { FaArrowRight } from "react-icons/fa6";
-import "./welcome.css";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import "./welcome.css";
+
 
 
 const Welcome  = () => {
-  const { id } = useParams();
+  const { token } = useParams();
+  const [userId, setUserId] = useState("");
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+
+useEffect(() => {
+  const verify = async () => {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+      if (res.data.userId) {
+        setUserId(res.data.userId);
+      } else {
+        setError("Verification succeeded but no ID returned.");
+      }
+    } catch (err) {
+      setError("Verification failed. Please try again later.");
+    }
+  };
+  verify();
+}, [token]);
+
+
   return (
     <div className="signup-wrapper">
        <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
-      
   <div className="paragraphs-welcome-box"> 
     <h3 className="congratulation-title">Congratulations!</h3>
       <p className="middle-paragraph">You've successfully signed up for our platform. </p>
+      {error && <p className="error-message">{error}</p>}
+      {userId && (
       <p className="middle-paragraph id-hyperlink"> Your unique ID is
-         <strong  className="link-id">{id}</strong>
+         <span  className="link-id">{userId}</span>
       </p> 
+      )}
       <p className="middle-paragraph">This ID will be your identifier on our platform, ensuring your privacy and security.</p>
 
       <p className="middle-paragraph  info-paragraph">
@@ -28,7 +53,7 @@ const Welcome  = () => {
         <div className="circle-container">  
            <div className="circle-right"></div>
               <div className="singup-arrowButton">
-                <h1 className="signup"></h1>
+                <span className="signup"></span>
                     <button
                       className="circle-button"
                       type="submit">

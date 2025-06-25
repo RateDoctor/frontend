@@ -4,24 +4,32 @@ import axios from "axios";
 
 const Verify = () => {
   const { token } = useParams();
+  const [message, setMessage] = useState("Verifying...");
   const navigate = useNavigate();
-  const [status, setStatus] = useState("Verifying...");
 
   useEffect(() => {
-    const verifyToken = async () => {
+    const verifyEmail = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
-        const userId = res.data.userId;
-        navigate(`/welcome/${userId}`);
+        const response = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+        const { userId } = response.data;
+        setMessage("Email verified successfully!");
+        setTimeout(() => {
+          navigate(`/welcome/${userId}`);
+        }, 2000); // short delay to show message
       } catch (err) {
-        setStatus("Verification failed.");
+        console.error(err);
+        setMessage("Invalid or expired verification link.");
       }
     };
 
-    verifyToken();
+    verifyEmail();
   }, [token, navigate]);
 
-  return <div>{status}</div>;
+  return (
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h2>{message}</h2>
+    </div>
+  );
 };
 
 export default Verify;

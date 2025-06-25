@@ -6,7 +6,7 @@
 .contact-us-header {
   display: flex;
   align-items: center;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: white;
   padding: 1rem;
   height: 80px;
@@ -46,6 +46,6 @@
 
 .email-address {
   font-size: 16px;
-  color: #0074E4;
-  border-bottom: #0074E4;
+  color: var(--primary-color);
+  border-bottom: var(--primary-color);
 }

@@ -60,6 +60,22 @@
   }
 
 
+
+
+.singin-input-label{
+ position: absolute;
+  left: 14px;
+  top: 20px;
+  color: #80B9F1;
+  text-indent: 999;
+}
+
+
+.input-group.filled .singin-input-label,
+.input-group input:focus + .singin-input-label {
+  text-indent: -999px;
+}
+
 .title-headLogin{
    position: absolute;
    top: 122px;

@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: #fff;
   padding: 1rem;
   font-size: 26px;
@@ -61,7 +61,7 @@
 .change-email-button {
   margin-top: 1rem;
   padding: 0.7rem;
-  background-color: var(--main-color);
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 15px;

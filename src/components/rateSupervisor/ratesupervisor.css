@@ -12,7 +12,7 @@
 
 .save-rate-edits-btn{
         float: left;
-    background-color: var(--main-color);
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 10px 20px;

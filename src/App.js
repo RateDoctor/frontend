@@ -4,7 +4,7 @@ import Layout from './layout/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SignUp from './components/singUp/singup.jsx';
 import Upload from './components/uploadFile/uploadFile.jsx';
-
+// import Verify from './components/verify/verify.jsx'
 import Checking from './components/checking/checking.jsx';
 import Welcome from './components/welcome/welcome.jsx';
 import Logout from './components/logout/logout.jsx';
@@ -38,7 +38,8 @@ function App() {
             <Route path="/signUp" element={<SignUp />} />
             <Route path="/checking" element={<Checking />} /> 
             <Route path="/upload" element={<Upload />} /> 
-            <Route path="/welcome/:id" element={<Welcome />} /> 
+            <Route path="/welcome/:token" element={<Welcome />} /> 
+            {/* <Route path="/verify/:token" element={<Verify />} /> */}
             <Route path="/logout" element={<Logout />} /> 
             <Route path="/forgot-password" element={<ForgotPassword />} /> 
             <Route path="/addDoctor" element={<AddDoctor />} /> 
@@ -48,7 +49,6 @@ function App() {
             <Route path="/university-profile" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-supervisor" element={<RateSupervisor />} /> 
-            {/* <Route path="/" element={<Explore />} /> */}
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/change-email" element={<ChangeEmail />} /> 
             <Route path="/settings/change-password" element={<ChangePassword />} />

@@ -39,21 +39,27 @@ const Signup = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validate()) return;
 
-    setIsLoading(true);
-    try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
-      alert("Registered! Check your email to verify.");
-      navigate("/login");
-    } catch (err) {
-      setSubmitError(err?.response?.data?.error || "Registration failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/register", form);
+    const { userId, verificationToken } = response.data;
+
+
+    localStorage.setItem("verificationToken", verificationToken);
+    localStorage.setItem("userId", userId)
+    // Navigate to checking page with userId + token
+    navigate("/checking", { state: { userId, token: verificationToken, email: form.email } });
+  } catch (err) {
+    setSubmitError(err?.response?.data?.error || "Registration failed");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="signup-wrapper">
