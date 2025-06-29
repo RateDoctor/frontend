@@ -4,24 +4,16 @@ import axios from "axios";
 import "./singin.css";  
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
-
-// import { useAuth } from "../utils/AuthProvider";
+import { useAuth } from "../../utils/AuthProvider";
 
 const Login = () => {
   const [form, setForm] = useState({ userId: "", password: "" });
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  // const [form, setForm] = useState({ userId: "", password: "" });
   const [errors, setErrors] = useState({});
-  // const [loginError, setLoginError] = useState("");
-  // const [userId, setUserId] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [userIdError, setUserIdError] = useState("");
-  // const [passwordError, setPasswordError] = useState("");
-  // const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  // const navigate = useNavigate();
+  const { login } = useAuth();
 
 
 
@@ -36,6 +28,7 @@ const handleTogglePassword = () => setVisible(!visible);
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+
   console.log("Login form values:", {
     id: form.userId,
     password: form.password,
@@ -45,22 +38,44 @@ const handleSubmit = async (e) => {
     const response = await axios.post(
       "http://localhost:5000/api/auth/login",
       {
-        id: form.userId.trim(), // 👈 FIXED!
+        id: form.userId.trim(),
         password: form.password.trim(),
       },
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          // Authorization header not needed here (only for protected routes)
+        },
       }
     );
 
+ 
     console.log("Login success:", response.data);
-    localStorage.setItem("authToken", response.data.token);
+    const { token, user } = response.data;
+    console.log("Logging in with role:", user.role);
+
+     // Set auth state
+    login(token, user.role);
+    // Validate presence of critical fields
+    if (!token || !user?.role) {
+      throw new Error("Invalid login response: Missing token or role.");
+    }
+
+
+  
+   
+    
+  
+
+    // Navigate user
     navigate("/");
+
   } catch (err) {
-    console.error("Login failed:", err.response?.data);
+    console.error("Login failed:", err.response?.data || err.message);
     setLoginError(err.response?.data?.message || "Login failed.");
   }
 };
+
 
 
 
@@ -85,7 +100,6 @@ const handleSubmit = async (e) => {
             className="login-input"
             type="text"
             name="userId"
-            placeholder="User ID"
             value={form.userId}
             onChange={handleChange}
             required />
@@ -102,7 +116,6 @@ const handleSubmit = async (e) => {
               className="login-input"
               name="password"
               type={visible ? "text" : "password"}
-              placeholder="Password"
               value={form.password}
               onChange={handleChange}
               required

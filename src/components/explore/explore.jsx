@@ -2,14 +2,16 @@ import React, { useState,useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
 import "../explore/explore.css";
-import { supervisors } from "./data.js";
+// import { supervisors } from "./data.js";
 import SearchBar from "../searchBar/searchBar";
-import Navbar from "../navbar/navbar";
+// import Navbar from "../navbar/navbar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 
 const getUnique = (arr, key) => [...new Set(arr.map(item => item[key]))];
 
 const Explore = () => {
+  const [supervisors, setSupervisors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [recentQueries, setRecentQueries] = useState([]);
   const [selectedUniversity, setSelectedUniversity] = useState("");
@@ -87,6 +89,25 @@ function useOutsideClick(ref, callback) {
   }, [ref, callback]);
 }
  
+
+
+
+ useEffect(() => {
+  const fetchDoctors = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/doctors");
+      const data = await res.json();
+      setSupervisors(data.doctors); // Adjust this line based on your API response shape
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
+      setLoading(false);
+    }
+  };
+
+  fetchDoctors();
+}, []);
+
   return (
 
     <div className="explore-container">
@@ -285,7 +306,7 @@ function useOutsideClick(ref, callback) {
           Supervisor not found.
           <span
             style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => navigate("/add-doctor")}
+            onClick={() => navigate("/addDoctor")}
           >
             Add doctor
           </span>
@@ -313,7 +334,7 @@ function useOutsideClick(ref, callback) {
           Supervisor not found.{" "}
           <span
             style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => navigate("/add-doctor")}
+            onClick={() => navigate("/addDoctor")}
           >
             Add doctor
           </span>

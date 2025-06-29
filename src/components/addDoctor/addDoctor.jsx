@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import { useState , useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { RxCalendar } from "react-icons/rx";
-import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
-
+import axios from "axios";
 import './addDoctor.css';
+
+
 const AddDoctor = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -15,8 +17,18 @@ const AddDoctor = () => {
     supervision: '',
     experience: '',
   });
-
   const [showCalendarFor, setShowCalendarFor] = useState(null);
+
+  useEffect(() => {
+      const role = localStorage.getItem("userRole");
+
+      if (role !== "supervisor") {
+        // Redirect students or unauthorized users
+        navigate("/"); // or "/not-authorized"
+      }
+    }, []);
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,9 +39,45 @@ const AddDoctor = () => {
     console.log('Selected file:', e.target.files[0]);
   };
 
-  const handleSubmit = () => {
-    alert('Form submitted with rating step next.');
+
+  const handleSubmit = async () => {
+
+  console.log("📨 Submitting doctor:", formData);
+  const payload = {
+    name: formData.doctorName,
+    universityId: formData.universityId, // Ideally selected from UI
+    fieldOfStudyId: formData.fieldOfStudyId || null,
+    topicId: formData.topicId || null,
+    affiliations: formData.affiliations,
+    background: formData.background,
+    teaching: formData.teaching,
+    supervision: formData.supervision,
+    experience: formData.experience,
+    researchInterests: [], // optional
   };
+
+     const token = localStorage.getItem("authToken");
+     console.log("Token being sent:", token);
+  if (!token) {
+    alert("You're not logged in");
+    return;
+  }
+
+  try {
+      await axios.post("http://localhost:5000/api/doctors", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    alert("Doctor created successfully!");
+    navigate("/rating"); // or wherever you want
+  } catch (err) {
+    console.error("Add Doctor error:", err.response?.data || err.message);
+    alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
+  }
+};
+
 
   const toggleCalendar = (field) => {
     setShowCalendarFor(showCalendarFor === field ? null : field);
@@ -149,8 +197,8 @@ const AddDoctor = () => {
           Before completing the profile creation process, we kindly ask you to provide an initial rating for Dr. {formData.doctorName || '[Doctor\'s Name]'}.
         </p>
         <div className='flex'>
-        <button className="rate-button" onClick={handleSubmit}>Rate Doctor</button>
-        <button className="confirm-button">Confirm</button>
+        <button className="rate-button"  type="button" >Rate Doctor</button>
+        <button className="confirm-button"  type="button" onClick={handleSubmit}>Confirm</button>
         </div>
         
 

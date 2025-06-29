@@ -52,7 +52,7 @@ const handleSubmit = async (e) => {
     localStorage.setItem("verificationToken", verificationToken);
     localStorage.setItem("userId", userId)
     // Navigate to checking page with userId + token
-    navigate("/checking", { state: { userId, token: verificationToken, email: form.email } });
+    navigate("/checking", { state: { userId, token: verificationToken } });
   } catch (err) {
     setSubmitError(err?.response?.data?.error || "Registration failed");
   } finally {
