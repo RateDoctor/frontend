@@ -1,27 +1,59 @@
-import React, { useState, useEffect} from "react";
-import { FaPlus } from "react-icons/fa6";
+import { useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import './createUniversity.css';
+import { FaPlus } from "react-icons/fa6";
 import { FiArrowLeft } from "react-icons/fi";
 import DoctorList from "../DoctorList/DoctorList.jsx";
+import axios from "axios";
+import './createUniversity.css';
 import { supervisors } from "../explore/data.js";
 
 
+
 const CreateUniversity = () => {
-
-
 const [listViewResults, setListViewResults] = useState([]);
 const [isSearchFocused, setIsSearchFocused] = useState(false);
+const navigate = useNavigate();
 
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    doctorName: '',
-    affiliations: '',
-    background: '',
-    teaching: '',
-    supervision: '',
-    experience: '',
-  });
+ const [formData, setFormData] = useState({
+  doctorName: '',
+  location: '',
+  phone: '',
+});
+
+ 
+
+
+ const handleSubmit = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      alert("You're not logged in");
+      return;
+    }
+
+    const payload = {
+      name: formData.doctorName, // this is the university name
+      city: formData.city || "Unknown", // you can update this based on actual form input
+      country: formData.country || "Unknown", // you can update this too
+    };
+
+    const res = await axios.post("http://localhost:5000/api/universities", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("✅ University created:", res.data);
+    alert("University created successfully!");
+
+    // optionally navigate or reset
+    navigate("/"); // or wherever you want to go after success
+
+  } catch (err) {
+    console.error("❌ Error creating university:", err.response?.data || err.message);
+    alert("Error creating university.");
+  }
+};
 
 
   const handleChange = (e) => {
@@ -33,9 +65,7 @@ const [isSearchFocused, setIsSearchFocused] = useState(false);
     console.log('Selected file:', e.target.files[0]);
   };
 
-  const handleSubmit = () => {
-    alert('Form submitted with rating step next.');
-  };
+
 
 
    useEffect(() => {
@@ -59,18 +89,26 @@ const [isSearchFocused, setIsSearchFocused] = useState(false);
         />
 
 
-         <label className='top-one-line label-addDoctor'> <span className='title'>Location *</span></label>
+        <label className='top-one-line label-addDoctor'> <span className='title'>Location *</span></label>
         <div className="input-with-icon">
           <input
             className="inputAddDoctor"
-            name="affiliations"
+            name="Location"
             placeholder="Text"
+            value={formData.location}
+            onChange={handleChange}
           />
         </div>
 
         <div className="input-number">
           <span className='title-phone'>Phone Number</span>
-          <span className="theNumber" >+1 012 3456 789</span>
+            <input
+            className="inputAddDoctor"
+            name="affiliations"
+            placeholder="+1 012 3456 789"
+            
+          />
+          {/* <span className="theNumber" ></span> */}
         </div>
 
        <label className='top-one-line label-addDoctor'>Logo *</label>
@@ -95,8 +133,8 @@ const [isSearchFocused, setIsSearchFocused] = useState(false);
 
 
         <div className='flex'>
-        <button className="add-doctor" onClick={handleSubmit}> <span className="plus-add-doc"><FaPlus/></span> <span className='add-doc'>Add Doctor</span> </button>
-        <button className="confirm-button">Confirm</button>
+        <button className="add-doctor" > <span className="plus-add-doc"><FaPlus/></span> <span className='add-doc'>Add Doctor</span> </button>
+        <button className="confirm-button" onClick={handleSubmit}>Confirm</button>
         </div>
         
 

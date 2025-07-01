@@ -17,16 +17,46 @@ const AddDoctor = () => {
     teaching: '',
     supervision: '',
     experience: '',
+    universityId: '',
   });
   const [showCalendarFor, setShowCalendarFor] = useState(null);
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const doctorId = location.state?.doctorId || searchParams.get("doctorId");
+  const [universities, setUniversities] = useState([]);
+  const [fields, setFields] = useState([]);
+  const [topics, setTopics] = useState([]);
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
 
 
+
+
+ 
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [uniRes, fieldRes, topicRes] = await Promise.all([
+        axios.get('http://localhost:5000/api/universities', { headers }),
+        axios.get('http://localhost:5000/api/fields', { headers }),
+        axios.get('http://localhost:5000/api/topics', { headers }),
+      ]);
+
+      setUniversities(uniRes.data);
+      setFields(fieldRes.data);
+      setTopics(topicRes.data);
+    } catch (err) {
+      console.error('Error fetching lists:', err);
+    }
+  };
+
+  fetchData();
+}, []);
 
 
 
@@ -175,22 +205,27 @@ const AddDoctor = () => {
 
   return (
     <div className="form-container">
-        {/* <Navbar
-        title="addDoctor"
-        onBack={() => {
-          if (window.history.length > 2) {
-            navigate(-1);
-          } else {
-            navigate("/");
-          }
-        }}
-      /> */}
-
        <div className="settings-header">
-              <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
-              <h2>Add Doctor</h2>
+            <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+            <h2>Add Doctor</h2>
         </div>
       <div className="form-left">
+
+        <label className="top-one-line label-addDoctor">University *</label>
+        <select
+          className="inputAddDoctor"
+          name="universityId"
+          value={formData.universityId}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select a university</option>
+          {universities.map((uni) => (
+            <option key={uni._id} value={uni._id}>
+              {uni.name}
+            </option>
+          ))}
+        </select>
         <label htmlFor="doctorName" className='top-one-line label-addDoctor'>Doctor Name *</label>
         <input
           className="inputAddDoctor"
