@@ -44,7 +44,6 @@ const handleSubmit = async (e) => {
       {
         headers: {
           "Content-Type": "application/json",
-          // Authorization header not needed here (only for protected routes)
         },
       }
     );
@@ -54,21 +53,20 @@ const handleSubmit = async (e) => {
     const { token, user } = response.data;
     console.log("Logging in with role:", user.role);
 
-     // Set auth state
-    login(token, user.role);
-    // Validate presence of critical fields
+  
+
+        // Validate presence of critical fields
     if (!token || !user?.role) {
       throw new Error("Invalid login response: Missing token or role.");
     }
-
-
-  
-   
-    
+   login(token, user.role); 
+ 
   
 
     // Navigate user
-    navigate("/");
+     setTimeout(() => {
+      navigate("/");
+    }, 100);
 
   } catch (err) {
     console.error("Login failed:", err.response?.data || err.message);

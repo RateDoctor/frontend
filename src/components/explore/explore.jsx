@@ -1,11 +1,10 @@
 import React, { useState,useEffect,useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
-import "../explore/explore.css";
-// import { supervisors } from "./data.js";
+import axios from "axios"; 
 import SearchBar from "../searchBar/searchBar";
-// import Navbar from "../navbar/navbar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
+import "../explore/explore.css";
 
 const getUnique = (arr, key) => [...new Set(arr.map(item => item[key]))];
 
@@ -92,15 +91,23 @@ function useOutsideClick(ref, callback) {
 
 
 
- useEffect(() => {
+useEffect(() => {
   const fetchDoctors = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/doctors");
-      const data = await res.json();
-      setSupervisors(data.doctors); // Adjust this line based on your API response shape
-      setLoading(false);
+      const response = await axios.get("http://localhost:5000/api/doctors", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}` // if your API is protected
+        }
+      });
+
+      // If your API returns { doctors: [...] }
+      const doctorList = response.data?.doctors || [];
+
+      setSupervisors(doctorList);
     } catch (error) {
-      console.error("Error fetching doctors:", error);
+      console.error("Error fetching doctors:", error.response?.data || error.message);
+      setSupervisors([]); // fallback to empty array on error
+    } finally {
       setLoading(false);
     }
   };
@@ -298,7 +305,13 @@ function useOutsideClick(ref, callback) {
           {/* Filtered search results */}
         {listViewResults.length > 0 ? (
 
-        <DoctorList doctors={listViewResults} onSelect={() => setIsSearchFocused(false)} />
+        <DoctorList 
+          doctors={listViewResults}
+          onDoctorClick={(doctor) => {
+            setIsSearchFocused(false);
+            navigate(`/rate-supervisor?doctorId=${doctor._id}`);
+          }}
+        />
 
 
         ) : (
@@ -327,7 +340,9 @@ function useOutsideClick(ref, callback) {
       <div className="card-grid">
         {filtered.length > 0 ? (
           filtered.map((sup, index) => (
-            <SupervisorCard key={index} {...sup} />
+            <SupervisorCard key={index} {...sup} 
+            onClick={() => navigate(`/rate-supervisor?doctorId=${sup._id}`)}
+            />
           ))
         ) : (
          <p style={{ marginTop: "1rem" }}>

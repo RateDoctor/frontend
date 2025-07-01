@@ -1,41 +1,48 @@
-import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "../utils/AuthProvider";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../utils/AuthProvider"; // adjust path
 
-const PrivateRoutes = () => {
-  const { isAuthenticated, role, loading } = useAuth();
-  const location = useLocation();
+const PrivateRoute = () => {
+  const { isAuthenticated, loading } = useAuth();
 
-  console.log("Authenticated:", isAuthenticated);
-  console.log("User role:", role);
-  console.log("Current path:", location.pathname);
+  if (loading) return <p>Loading auth...</p>;
 
-    if (loading) {
-    return <div>Loading...</div>; // or a spinner
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  const supervisorOnlyRoutes = ["/addDoctor", "/create-university"];
-
-  if (supervisorOnlyRoutes.some(path => location.pathname.startsWith(path)) && role !== "supervisor") {
-    return <Navigate to="/" replace />;
-  }
-
-   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
-export default PrivateRoutes;
+export default PrivateRoute;
 
 
 
-// import { Outlet, Navigate } from "react-router-dom";
+
+// import { Outlet, Navigate, useLocation } from "react-router-dom";
 // import { useAuth } from "../utils/AuthProvider";
 
-// const PrivateRoutes = () => { 
-//   const { isAuthenticated } = useAuth();
-//   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+// const PrivateRoutes = () => {
+//   const { isAuthenticated, role, loading } = useAuth();
+//   const location = useLocation();
+
+//   console.log("Authenticated:", isAuthenticated);
+//   console.log("User role:", role);
+//   console.log("Current path:", location.pathname);
+
+//     if (loading) {
+//     return <div>Loading...</div>; // or a spinner
+//   }
+
+//   if (!isAuthenticated) {
+//     return <Navigate to="/login" state={{ from: location }} replace />;
+//   }
+
+//   const supervisorOnlyRoutes = ["/addDoctor", "/create-university"];
+
+//   if (supervisorOnlyRoutes.some(path => location.pathname.startsWith(path)) && role !== "supervisor") {
+//     return <Navigate to="/" replace />;
+//   }
+
+//    return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 // };
 
 // export default PrivateRoutes;
+
+
+

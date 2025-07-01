@@ -1,5 +1,6 @@
 import { useState , useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { RxCalendar } from "react-icons/rx";
 import { FiArrowLeft } from "react-icons/fi";
@@ -18,13 +19,24 @@ const AddDoctor = () => {
     experience: '',
   });
   const [showCalendarFor, setShowCalendarFor] = useState(null);
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const doctorId = location.state?.doctorId || searchParams.get("doctorId");
+
+  console.log("➡️ Full location state:", location.state);
+  console.log("👨‍⚕️ Received doctorId:", doctorId);
+
+
+
+
+
+
 
   useEffect(() => {
       const role = localStorage.getItem("userRole");
-
       if (role !== "supervisor") {
         // Redirect students or unauthorized users
-        navigate("/"); // or "/not-authorized"
+        navigate("/");
       }
     }, []);
 
@@ -40,8 +52,12 @@ const AddDoctor = () => {
   };
 
 
-  const handleSubmit = async () => {
+  
 
+
+
+
+  const handleSubmit = async () => {
   console.log("📨 Submitting doctor:", formData);
   const payload = {
     name: formData.doctorName,
@@ -56,27 +72,85 @@ const AddDoctor = () => {
     researchInterests: [], // optional
   };
 
-     const token = localStorage.getItem("authToken");
-     console.log("Token being sent:", token);
+  const token = localStorage.getItem("authToken");
+  console.log("Token being sent:", token);
   if (!token) {
     alert("You're not logged in");
     return;
   }
 
   try {
-      await axios.post("http://localhost:5000/api/doctors", payload, {
+    const response = await axios.post("http://localhost:5000/api/doctors", payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
-    alert("Doctor created successfully!");
-    navigate("/rating"); // or wherever you want
+    const newDoctor = response.data?.doctor;
+    console.log("🚀 New doctor created:", newDoctor);
+
+
+    if (!newDoctor || !newDoctor._id) {
+    alert("Error: created doctor ID missing.");
+    return;
+    }
+
+    console.log("Navigating to rate-supervisor with ID:", newDoctor._id);
+
+    navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
+
+
+
+
+
+
+
+
+
   } catch (err) {
     console.error("Add Doctor error:", err.response?.data || err.message);
     alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
   }
 };
+
+
+//   const handleSubmit = async () => {
+
+//   console.log("📨 Submitting doctor:", formData);
+//   const payload = {
+//     name: formData.doctorName,
+//     universityId: formData.universityId, // Ideally selected from UI
+//     fieldOfStudyId: formData.fieldOfStudyId || null,
+//     topicId: formData.topicId || null,
+//     affiliations: formData.affiliations,
+//     background: formData.background,
+//     teaching: formData.teaching,
+//     supervision: formData.supervision,
+//     experience: formData.experience,
+//     researchInterests: [], // optional
+//   };
+
+//      const token = localStorage.getItem("authToken");
+//      console.log("Token being sent:", token);
+//   if (!token) {
+//     alert("You're not logged in");
+//     return;
+//   }
+
+//   try {
+//       await axios.post("http://localhost:5000/api/doctors", payload, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     alert("Doctor created successfully!");
+//     navigate("/rate-supervisor"); // or wherever you want
+//   } catch (err) {
+//     console.error("Add Doctor error:", err.response?.data || err.message);
+//     alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
+//   }
+// };
 
 
   const toggleCalendar = (field) => {
@@ -180,7 +254,7 @@ const AddDoctor = () => {
           onChange={handleChange}
         />
 
-        <label class="top-one-line label-addDoctor"> <span className='title'>Experience</span></label>
+        <label className="top-one-line label-addDoctor"> <span className='title'>Experience</span></label>
         <div className="input-with-icon">
           <input
             className="inputAddDoctor"

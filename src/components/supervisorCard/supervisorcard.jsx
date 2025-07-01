@@ -2,7 +2,7 @@ import React from "react";
 
 import './supervisorcard.css'
 
-const SupervisorCard = ({ name, rating, university, field, topics, image }) => {
+const SupervisorCard = ({ name, rating, university, field, topics, image, onClick }) => {
   const renderStars = (rating) => {
 
     if (typeof rating !== "number" || isNaN(rating)) {
@@ -30,7 +30,7 @@ const SupervisorCard = ({ name, rating, university, field, topics, image }) => {
   };
 
   return (
-    <div className="supervisor-card">
+    <div className="supervisor-card"  onClick={onClick}>
       <img src={image} alt={name} className="doctor-img" />
       <div className="info">
         <h3>{name}</h3>

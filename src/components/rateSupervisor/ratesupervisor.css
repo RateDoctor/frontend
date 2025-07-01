@@ -10,6 +10,14 @@
     color: #6C757D;
 }
 
+
+.rating-option.selected {
+  border: 2px solid #0074e4;
+  background-color: #eef6ff;
+  border-radius: 8px;
+}
+
+
 .save-rate-edits-btn{
         float: left;
     background-color: var(--primary-color);

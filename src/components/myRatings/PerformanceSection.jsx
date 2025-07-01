@@ -1,17 +1,28 @@
-import React from "react";
-
 const PerformanceSection = ({
-  title = "Erick’s Performance",
+  title = "Rate Performance",
   doctorName = "Tomas",
   hideTitle = false,
   showPercentage = false,
+  ratings = {},
+  onRatingChange = () => {}
 }) => {
-  const categories = ["Communication", "Support", "Guidance", "Availability"];
+  const categories = ["communication", "support", "guidance", "availability"];
+  const labels = {
+    communication: "Communication",
+    support: "Support",
+    guidance: "Guidance",
+    availability: "Availability"
+  };
+  if (![communication, support, guidance, availability].every(val => ["Excellent", "Good", "Fair", "Poor"].includes(val))) {
+  alert("Please rate all four performance categories before submitting.");
+  return;
+}
+
   const options = [
-    { label: "Excellent", emoji: "😄" , percent: "40%" },
-    { label: "Good", emoji: "🙂", percent: "58%" },
-    { label: "Fair", emoji: "😐", percent: "89%" },
-    { label: "Poor", emoji: "😞", percent: "26%" },
+    { label: "Excellent", emoji: "😄" },
+    { label: "Good", emoji: "🙂" },
+    { label: "Fair", emoji: "😐" },
+    { label: "Poor", emoji: "😞" },
   ];
 
   return (
@@ -22,16 +33,18 @@ const PerformanceSection = ({
 
       {categories.map((category) => (
         <div key={category} className="rating-category">
-          <label>{category}</label>
+          <label>{labels[category]}</label>
           <div className="rating-options">
             {options.map((option) => (
-              <div key={option.label} className="rating-option">
+              <div
+                key={option.label}
+                className={`rating-option ${
+                  ratings[category] === option.label ? "selected" : ""
+                }`}
+                onClick={() => onRatingChange(category, option.label)}
+              >
                 <div className="emoji">{option.emoji}</div>
                 <div className="label">{option.label}</div>
-                {showPercentage && (
-                <div className="percentage-text">{option.percent}</div>
-              )}
-
               </div>
             ))}
           </div>
