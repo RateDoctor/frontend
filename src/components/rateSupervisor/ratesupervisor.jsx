@@ -18,10 +18,7 @@ const RateSupervisor = () => {
   const [questionnaire, setQuestionnaire] = useState({});
   const [searchParams] = useSearchParams();
   const doctorId = searchParams.get("doctorId");
-  const [communication, setCommunication] = useState("");
-  const [support, setSupport] = useState("");
-  const [guidance, setGuidance] = useState("");
-  const [availability, setAvailability] = useState("");
+
 
   const [ratings, setRatings] = useState({
   communication: "",
@@ -97,23 +94,23 @@ if (!doctorData) return <p>Doctor not found.</p>;
 console.log("Loading:", loading);
 console.log("DoctorData:", doctorData);
 
-  const handleSubmit = async () => {
-    try {
-      await axios.post("http://localhost:5000/api/ratings", {
-      doctorId,
-      communication: ratings.communication,
-      support: ratings.support,
-      guidance: ratings.guidance,
-      availability: ratings.availability,
-      additionalFeedback: feedback,
-      questionnaire,
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("authToken")}`
-      }
-    });
 
-    console.log({
+
+const handleSubmit = async () => {
+   if (
+    !ratings.communication ||
+    !ratings.support ||
+    !ratings.guidance ||
+    !ratings.availability
+  ) {
+    alert("Please rate all categories before submitting.");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const payload = {
       doctorId,
       communication: ratings.communication,
       support: ratings.support,
@@ -121,18 +118,26 @@ console.log("DoctorData:", doctorData);
       availability: ratings.availability,
       additionalFeedback: feedback,
       questionnaire
+    };
+
+    await axios.post("http://localhost:5000/api/ratings", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
 
-
-      console.log("RateSupervisor location state:", location.state);
-      console.log("DoctorId received:", doctorId);
-      alert("Rating submitted successfully.");
-      navigate("/thank-you");
-    } catch (err) {
+    alert("Rating submitted successfully.");
+    navigate("/thank-you");
+    
+  } catch (err) {
+    if (err.response?.status === 409) {
+      alert("You've already submitted a rating for this doctor.");
+    } else {
       console.error("Rating submission failed:", err);
       alert("Failed to submit rating. Try again.");
     }
-  };
+  }
+};
 
 
 
@@ -153,9 +158,11 @@ console.log("DoctorData:", doctorData);
         </div>
 
         <PerformanceSection
-          doctorName={doctorData.name}
-          ratings={ratings}
-          onRatingChange={handleRatingChange}
+           doctorName={doctorData.name}
+            ratings={ratings}
+            onRatingChange={(category, value) =>
+              setRatings((prev) => ({ ...prev, [category]: value }))
+            }
         />
 
         <div className="feedback-section">

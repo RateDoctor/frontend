@@ -13,10 +13,7 @@ const PerformanceSection = ({
     guidance: "Guidance",
     availability: "Availability"
   };
-  if (![communication, support, guidance, availability].every(val => ["Excellent", "Good", "Fair", "Poor"].includes(val))) {
-  alert("Please rate all four performance categories before submitting.");
-  return;
-}
+  
 
   const options = [
     { label: "Excellent", emoji: "😄" },
