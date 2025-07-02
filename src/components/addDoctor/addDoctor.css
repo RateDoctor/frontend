@@ -140,6 +140,45 @@
   background-color: #6cb6ff;
 }
 
+.autocomplete-dropdown {
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+}
+
+.autocomplete-dropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.autocomplete-dropdown li:hover {
+  background-color: #f0f0f0;
+}
+
+
+.plus-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #007bff; /* or any theme color */
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.plus-icon:hover {
+  background-color: #f0f0f0;
+}
+
+
 @media (max-width: 768px) {
   .form-container {
     flex-direction: column;

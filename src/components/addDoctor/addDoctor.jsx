@@ -17,7 +17,6 @@ const AddDoctor = () => {
     teaching: '',
     supervision: '',
     experience: '',
-    universityId: '',
   });
   const [showCalendarFor, setShowCalendarFor] = useState(null);
   const location = useLocation();
@@ -26,6 +25,7 @@ const AddDoctor = () => {
   const [universities, setUniversities] = useState([]);
   const [fields, setFields] = useState([]);
   const [topics, setTopics] = useState([]);
+  const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
@@ -144,43 +144,6 @@ useEffect(() => {
 };
 
 
-//   const handleSubmit = async () => {
-
-//   console.log("📨 Submitting doctor:", formData);
-//   const payload = {
-//     name: formData.doctorName,
-//     universityId: formData.universityId, // Ideally selected from UI
-//     fieldOfStudyId: formData.fieldOfStudyId || null,
-//     topicId: formData.topicId || null,
-//     affiliations: formData.affiliations,
-//     background: formData.background,
-//     teaching: formData.teaching,
-//     supervision: formData.supervision,
-//     experience: formData.experience,
-//     researchInterests: [], // optional
-//   };
-
-//      const token = localStorage.getItem("authToken");
-//      console.log("Token being sent:", token);
-//   if (!token) {
-//     alert("You're not logged in");
-//     return;
-//   }
-
-//   try {
-//       await axios.post("http://localhost:5000/api/doctors", payload, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-
-//     alert("Doctor created successfully!");
-//     navigate("/rate-supervisor"); // or wherever you want
-//   } catch (err) {
-//     console.error("Add Doctor error:", err.response?.data || err.message);
-//     alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
-//   }
-// };
 
 
   const toggleCalendar = (field) => {
@@ -210,22 +173,6 @@ useEffect(() => {
             <h2>Add Doctor</h2>
         </div>
       <div className="form-left">
-
-        <label className="top-one-line label-addDoctor">University *</label>
-        <select
-          className="inputAddDoctor"
-          name="universityId"
-          value={formData.universityId}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select a university</option>
-          {universities.map((uni) => (
-            <option key={uni._id} value={uni._id}>
-              {uni.name}
-            </option>
-          ))}
-        </select>
         <label htmlFor="doctorName" className='top-one-line label-addDoctor'>Doctor Name *</label>
         <input
           className="inputAddDoctor"
@@ -249,18 +196,66 @@ useEffect(() => {
         </label>
         </div>
 
-        <label className='top-one-line label-addDoctor'> <span className='title'>Affiliations</span> <span className="plus-icon"><FaPlus/></span></label>
-        <div className="input-with-icon">
-          <input
-            className="inputAddDoctor"
-            name="affiliations"
-            placeholder="Text"
-            value={formData.affiliations}
-            onChange={handleChange}
-          />
-          <span className="calendar-icon" onClick={() => toggleCalendar('affiliations')}><RxCalendar/></span>
-          {renderCalendar('affiliations')}
-        </div>
+        <label className='top-one-line label-addDoctor'> 
+          <span className='title'>Affiliations</span>
+          <span
+            className="plus-icon"
+            onClick={() => setIsUniversityDropdownOpen(!isUniversityDropdownOpen)}
+            style={{ cursor: 'pointer' }}
+          >
+            <FaPlus />
+          </span>
+        </label>
+
+       <div className="input-with-icon">
+        <input
+          className="inputAddDoctor"
+          name="affiliations"
+          placeholder="Search or type affiliation"
+          value={formData.affiliations}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFormData({ ...formData, affiliations: value, universityId: null }); // clear ID when typing
+          }}
+        />
+        <span className="calendar-icon" onClick={() => toggleCalendar('affiliations')}><RxCalendar/></span>
+        {renderCalendar('affiliations')}
+
+        {/* Show dropdown if user is typing and matches found */}
+        
+        {(isUniversityDropdownOpen || formData.affiliations) && (
+        <ul className="autocomplete-dropdown">
+          {universities
+            .filter(uni =>
+              isUniversityDropdownOpen || !formData.affiliations
+                ? true
+                : uni.name.toLowerCase().includes(formData.affiliations.toLowerCase())
+            )
+            .map(uni => (
+             <li
+                key={uni._id}
+                onClick={() => {
+                  setFormData({
+                    ...formData,
+                    affiliations: uni.name,
+                    universityId: uni._id,
+                  });
+                  setIsUniversityDropdownOpen(false);
+                }}
+              >
+                {uni.name} – 
+                  {typeof uni.location === 'string'
+                    ? uni.location
+                    : `${uni.location?.city || ''}, ${uni.location?.country || ''}`} 
+                  – {uni.phone}
+              </li>
+            ))}
+          {universities.length === 0 && (
+            <li>No universities found</li>
+          )}
+        </ul>
+      )}
+      </div>
 
         <label className='top-one-line label-addDoctor'> <span className='title'>Background</span> <span className="plus-icon"><FaPlus/></span></label>
         <input

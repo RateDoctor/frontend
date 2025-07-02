@@ -32,9 +32,9 @@ const navigate = useNavigate();
     }
 
     const payload = {
-      name: formData.doctorName, // this is the university name
-      city: formData.city || "Unknown", // you can update this based on actual form input
-      country: formData.country || "Unknown", // you can update this too
+      name: formData.doctorName,
+      location: formData.location,
+      phone: formData.phone
     };
 
     const res = await axios.post("http://localhost:5000/api/universities", payload, {
@@ -75,9 +75,9 @@ const navigate = useNavigate();
   return (
     <div className="form-container">
         <div className="settings-header">
-                    <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
-                    <h2>Create University</h2>
-              </div>
+            <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+            <h2>Create University</h2>
+        </div>
       <div className="form-createUniversity">
         <label htmlFor="doctorName" className='top-one-line label-addDoctor'>Official university name *</label>
         <input
@@ -92,21 +92,22 @@ const navigate = useNavigate();
         <label className='top-one-line label-addDoctor'> <span className='title'>Location *</span></label>
         <div className="input-with-icon">
           <input
-            className="inputAddDoctor"
-            name="Location"
-            placeholder="Text"
-            value={formData.location}
-            onChange={handleChange}
-          />
+          className="inputAddDoctor"
+          name="location"
+          placeholder="Text"
+          value={formData.location}
+          onChange={handleChange}
+        />
         </div>
 
         <div className="input-number">
           <span className='title-phone'>Phone Number</span>
             <input
-            className="inputAddDoctor"
-            name="affiliations"
-            placeholder="+1 012 3456 789"
-            
+              className="inputAddDoctor"
+              name="phone"
+              placeholder="+1 012 3456 789"
+              value={formData.phone}
+              onChange={handleChange} 
           />
           {/* <span className="theNumber" ></span> */}
         </div>
