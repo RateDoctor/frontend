@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useState , useEffect , useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
@@ -18,6 +18,9 @@ const AddDoctor = () => {
     supervision: '',
     experience: '',
   });
+  const universityRef = useRef(null);
+  const fieldRef = useRef(null);
+  const topicRef = useRef(null);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -26,12 +29,33 @@ const AddDoctor = () => {
   const [fields, setFields] = useState([]);
   const [topics, setTopics] = useState([]);
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
+  const [isFieldDropdownOpen, setIsFieldDropdownOpen] = useState(false);
+  const [isTopicDropdownOpen, setIsTopicDropdownOpen] = useState(false);
+
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
 
 
 
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (universityRef.current && !universityRef.current.contains(event.target)) {
+      setIsUniversityDropdownOpen(false);
+    }
+
+    if (fieldRef.current && !fieldRef.current.contains(event.target)) {
+      setIsFieldDropdownOpen(false);
+    }
+
+    if (topicRef.current && !topicRef.current.contains(event.target)) {
+      setIsTopicDropdownOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
  
 
@@ -82,7 +106,10 @@ useEffect(() => {
   };
 
 
-  
+  const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 
 
 
@@ -207,7 +234,7 @@ useEffect(() => {
           </span>
         </label>
 
-       <div className="input-with-icon">
+       <div className="input-with-icon" ref={universityRef}>
         <input
           className="inputAddDoctor"
           name="affiliations"
@@ -223,7 +250,7 @@ useEffect(() => {
 
         {/* Show dropdown if user is typing and matches found */}
         
-        {(isUniversityDropdownOpen || formData.affiliations) && (
+        {isUniversityDropdownOpen && (
         <ul className="autocomplete-dropdown">
           {universities
             .filter(uni =>
@@ -257,23 +284,198 @@ useEffect(() => {
       )}
       </div>
 
-        <label className='top-one-line label-addDoctor'> <span className='title'>Background</span> <span className="plus-icon"><FaPlus/></span></label>
-        <input
-          className="inputAddDoctor"
-          name="background"
-          placeholder="Text"
-          value={formData.background}
-          onChange={handleChange}
-        />
+      <label className='top-one-line label-addDoctor'>
+      <span className='title'>Background</span>
+      <span
+        className="plus-icon"
+        onClick={() => setIsFieldDropdownOpen(!isFieldDropdownOpen)}
+        style={{ cursor: 'pointer' }}
+      >
+        <FaPlus />
+      </span>
+    </label>
 
-        <label className='top-one-line label-addDoctor'><span className='title'>Teaching</span> <span className="plus-icon"><FaPlus/></span></label>
-        <input
-          className="inputAddDoctor"
-          name="teaching"
-          placeholder="Text"
-          value={formData.teaching}
-          onChange={handleChange}
-        />
+    <div className="input-with-icon"  ref={fieldRef}>
+      <input
+        className="inputAddDoctor"
+        name="background"
+        placeholder="Search or type background"
+        value={formData.background}
+        onChange={(e) => {
+          const value = e.target.value;
+          setFormData({ ...formData, background: capitalizeFirstLetter(value), fieldOfStudyId: '' });
+        }}
+       onKeyDown={async (e) => {
+    if (e.key === 'Enter') {
+      const match = fields.find(
+        f => f.name.toLowerCase() === formData.background.toLowerCase()
+      );
+      if (!match && formData.background.trim()) {
+        try {
+          const token = localStorage.getItem('authToken');
+          const response = await axios.post(
+            'http://localhost:5000/api/fields',
+            { name: capitalizeFirstLetter(formData.background) },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          const newField = response.data;
+          setFields(prev => [...prev, newField]);
+          setFormData({ ...formData, fieldOfStudyId: newField._id });
+          setIsFieldDropdownOpen(false);
+        } catch (err) {
+          console.error('Error creating new field:', err.response?.data || err.message);
+        }
+      }
+    }
+  }}
+/>
+
+      {isFieldDropdownOpen && (
+        <ul className="autocomplete-dropdown">
+          {fields
+            .filter(field =>
+              isFieldDropdownOpen || !formData.background
+                ? true
+                : field.name.toLowerCase().includes(formData.background.toLowerCase())
+            )
+            .map(field => (
+              <li
+                key={field._id}
+                onClick={() => {
+                  setFormData({
+                    ...formData,
+                    background: field.name,
+                    fieldOfStudyId: field._id,
+                  });
+                  setIsFieldDropdownOpen(false);
+                  
+                }}
+              >
+                {field.name}
+              </li>
+            ))}
+          {fields.length === 0 && (
+            <li>No fields found</li>
+          )}
+        </ul>
+      )}
+    </div>
+
+
+       <label className='top-one-line label-addDoctor'>
+        <span className='title'>Teaching</span>
+        <span className="plus-icon" onClick={() => setIsTopicDropdownOpen(!isTopicDropdownOpen)} style={{ cursor: 'pointer' }}>
+          <FaPlus />
+        </span>
+      </label>
+    <div className="input-with-icon" ref={topicRef}>
+    <input
+      className="inputAddDoctor"
+      name="teaching"
+      placeholder="Search or type teaching topic"
+      value={formData.teaching}
+      onChange={(e) => {
+        const value = e.target.value;
+        setFormData({ ...formData, teaching: capitalizeFirstLetter(value), topicId: '' });
+      }}
+    onKeyDown={async (e) => {
+      if (e.key === 'Enter') {
+        const match = topics.find(
+          t =>
+            t.name.toLowerCase() === formData.teaching.toLowerCase() &&
+            t.field === formData.fieldOfStudyId
+        );
+
+        if (!match && formData.teaching.trim() && formData.fieldOfStudyId) {
+          try {
+            const token = localStorage.getItem("authToken");
+            const response = await axios.post(
+              "http://localhost:5000/api/topics",
+              {
+                name: capitalizeFirstLetter(formData.teaching),
+                fieldId: formData.fieldOfStudyId,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            const newTopic = response.data;
+            setTopics(prev => [...prev, newTopic]);
+            setFormData({ ...formData, topicId: newTopic._id });
+            setIsTopicDropdownOpen(false);
+          } catch (err) {
+            console.error("Error creating topic:", err.response?.data || err.message);
+          }
+        }
+      }
+    }}
+  />
+
+  {isTopicDropdownOpen && (
+    <ul className="autocomplete-dropdown">
+      {topics
+        .filter(topic =>
+          formData.fieldOfStudyId && topic.field === formData.fieldOfStudyId &&
+          topic.name.toLowerCase().includes(formData.teaching.toLowerCase())
+        )
+        .map(topic => (
+          <li
+            key={topic._id}
+            onClick={() => {
+              setFormData({
+                ...formData,
+                teaching: topic.name,
+                topicId: topic._id,
+              });
+              setIsTopicDropdownOpen(false);
+            }}
+          >
+            {topic.name}
+          </li>
+        ))}
+      {
+        formData.fieldOfStudyId &&
+        !topics.some(
+          t =>
+            t.name.toLowerCase() === formData.teaching.toLowerCase() &&
+            t.field === formData.fieldOfStudyId
+        ) && formData.teaching.trim() && (
+          <li
+            className="add-new-item"
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem("authToken");
+                const response = await axios.post(
+                  "http://localhost:5000/api/topics",
+                  {
+                    name: capitalizeFirstLetter(formData.teaching),
+                    fieldId: formData.fieldOfStudyId,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+                const newTopic = response.data;
+                setTopics(prev => [...prev, newTopic]);
+                setFormData({ ...formData, topicId: newTopic._id });
+                setIsTopicDropdownOpen(false);
+              } catch (err) {
+                console.error("Error creating topic:", err.response?.data || err.message);
+              }
+            }}
+          >
+            + Add "{capitalizeFirstLetter(formData.teaching)}"
+          </li>
+        )
+      }
+    </ul>
+  )}
+</div>
 
         <label className='top-one-line label-addDoctor'> <span className='title'>Supervision</span> <span className="plus-icon"><FaPlus/></span></label>
         <input

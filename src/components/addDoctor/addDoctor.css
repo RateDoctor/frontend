@@ -163,6 +163,12 @@
   background-color: #f0f0f0;
 }
 
+.add-new-item {
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 
 .plus-icon {
   display: inline-flex;
