@@ -31,6 +31,9 @@ const AddDoctor = () => {
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
   const [isFieldDropdownOpen, setIsFieldDropdownOpen] = useState(false);
   const [isTopicDropdownOpen, setIsTopicDropdownOpen] = useState(false);
+  const [isSavingField, setIsSavingField] = useState(false);
+  const [isSavingTopic, setIsSavingTopic] = useState(false);
+  const [isReadyToSubmit, setIsReadyToSubmit] = useState(true);
 
 
   console.log("➡️ Full location state:", location.state);
@@ -116,6 +119,26 @@ useEffect(() => {
 
   const handleSubmit = async () => {
   console.log("📨 Submitting doctor:", formData);
+
+  // Validation before proceeding
+  if (!formData.universityId) {
+    alert("Please select or wait for university to be saved.");
+    return;
+  }
+  if (!formData.fieldOfStudyId) {
+    alert("Please select or wait for field of study to be saved.");
+    return;
+  }
+  if (!formData.topicId && formData.teaching.trim()) {
+    alert("Please select or wait for topic to be saved.");
+    return;
+  }
+
+
+  if (isSavingField || isSavingTopic) {
+  alert("Please wait, saving field/topic...");
+  return;
+}
   const payload = {
     name: formData.doctorName,
     universityId: formData.universityId, // Ideally selected from UI
@@ -136,6 +159,7 @@ useEffect(() => {
     return;
   }
 
+  setIsSavingField(true);
   try {
     const response = await axios.post("http://localhost:5000/api/doctors", payload, {
       headers: {
@@ -146,23 +170,14 @@ useEffect(() => {
     const newDoctor = response.data?.doctor;
     console.log("🚀 New doctor created:", newDoctor);
 
-
+    setIsSavingField(false);
     if (!newDoctor || !newDoctor._id) {
     alert("Error: created doctor ID missing.");
     return;
     }
 
     console.log("Navigating to rate-supervisor with ID:", newDoctor._id);
-
     navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
-
-
-
-
-
-
-
-
 
   } catch (err) {
     console.error("Add Doctor error:", err.response?.data || err.message);
@@ -313,6 +328,7 @@ useEffect(() => {
       if (!match && formData.background.trim()) {
         try {
           const token = localStorage.getItem('authToken');
+          setIsReadyToSubmit(false); 
           const response = await axios.post(
             'http://localhost:5000/api/fields',
             { name: capitalizeFirstLetter(formData.background) },
@@ -321,7 +337,7 @@ useEffect(() => {
           const newField = response.data;
           setFields(prev => [...prev, newField]);
           setFormData({ ...formData, fieldOfStudyId: newField._id });
-          setIsFieldDropdownOpen(false);
+          setIsFieldDropdownOpen(true);
         } catch (err) {
           console.error('Error creating new field:', err.response?.data || err.message);
         }

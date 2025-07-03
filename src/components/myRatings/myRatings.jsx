@@ -3,39 +3,42 @@ import { FiArrowLeft, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
-import { sections } from "./data"; // Your questionnaire data here
+import { sections } from "./data"; // Questionnaire config
 import "./myRatings.css";
 
 const MyRatings = () => {
   const navigate = useNavigate();
-
-  // Auth token and userId assumed to be in localStorage or from your auth context
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
 
-  // State variables
   const [ratings, setRatings] = useState([]);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [feedbackEditable, setFeedbackEditable] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [feedbackEditable, setFeedbackEditable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch ratings on mount and when userId or token changes
 useEffect(() => {
   const fetchRatings = async () => {
-    if (!userId) {
-      setError("User ID missing");
+    const storedUserId = localStorage.getItem("userId");
+    const storedToken = localStorage.getItem("authToken");
+    console.log("Fetched from localStorage:", { storedUserId, storedToken });
+
+    if (!storedUserId || !storedToken) {
+      setError("Missing userId or token.");
       setLoading(false);
       return;
     }
-    
+
     try {
-      const res = await axios.get(`http://localhost:5000/api/ratings/users/${userId}/ratings`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `http://localhost:5000/api/ratings/users/${storedUserId}/ratings`,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        }
+      );
       setRatings(res.data);
     } catch (err) {
       console.error(err);
@@ -46,65 +49,43 @@ useEffect(() => {
   };
 
   fetchRatings();
-}, [userId, token]);
+}, []); 
 
 
-
-  // Prevent background scroll when feedback modal is open
   useEffect(() => {
-    if (feedbackEditable) {
-      document.body.classList.add("no-scroll");
-    } else {
-      document.body.classList.remove("no-scroll");
-    }
+    document.body.classList.toggle("no-scroll", feedbackEditable);
     return () => document.body.classList.remove("no-scroll");
   }, [feedbackEditable]);
 
-  // When selecting a doctor, set state and feedback
-  const handleSelectDoctor = (rating) => {
-    const doctor = rating.doctorId;
-    setSelectedDoctor({
-      id: doctor._id,
-      name: doctor.name,
-      image: doctor.profileImage?.fileUrl || "/default-avatar.png",
-      rating,
-    });
+  const handleSelectRating = (rating) => {
+    setSelectedRating(rating);
     setFeedback(rating.additionalFeedback || "");
   };
 
-  // Delete rating handler (optional)
   const handleDeleteRating = async (ratingId) => {
     if (!window.confirm("Are you sure you want to delete this rating?")) return;
-
     try {
       await axios.delete(`http://localhost:5000/api/ratings/${ratingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRatings((prev) => prev.filter((r) => r._id !== ratingId));
-      setSelectedDoctor(null);
+      setSelectedRating(null);
     } catch (err) {
       alert("Failed to delete rating.");
     }
   };
 
-  // Save feedback handler (simplified)
   const handleSaveFeedback = async () => {
-    if (!selectedDoctor) return;
-
+    if (!selectedRating) return;
     try {
       await axios.put(
-        `http://localhost:5000/api/ratings/${selectedDoctor.rating._id}`,
+        `http://localhost:5000/api/ratings/${selectedRating._id}`,
         { additionalFeedback: feedback },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Update locally to reflect saved feedback
       setRatings((prev) =>
         prev.map((r) =>
-          r._id === selectedDoctor.rating._id
-            ? { ...r, additionalFeedback: feedback }
-            : r
+          r._id === selectedRating._id ? { ...r, additionalFeedback: feedback } : r
         )
       );
       setFeedbackEditable(false);
@@ -113,7 +94,6 @@ useEffect(() => {
     }
   };
 
-  // Rendering doctor list view
   const renderDoctorList = () => (
     <div className="ratings-list">
       {ratings.length === 0 && <p>No ratings found.</p>}
@@ -123,13 +103,15 @@ useEffect(() => {
           <div
             key={rating._id}
             className="ratings-item"
-            onClick={() => handleSelectDoctor(rating)}
+            onClick={() => handleSelectRating(rating)}
           >
+            {doctor.profileImage?.fileUrl ? (
             <img
               src={doctor.profileImage?.fileUrl || "/default-avatar.png"}
               alt={doctor.name}
               className="doctor-img"
             />
+            ) : null}
             <span className="doctor-name">{doctor.name}</span>
             <FiTrash2
               className="delete-icon"
@@ -145,26 +127,19 @@ useEffect(() => {
     </div>
   );
 
-  // Render feedback edit modal
   const renderFeedbackSection = () => (
     <>
       <div className="feedback-section">
         <div className="feedback-header">
           <h4 className="my-rating-title-header">Additional Feedback</h4>
-          <FiEdit2
-            className="penFeedback"
-            onClick={() => setFeedbackEditable(true)}
-          />
+          <FiEdit2 className="penFeedback" onClick={() => setFeedbackEditable(true)} />
         </div>
         <p>{feedback || "No feedback provided."}</p>
       </div>
 
       {feedbackEditable && (
         <div className="modal-overlay">
-          <button
-            className="floating-done-button"
-            onClick={handleSaveFeedback}
-          >
+          <button className="floating-done-button" onClick={handleSaveFeedback}>
             Save
           </button>
           <div className="modal-content">
@@ -180,13 +155,11 @@ useEffect(() => {
     </>
   );
 
-  // Render questionnaire section (read-only)
   const renderQuestionnaireSection = () => (
     <div className="questionnaire-section">
       <h4 className="title-questionnaire">Questionnaire</h4>
       <p className="paragraph-questionnaire">
-        Share your thoughts and insights by completing the questionnaire,
-        helping us enhance the overall academic experience.
+        Share your thoughts and insights by completing the questionnaire.
       </p>
       {sections.map((section, index) => (
         <div key={index} className="question-block">
@@ -196,11 +169,8 @@ useEffect(() => {
             <textarea
               placeholder={section.firstPlaceholder}
               disabled
-              value={selectedDoctor?.rating?.questionnaire?.[section.title] || ""}
+              value={selectedRating?.questionnaire?.[section.title] || ""}
             />
-            {index !== sections.length - 1 && (
-              <FiTrash2 className="delete-icon" />
-            )}
           </div>
           {section.questions.map((q, i) => (
             <div key={i} className="question-field">
@@ -208,9 +178,7 @@ useEffect(() => {
               <textarea
                 className="question-fieldParagraph"
                 disabled
-                value={
-                  selectedDoctor?.rating?.questionnaire?.[q] || ""
-                }
+                value={selectedRating?.questionnaire?.[q] || ""}
               />
             </div>
           ))}
@@ -219,44 +187,36 @@ useEffect(() => {
     </div>
   );
 
-  // Render edit view for selected doctor rating
   const renderEditor = () => (
     <div className="edit-section-scrollable edit-section">
       <div className="doctor-info">
         <div className="doctor-infoBox">
           <img
-            src={selectedDoctor.image}
-            alt={selectedDoctor.name}
+            src={selectedRating.doctorId.profileImage?.fileUrl || "/default-avatar.png"}
+            alt={selectedRating.doctorId.name}
             className="doctor-img"
           />
-          <h3>{selectedDoctor.name}</h3>
+          <h3>{selectedRating.doctorId.name}</h3>
         </div>
-        <button
-          className="delete-btn"
-          onClick={() => handleDeleteRating(selectedDoctor.rating._id)}
-        >
+        <button className="delete-btn" onClick={() => handleDeleteRating(selectedRating._id)}>
           Delete
         </button>
       </div>
 
-      <PerformanceSection doctorName={selectedDoctor.name} />
+      <PerformanceSection doctorName={selectedRating.doctorId.name} />
 
       {renderFeedbackSection()}
 
       {renderQuestionnaireSection()}
 
-      <button
-        className="save-edits-btn"
-        onClick={handleSaveFeedback}
-        disabled={!feedbackEditable}
-      >
+      <button className="save-edits-btn" onClick={handleSaveFeedback} disabled={!feedbackEditable}>
         Save Edits
       </button>
 
       <button
         className="back-btn"
         onClick={() => {
-          setSelectedDoctor(null);
+          setSelectedRating(null);
           setFeedbackEditable(false);
         }}
       >
@@ -271,8 +231,8 @@ useEffect(() => {
         <FiArrowLeft
           className="back-icon"
           onClick={() => {
-            if (selectedDoctor) {
-              setSelectedDoctor(null);
+            if (selectedRating) {
+              setSelectedRating(null);
               setFeedbackEditable(false);
             } else {
               navigate(-1);
@@ -286,15 +246,14 @@ useEffect(() => {
       {error && <p className="error">{error}</p>}
 
       {!loading && !error && (
-        <>
-          {selectedDoctor ? renderEditor() : renderDoctorList()}
-        </>
+        <>{selectedRating ? renderEditor() : renderDoctorList()}</>
       )}
     </div>
   );
 };
 
 export default MyRatings;
+
 
 
 

@@ -19,6 +19,8 @@ const DoctorList = ({ doctors, onSelect }) => {
           <span className="doctor-rank">{doc.rank}</span>
           <img src={doc.image} alt={doc.name} className="doctor-list-img" />
           <span className="doctor-name">{doc.name}</span>
+
+          <div>HEllo hello hello</div>
         </li>
       ))}
     </ul>

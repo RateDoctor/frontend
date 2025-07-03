@@ -1,4 +1,8 @@
 
+.ratings-container{
+    height: 100vh;
+}
+
 .rate-title{
     font-size:20px;
     color: #000000;
@@ -10,7 +14,9 @@
     color: #6C757D;
 }
 
-
+.questionnaire-rate-section{
+    padding: 0 0 10rem 0;
+}
 .rating-option.selected {
   border: 2px solid #0074e4;
   background-color: #eef6ff;

@@ -127,7 +127,7 @@ const handleSubmit = async () => {
     });
 
     alert("Rating submitted successfully.");
-    navigate("/thank-you");
+    navigate("/");
     
   } catch (err) {
     if (err.response?.status === 409) {
@@ -142,7 +142,7 @@ const handleSubmit = async () => {
 
 
   return (
-    <div className="ratings-container">
+    <div className="ratings-container  ">
       <div className="ratings-header">
         <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} />
       </div>
@@ -190,7 +190,7 @@ const handleSubmit = async () => {
           </div>
         )}
 
-        <div className="questionnaire-section">
+        <div className="questionnaire-rate-section">
           <h4 className="title-questionnaire">Questionnaire</h4>
           <p className="paragraph-questionnaire">
             Share your insights to help improve the academic experience.
@@ -207,6 +207,7 @@ const handleSubmit = async () => {
                   onChange={(e) =>
                     handleTextareaChange(`${section.title}_general`, e.target.value)
                   }
+                  name="rate-question-fieldParagraph" id="rate-question-fieldParagraph"
                 />
               </div>
 
@@ -218,17 +219,22 @@ const handleSubmit = async () => {
                     onChange={(e) =>
                       handleTextareaChange(`${section.title}_q${i}`, e.target.value)
                     }
+                    name="question-fieldParagraph" id="rate-question-fieldParagraph"
                   />
                 </div>
               ))}
             </div>
           ))}
-        </div>
-
-        <button className="save-rate-edits-btn" onClick={handleSubmit}>
+       <button className="save-rate-edits-btn" onClick={handleSubmit}>
           Submit
         </button>
+       
+        </div>
+      
+      
       </div>
+
+      
     </div>
   );
 };
@@ -238,34 +244,7 @@ export default RateSupervisor;
 
 
 
-// import React, { useState, useEffect } from "react";
-// import { FiArrowLeft, FiTrash2, FiEdit2 } from "react-icons/fi";
-// import { useNavigate } from "react-router-dom";
-// import PerformanceSection from "../myRatings/PerformanceSection.jsx";
-// import { ratedDoctors, sections } from '../myRatings/data.js';
-// import "./ratesupervisor.css";
 
-// const RateSupervisor = () => {
-//   const navigate = useNavigate();
-//   const [selectedDoctor, setSelectedDoctor] = useState(null);
-//   const [feedbackEditable, setFeedbackEditable] = useState(false);
-//   const [feedback, setFeedback] = useState("");
-
-
-
-//   useEffect(() => {
-//   if (feedbackEditable) {
-//     document.body.classList.add("no-scroll");
-//   } else {
-//     document.body.classList.remove("no-scroll");
-//   }
-
-//   // Cleanup when unmounting
-//   return () => document.body.classList.remove("no-scroll");
-// }, [feedbackEditable]);
-
-
-//  <PerformanceSection/> 
 
 
 

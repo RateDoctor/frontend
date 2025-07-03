@@ -59,9 +59,16 @@ const handleSubmit = async (e) => {
     if (!token || !user?.role) {
       throw new Error("Invalid login response: Missing token or role.");
     }
-   login(token, user.role); 
  
-  
+      // ✅ Store user info in localStorage
+     localStorage.setItem("userId", user._id);
+     localStorage.setItem("authToken", token);
+
+      console.log("User object:", user);
+      console.log("User ID:", user._id);
+
+    // Continue with your login context (if needed)
+    login(token, user.role);
 
     // Navigate user
      setTimeout(() => {
