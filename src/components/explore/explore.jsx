@@ -50,13 +50,29 @@ const Explore = () => {
       );
     }
     if (university) {
-      result = result.filter(sup => sup.university === university);
+      result = result.filter(sup => {
+        if (typeof sup.university === 'object') {
+          return sup.university._id === university._id;
+        }
+        return sup.university === university;
+      });
     }
     if (field) {
-      result = result.filter(sup => sup.field === field);
+      result = result.filter(sup => {
+        if (typeof sup.field === 'object'){
+          return sup.field._id === field._id;
+        }
+        return sup.field._id === field._id;
+      });     
     }
+
     if (topic) {
-      result = result.filter(sup => sup.topics.includes(topic));
+      result = result.filter(sup => {
+        if (typeof sup.topic === 'object'){
+          return sup.topic._id === topic._id;
+        }
+        return sup.topic._id === topic._id;
+      });
     }
 
     return result;
@@ -89,6 +105,17 @@ function useOutsideClick(ref, callback) {
 }
  
 
+const normalizeDoctorData = (doctor) => {
+  return {
+    ...doctor,
+    field: doctor.fieldOfStudy || doctor.field || "No field",
+    topics: doctor.topic ? [doctor.topic] : [], // ✅ FIXED: always an array
+    image: doctor.profileImage?.fileUrl || doctor.profileImage || "",
+    rating: doctor.avgRating || doctor.rating || 0
+  };
+};
+
+
 
 
 useEffect(() => {
@@ -100,10 +127,10 @@ useEffect(() => {
         }
       });
 
-      // If your API returns { doctors: [...] }
-      const doctorList = response.data?.doctors || [];
-
+       // Normalize and update supervisors
+      const doctorList = response.data?.doctors.map(normalizeDoctorData) || [];
       setSupervisors(doctorList);
+
     } catch (error) {
       console.error("Error fetching doctors:", error.response?.data || error.message);
       setSupervisors([]); // fallback to empty array on error
@@ -118,20 +145,6 @@ useEffect(() => {
   return (
 
     <div className="explore-container">
-
-
-   {/* <Navbar
-        title="Explore"
-        onBack={() => {
-          if (window.history.length > 2) {
-            navigate(-1);
-          } else {
-            navigate("/");
-          }
-        }}
-      />  */}
-
-
       <div className="search-wrapper" style={{ position: "relative" }}>
         <SearchBar
          placeholder="Search Doctors..."
@@ -177,10 +190,14 @@ useEffect(() => {
                 >
                   All Universities
                 </li>
+
+                console.log("universities", universities);
+                console.log("selectedUniversity", selectedUniversity);
+
                 
-                {universities.map((uni, index) => (
+                {universities.map((uni) => (
                   <li
-                    key={index}
+                    key={uni._id}
                     className={`lists ${selectedUniversity === uni ? "selected" : ""}`}
                     onClick={() => {
                       setSelectedUniversity(uni);
@@ -190,7 +207,8 @@ useEffect(() => {
                       handleSearch(query);
                     }}
                   >
-                    {uni}
+                    {/* {uni.name} */}
+                     {typeof uni === 'object' ? uni.name : uni}
                   </li>
                 ))
                 }
@@ -246,7 +264,7 @@ useEffect(() => {
 
                       }}
                     >
-                      {field}
+                     {field}
                     </li>
                   ))}
                 </ul>
@@ -254,6 +272,8 @@ useEffect(() => {
               )}
             </div>
           )}
+
+         
 
           {/* Topic Dropdown */}
           {selectedField && (
@@ -286,7 +306,7 @@ useEffect(() => {
                           handleSearch(query);
                       }}
                     >
-                      {topic}
+                     {topic}
                     </li>
                   ))}
                 </ul>

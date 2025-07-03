@@ -36,9 +36,22 @@ const SupervisorCard = ({ name, rating, university, field, topics, image, onClic
         <h3>{name}</h3>
         <div className="parent-paragraphs">
         <p className="rating">{renderStars(rating)}</p>
-        <p className="university">{university}</p>
-        <p className="field">{field}</p>
-        <p className="topics">{Array.isArray(topics) ? topics.join(", ") : "No topics available"}</p>
+
+        <p className="university">{typeof university === 'object' ? university?.name : university || "No university"}</p>
+        <p className="field">{typeof field === 'object' ? field?.name : field || "No field"}</p>
+        <p className="topics">
+          {topics && topics.length > 0 ? (
+            topics.map((t, index) => (
+              <span key={index} className="topic-item">{t.name}</span>
+            ))
+          ) : (
+            <span>No topic</span>
+          )}
+        </p>
+
+
+
+
 
         </div>
        
