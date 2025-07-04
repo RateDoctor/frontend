@@ -94,7 +94,8 @@ useEffect(() => {
     }
   };
 
-  const renderDoctorList = () => (
+  const renderDoctorList = () => (  
+    
     <div className="ratings-list">
       {ratings.length === 0 && <p>No ratings found.</p>}
       {ratings.map((rating) => {
@@ -184,7 +185,13 @@ useEffect(() => {
           ))}
         </div>
       ))}
+
+       <button className="save-edits-btn" onClick={handleSaveFeedback} disabled={!feedbackEditable}>
+        Save Edits
+      </button>
     </div>
+
+    
   );
 
   const renderEditor = () => (
@@ -209,11 +216,9 @@ useEffect(() => {
 
       {renderQuestionnaireSection()}
 
-      <button className="save-edits-btn" onClick={handleSaveFeedback} disabled={!feedbackEditable}>
-        Save Edits
-      </button>
+    
 
-      <button
+      {/* <button
         className="back-btn"
         onClick={() => {
           setSelectedRating(null);
@@ -221,7 +226,7 @@ useEffect(() => {
         }}
       >
         Back to List
-      </button>
+      </button> */}
     </div>
   );
 
@@ -249,6 +254,8 @@ useEffect(() => {
         <>{selectedRating ? renderEditor() : renderDoctorList()}</>
       )}
     </div>
+
+    
   );
 };
 
