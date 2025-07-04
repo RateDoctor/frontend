@@ -6,9 +6,8 @@
 
 .profile-superdrprofile {
   flex: 1;
-  /* overflow-y: auto;           */
-  padding: 1rem;
   border-radius: 1rem;
+  padding: 1rem 1rem 7rem 1rem;
 }
 
 .doctor-name-superdrprofile {

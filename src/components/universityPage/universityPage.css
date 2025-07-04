@@ -2,8 +2,9 @@
   position: relative;
   display: flex;
   height: 100vh;
-  /* overflow-y: auto; */
+  overflow-y: auto;
   flex-direction: column;
+  padding-bottom: 7rem;
 }
 
 .searching-title{
