@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from './layout/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
-import SignUp from './components/singUp/singup.jsx';
+import SingUp from './components/singUp/singup.jsx';
 import Upload from './components/uploadFile/uploadFile.jsx';
 // import Verify from './components/verify/verify.jsx'
 import Checking from './components/checking/checking.jsx';
@@ -37,7 +37,7 @@ function App() {
 
          
              <Route path="/login" element={<SignIn />} />
-             <Route path="/signUp" element={<SignUp />} />
+             <Route path="/singup" element={<SingUp />} />
          
            
 

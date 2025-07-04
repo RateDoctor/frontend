@@ -23,7 +23,7 @@ const Layout = () => {
     "/leaderboard",
     "/helpFAQ",
     "/login",
-    "/signUp",
+    "/singup",
     "/checking",
     "/Upload",
     "/forgot-password",
@@ -35,7 +35,7 @@ const Layout = () => {
   const hideFooterRoutes  = 
   [
   "/login",
-  "/signUp",
+  "/singup",
   "/Upload",
   "/checking",
   "/forgot-password",
