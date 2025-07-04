@@ -10,7 +10,7 @@ const MyRatings = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
-
+  const [editableQuestionnaire, setEditableQuestionnaire] = useState({});
   const [ratings, setRatings] = useState([]);
   const [selectedRating, setSelectedRating] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -58,9 +58,10 @@ useEffect(() => {
   }, [feedbackEditable]);
 
   const handleSelectRating = (rating) => {
-    setSelectedRating(rating);
-    setFeedback(rating.additionalFeedback || "");
-  };
+  setSelectedRating(rating);
+  setFeedback(rating.additionalFeedback || "");
+  setEditableQuestionnaire(rating.questionnaire || {});
+};
 
   const handleDeleteRating = async (ratingId) => {
     if (!window.confirm("Are you sure you want to delete this rating?")) return;
@@ -75,27 +76,30 @@ useEffect(() => {
     }
   };
 
-  const handleSaveFeedback = async () => {
-    if (!selectedRating) return;
-    try {
-      await axios.put(
-        `http://localhost:5000/api/ratings/${selectedRating._id}`,
-        { additionalFeedback: feedback },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setRatings((prev) =>
-        prev.map((r) =>
-          r._id === selectedRating._id ? { ...r, additionalFeedback: feedback } : r
-        )
-      );
-      setFeedbackEditable(false);
-    } catch (err) {
-      alert("Failed to save feedback.");
-    }
-  };
+const handleSaveFeedback = async () => {
+  if (!selectedRating) return;
+  try {
+    await axios.put(
+      `http://localhost:5000/api/ratings/${selectedRating._id}`,
+      { 
+        additionalFeedback: feedback,
+        questionnaire: editableQuestionnaire
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setRatings((prev) =>
+      prev.map((r) =>
+        r._id === selectedRating._id ? { ...r, additionalFeedback: feedback, questionnaire: editableQuestionnaire } : r
+      )
+    );
+    setFeedbackEditable(false);
+  } catch (err) {
+    alert("Failed to save feedback.");
+  }
+};
 
-  const renderDoctorList = () => (  
-    
+
+  const renderDoctorList = () => (
     <div className="ratings-list">
       {ratings.length === 0 && <p>No ratings found.</p>}
       {ratings.map((rating) => {
@@ -162,29 +166,62 @@ useEffect(() => {
       <p className="paragraph-questionnaire">
         Share your thoughts and insights by completing the questionnaire.
       </p>
-      {sections.map((section, index) => (
+    {sections.map((section, index) => {
+  // Determine if this section should have the trash icon on first textarea
+  const showTrashForFirstTextarea = 
+    section.title === "Teaching Style" ||
+    section.title === "Responsiveness" ||
+    section.title === "Mentorship";
+
+      return (
         <div key={index} className="question-block">
           <h5>{section.title}</h5>
           <p className="section-description">{section.description}</p>
-          <div className="textarea-with-icon">
+          <div className="textarea-with-trash">
             <textarea
-              placeholder={section.firstPlaceholder}
-              disabled
-              value={selectedRating?.questionnaire?.[section.title] || ""}
-            />
+            placeholder={section.firstPlaceholder}
+            value={editableQuestionnaire[section.title] || ""}
+            onChange={(e) =>
+              setEditableQuestionnaire(prev => ({
+                ...prev,
+                [section.title]: e.target.value
+              }))
+            }
+          />
+            {showTrashForFirstTextarea && (
+              <FiTrash2
+                className="trash-icon"
+                onClick={() => {
+                  // Clear the text area's value in selectedRating's questionnaire
+                  const updatedRating = { ...selectedRating };
+                  if (updatedRating.questionnaire) {
+                    updatedRating.questionnaire[section.title] = "";
+                    setSelectedRating(updatedRating);
+                  }
+                }}
+              />
+            )}
           </div>
+
           {section.questions.map((q, i) => (
             <div key={i} className="question-field">
               <p>{q}</p>
               <textarea
-                className="question-fieldParagraph"
-                disabled
-                value={selectedRating?.questionnaire?.[q] || ""}
-              />
+              className="question-fieldParagraph"
+              value={editableQuestionnaire[q] || ""}
+              onChange={(e) =>
+                setEditableQuestionnaire(prev => ({
+                  ...prev,
+                  [q]: e.target.value
+                }))
+              }
+            />
             </div>
           ))}
         </div>
-      ))}
+      );
+    })}
+
 
        <button className="save-edits-btn" onClick={handleSaveFeedback} disabled={!feedbackEditable}>
         Save Edits
@@ -254,8 +291,6 @@ useEffect(() => {
         <>{selectedRating ? renderEditor() : renderDoctorList()}</>
       )}
     </div>
-
-    
   );
 };
 
