@@ -12,11 +12,12 @@ const AddDoctor = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     doctorName: '',
-    affiliations: '',
-    background: '',
-    teaching: '',
-    supervision: '',
-    experience: '',
+    affiliations: [{ name: '', joined: '' }],
+    backgrounds:  [''],
+    teaching: [''],
+    topicIds: [], 
+    supervision: [''],
+    experience: [''],
   });
   const universityRef = useRef(null);
   const fieldRef = useRef(null);
@@ -34,7 +35,9 @@ const AddDoctor = () => {
   const [isSavingField, setIsSavingField] = useState(false);
   const [isSavingTopic, setIsSavingTopic] = useState(false);
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(true);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newBackground, setNewBackground] = useState('');
+  const [isAddingBackground, setIsAddingBackground] = useState(false);
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
@@ -115,76 +118,145 @@ useEffect(() => {
 
 
 
+const ensureTopicId = async (topicName, fieldId, index) => {
+  const topic = topicName.trim();
+  console.log(`➡️ ensureTopicId: "${topic}" for field "${fieldId}"`);
+
+  if (!topic || !fieldId) return null;
+
+  const existingTopic = topics.find(
+    (t) => t.name.toLowerCase() === topic.toLowerCase() && t.field === fieldId
+  );
+
+  if (existingTopic) {
+    return existingTopic._id;
+  }
+
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.post(
+      "http://localhost:5000/api/topics",
+      { name: capitalizeFirstLetter(topic), fieldId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const newTopic = response.data;
+    setTopics((prev) => [...prev, newTopic]);
+    return newTopic._id;
+  } catch (err) {
+    console.error(`❌ Error creating topic "${topic}":`, err.response?.data || err.message);
+    throw new Error(`Error creating topic: "${topic}". Please try again.`);
+  }
+};
 
 
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
   console.log("📨 Submitting doctor:", formData);
 
-  // Validation before proceeding
+  // Step 1: Validate university selection
   if (!formData.universityId) {
     alert("Please select or wait for university to be saved.");
     return;
   }
+
+  // Step 2: Ensure fieldOfStudyId is set using first background
+  const primaryBackground = formData.backgrounds[0]?.trim();
+  if (!primaryBackground) {
+    alert("Please enter a background and wait for it to be saved.");
+    return;
+  }
+
   if (!formData.fieldOfStudyId) {
-    alert("Please select or wait for field of study to be saved.");
-    return;
-  }
-  if (!formData.topicId && formData.teaching.trim()) {
-    alert("Please select or wait for topic to be saved.");
-    return;
+    const existingField = fields.find(
+      (f) => f.name.toLowerCase() === primaryBackground.toLowerCase()
+    );
+
+    if (existingField) {
+      formData.fieldOfStudyId = existingField._id;
+    } else {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.post(
+          "http://localhost:5000/api/fields",
+          { name: capitalizeFirstLetter(primaryBackground) },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const newField = response.data;
+        setFields((prev) => [...prev, newField]);
+        formData.fieldOfStudyId = newField._id;
+      } catch (err) {
+        console.error("❌ Error creating field on submit:", err.response?.data || err.message);
+        alert("Error creating field. Please try again.");
+        return;
+      }
+    }
   }
 
+  // Step 3: Ensure teaching topics are all saved and topicIds are filled
+let topicIds = [];
+try {
+  topicIds = await Promise.all(
+    formData.teaching.map((topic, i) => {
+      const trimmed = topic.trim();
+      if (!trimmed) return null;
 
-  if (isSavingField || isSavingTopic) {
-  alert("Please wait, saving field/topic...");
+      if (formData.topicIds[i]) return formData.topicIds[i];
+      return ensureTopicId(trimmed, formData.fieldOfStudyId, i);
+    })
+  );
+} catch (err) {
+  alert(err.message);
   return;
 }
+
+// Step 4: Validate topicIds
+const unsaved = topicIds.some((id, i) => formData.teaching[i].trim() && !id);
+if (unsaved) {
+  alert("Please select or wait for all teaching topics to be saved.");
+  return;
+}
+
+  // Step 5: Submit to backend
+  setIsSubmitting(true);
+
   const payload = {
-    name: formData.doctorName,
-    universityId: formData.universityId, // Ideally selected from UI
-    fieldOfStudyId: formData.fieldOfStudyId || null,
-    topicId: formData.topicId || null,
-    affiliations: formData.affiliations,
-    background: formData.background,
-    teaching: formData.teaching,
-    supervision: formData.supervision,
-    experience: formData.experience,
-    researchInterests: [], // optional
+  name: formData.doctorName,
+  universityId: formData.universityId,
+  fieldOfStudyId: formData.fieldOfStudyId || null,
+  affiliations: formData.affiliations,
+  background: formData.backgrounds,
+  teaching: formData.teaching.map(t => t.trim()),
+  topicIds: topicIds,
+  supervision: formData.supervision,
+  experience: formData.experience,
+  researchInterests: [],
   };
 
   const token = localStorage.getItem("authToken");
-  console.log("Token being sent:", token);
   if (!token) {
     alert("You're not logged in");
     return;
   }
 
-  setIsSavingField(true);
   try {
     const response = await axios.post("http://localhost:5000/api/doctors", payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     const newDoctor = response.data?.doctor;
-    console.log("🚀 New doctor created:", newDoctor);
-
-    setIsSavingField(false);
     if (!newDoctor || !newDoctor._id) {
-    alert("Error: created doctor ID missing.");
-    return;
+      alert("Error: created doctor ID missing.");
+      return;
     }
 
-    console.log("Navigating to rate-supervisor with ID:", newDoctor._id);
+    console.log("🚀 New doctor created:", newDoctor);
     navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
-
   } catch (err) {
     console.error("Add Doctor error:", err.response?.data || err.message);
     alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
+  } finally {
+    setIsSubmitting(false);
   }
 };
-
 
 
 
@@ -238,289 +310,363 @@ useEffect(() => {
         </label>
         </div>
 
-        <label className='top-one-line label-addDoctor'> 
-          <span className='title'>Affiliations</span>
+
+  {/* Affiliations section */}
+  <label className='top-one-line label-addDoctor'> 
+    <span className='title'>Affiliations</span>
+    <span className="plus-icon" onClick={() =>
+    setFormData({
+      ...formData,
+      affiliations: [...formData.affiliations, { name: '', joined: '' }],
+        })
+    }>
+    <FaPlus />
+  </span>
+  </label>
+
+
+  {formData.affiliations.map((aff, index) => (
+    <div key={index} className="input-with-icon" ref={universityRef}>
+      <input
+        className="inputAddDoctor"
+        placeholder="Search or type affiliation"
+        value={aff.name}
+        onChange={(e) => {
+        const updated = Array.isArray(formData.affiliations) ?
+        [...formData.affiliations] : [{ name: '', joined: '' }];
+        updated[index].name = e.target.value;
+        setFormData({ ...formData, affiliations: updated });
+      }}
+
+        onFocus={() => setIsUniversityDropdownOpen(true)}
+      />
+
+      <span className="calendar-icon" onClick={() => setShowCalendarFor(`affiliations-${index}`)}><RxCalendar /></span>
+      {showCalendarFor === `affiliations-${index}` && (
+        <div className="calendar-popup">
+          <input
+            type="date"
+            value={aff.joined}
+            onChange={(e) => {
+              const updated = [...formData.affiliations];
+              updated[index].joined = e.target.value;
+              setFormData({ ...formData, affiliations: updated });
+              setShowCalendarFor(null);
+            }}
+          />
+        </div>
+      )}
+
+      {/* dropdown for selecting university */}
+      {isUniversityDropdownOpen && (
+        <ul className="autocomplete-dropdown">
+          {universities
+            .filter((uni) =>
+              uni.name.toLowerCase().includes(aff.name.toLowerCase())
+            )
+            .map((uni) => (
+              <li
+                key={uni._id}
+                onClick={() => {
+                  const updated = [...formData.affiliations];
+                  updated[index].name = uni.name;
+                  setFormData({ ...formData, affiliations: updated, universityId: uni._id });
+                  setIsUniversityDropdownOpen(false);
+                }}
+              >
+                {uni.name}
+              </li>
+            ))}
+        </ul>
+      )}
+    </div>
+  ))}
+
+
+  {/* Background section */}
+ 
+
+
+<label className="top-one-line label-addDoctor">
+  <span className="title">Background</span>
+  <span
+    className="plus-icon"
+    onClick={() =>
+      setFormData((prev) => ({
+        ...prev,
+        backgrounds: [...prev.backgrounds, ''], // add new empty input
+      }))
+    }
+    style={{ cursor: 'pointer' }}
+  >
+    <FaPlus />
+  </span>
+</label>
+
+{/* Multiple Background Inputs */}
+{formData.backgrounds.map((bg, index) => (
+  <div key={index} className="input-with-icon">
+    <input
+      className="inputAddDoctor"
+      placeholder={
+        index === 0
+          ? "Primary field of study (auto-saved)"
+          : "Add background info"
+      }
+      value={bg}
+      onChange={(e) => {
+        const updated = [...formData.backgrounds];
+        updated[index] = e.target.value;
+        setFormData({ ...formData, backgrounds: updated });
+
+        // If editing the first one, clear fieldOfStudyId to force re-selection or creation
+        if (index === 0) {
+          setFormData((prev) => ({
+            ...prev,
+            fieldOfStudyId: '',
+          }));
+        }
+      }}
+      onKeyDown={async (e) => {
+      if (e.key === 'Enter' && index === 0 && bg.trim()) {
+        const match = fields.find(
+          (f) => f.name.toLowerCase() === bg.toLowerCase()
+        );
+
+        if (!match) {
+          try {
+            const token = localStorage.getItem("authToken");
+            const response = await axios.post(
+              "http://localhost:5000/api/fields",
+              { name: capitalizeFirstLetter(bg) },
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const newField = response.data;
+            setFields((prev) => [...prev, newField]);
+            setFormData((prev) => ({
+              ...prev,
+              fieldOfStudyId: newField._id,
+            }));
+          } catch (err) {
+            console.error("Error creating field:", err.response?.data || err.message);
+            alert("Failed to save field. Please try again.");
+          }
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            fieldOfStudyId: match._id,
+          }));
+        }
+      }
+    }}
+
+    />
+  </div>
+))}
+
+
+
+
+
+
+
+{/* Teaching section */}
+
+
+<label className='top-one-line label-addDoctor'>
+  <span className='title'>Teaching</span>
+  <span
+    className="plus-icon"
+    onClick={() =>
+      setFormData(prev => ({
+        ...prev,
+        teaching: [...prev.teaching, ''],  // add new empty teaching input
+        topicIds: [...prev.topicIds, null], // keep topicIds in sync
+      }))
+    }
+    style={{ cursor: 'pointer' }}
+  >
+    <FaPlus />
+  </span>
+</label>
+
+{formData.teaching.map((topic, index) => (
+  <div
+    key={index}
+    className="input-with-icon"
+    ref={index === formData.teaching.length - 1 ? topicRef : null}
+  >
+    <input
+      className="inputAddDoctor"
+      placeholder={index === 0 ? "Primary teaching topic (auto-saved)" : "Add teaching topic"}
+      value={topic}
+
+      onChange={e => {
+        const value = e.target.value;
+
+        setFormData(prev => {
+          const splitTopics = value
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t !== '');
+
+          if (splitTopics.length > 1) {
+            const updatedTeaching = [...prev.teaching];
+            const updatedTopicIds = [...prev.topicIds];
+
+            // Replace current index with split values
+            updatedTeaching.splice(index, 1, ...splitTopics);
+            updatedTopicIds.splice(index, 1, ...Array(splitTopics.length).fill(null));
+
+            return {
+              ...prev,
+              teaching: updatedTeaching,
+              topicIds: updatedTopicIds,
+            };
+          } else {
+            const updatedTeaching = [...prev.teaching];
+            updatedTeaching[index] = value;
+
+            const updatedTopicIds = [...prev.topicIds];
+            updatedTopicIds[index] = null;
+
+            return {
+              ...prev,
+              teaching: updatedTeaching,
+              topicIds: updatedTopicIds,
+            };
+          }
+        });
+      }}
+
+      onKeyDown={async (e) => {
+        if (e.key === 'Enter' && topic.trim()) {
+          const existingTopic = topics.find(
+            t =>
+              t.name.toLowerCase() === topic.toLowerCase() &&
+              t.field === formData.fieldOfStudyId
+          );
+
+          if (!existingTopic && formData.fieldOfStudyId) {
+            try {
+              const token = localStorage.getItem("authToken");
+              const response = await axios.post(
+                "http://localhost:5000/api/topics",
+                {
+                  name: capitalizeFirstLetter(topic),
+                  fieldId: formData.fieldOfStudyId,
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              const newTopic = response.data;
+              setTopics(prev => [...prev, newTopic]);
+
+              const updatedTopicIds = [...formData.topicIds];
+              updatedTopicIds[index] = newTopic._id;
+              setFormData(prev => ({ ...prev, topicIds: updatedTopicIds }));
+
+            } catch (err) {
+              console.error("Error creating topic:", err.response?.data || err.message);
+              alert("Failed to save teaching topic. Please try again.");
+            }
+          } else if (existingTopic) {
+            const updatedTopicIds = [...formData.topicIds];
+            updatedTopicIds[index] = existingTopic._id;
+            setFormData(prev => ({ ...prev, topicIds: updatedTopicIds }));
+          }
+        }
+      }}
+    />
+  </div>
+))}
+      {formData.teaching.filter(t => t.trim() !== '').length > 0 && (
+      <p>
+        Teaching topics: {formData.teaching
+          .filter(t => t.trim() !== '')
+          .map(t => t.trim()[0].toUpperCase() + t.trim().slice(1))
+          .join(', ')}
+      </p>
+    )}
+
+{/* Supervision section */}
+          <label className="top-one-line label-addDoctor">
+          <span className="title">Supervision</span>
           <span
             className="plus-icon"
-            onClick={() => setIsUniversityDropdownOpen(!isUniversityDropdownOpen)}
-            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              setFormData(prev => ({
+                ...prev,
+                supervision: [...prev.supervision, ''],
+              }))
+            }
           >
             <FaPlus />
           </span>
         </label>
-
-       <div className="input-with-icon" ref={universityRef}>
-        <input
-          className="inputAddDoctor"
-          name="affiliations"
-          placeholder="Search or type affiliation"
-          value={formData.affiliations}
-          onChange={(e) => {
-            const value = e.target.value;
-            setFormData({ ...formData, affiliations: value, universityId: null }); // clear ID when typing
-          }}
-        />
-        <span className="calendar-icon" onClick={() => toggleCalendar('affiliations')}><RxCalendar/></span>
-        {renderCalendar('affiliations')}
-
-        {/* Show dropdown if user is typing and matches found */}
-        
-        {isUniversityDropdownOpen && (
-        <ul className="autocomplete-dropdown">
-          {universities
-            .filter(uni =>
-              isUniversityDropdownOpen || !formData.affiliations
-                ? true
-                : uni.name.toLowerCase().includes(formData.affiliations.toLowerCase())
-            )
-            .map(uni => (
-             <li
-                key={uni._id}
-                onClick={() => {
-                  setFormData({
-                    ...formData,
-                    affiliations: uni.name,
-                    universityId: uni._id,
-                  });
-                  setIsUniversityDropdownOpen(false);
-                }}
-              >
-                {uni.name} – 
-                  {typeof uni.location === 'string'
-                    ? uni.location
-                    : `${uni.location?.city || ''}, ${uni.location?.country || ''}`} 
-                  – {uni.phone}
-              </li>
-            ))}
-          {universities.length === 0 && (
-            <li>No universities found</li>
-          )}
-        </ul>
-      )}
-      </div>
-
-      <label className='top-one-line label-addDoctor'>
-      <span className='title'>Background</span>
-      <span
-        className="plus-icon"
-        onClick={() => setIsFieldDropdownOpen(!isFieldDropdownOpen)}
-        style={{ cursor: 'pointer' }}
-      >
-        <FaPlus />
-      </span>
-    </label>
-
-    <div className="input-with-icon"  ref={fieldRef}>
-      <input
-        className="inputAddDoctor"
-        name="background"
-        placeholder="Search or type background"
-        value={formData.background}
-        onChange={(e) => {
-          const value = e.target.value;
-          setFormData({ ...formData, background: capitalizeFirstLetter(value), fieldOfStudyId: '' });
-        }}
-       onKeyDown={async (e) => {
-    if (e.key === 'Enter') {
-      const match = fields.find(
-        f => f.name.toLowerCase() === formData.background.toLowerCase()
-      );
-      if (!match && formData.background.trim()) {
-        try {
-          const token = localStorage.getItem('authToken');
-          setIsReadyToSubmit(false); 
-          const response = await axios.post(
-            'http://localhost:5000/api/fields',
-            { name: capitalizeFirstLetter(formData.background) },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          const newField = response.data;
-          setFields(prev => [...prev, newField]);
-          setFormData({ ...formData, fieldOfStudyId: newField._id });
-          setIsFieldDropdownOpen(true);
-        } catch (err) {
-          console.error('Error creating new field:', err.response?.data || err.message);
-        }
-      }
-    }
-  }}
-/>
-
-      {isFieldDropdownOpen && (
-        <ul className="autocomplete-dropdown">
-          {fields
-            .filter(field =>
-              isFieldDropdownOpen || !formData.background
-                ? true
-                : field.name.toLowerCase().includes(formData.background.toLowerCase())
-            )
-            .map(field => (
-              <li
-                key={field._id}
-                onClick={() => {
-                  setFormData({
-                    ...formData,
-                    background: field.name,
-                    fieldOfStudyId: field._id,
-                  });
-                  setIsFieldDropdownOpen(false);
-                  
-                }}
-              >
-                {field.name}
-              </li>
-            ))}
-          {fields.length === 0 && (
-            <li>No fields found</li>
-          )}
-        </ul>
-      )}
-    </div>
-
-
-       <label className='top-one-line label-addDoctor'>
-        <span className='title'>Teaching</span>
-        <span className="plus-icon" onClick={() => setIsTopicDropdownOpen(!isTopicDropdownOpen)} style={{ cursor: 'pointer' }}>
-          <FaPlus />
-        </span>
-      </label>
-    <div className="input-with-icon" ref={topicRef}>
-    <input
-      className="inputAddDoctor"
-      name="teaching"
-      placeholder="Search or type teaching topic"
-      value={formData.teaching}
-      onChange={(e) => {
-        const value = e.target.value;
-        setFormData({ ...formData, teaching: capitalizeFirstLetter(value), topicId: '' });
-      }}
-    onKeyDown={async (e) => {
-      if (e.key === 'Enter') {
-        const match = topics.find(
-          t =>
-            t.name.toLowerCase() === formData.teaching.toLowerCase() &&
-            t.field === formData.fieldOfStudyId
-        );
-
-        if (!match && formData.teaching.trim() && formData.fieldOfStudyId) {
-          try {
-            const token = localStorage.getItem("authToken");
-            const response = await axios.post(
-              "http://localhost:5000/api/topics",
-              {
-                name: capitalizeFirstLetter(formData.teaching),
-                fieldId: formData.fieldOfStudyId,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-            const newTopic = response.data;
-            setTopics(prev => [...prev, newTopic]);
-            setFormData({ ...formData, topicId: newTopic._id });
-            setIsTopicDropdownOpen(false);
-          } catch (err) {
-            console.error("Error creating topic:", err.response?.data || err.message);
-          }
-        }
-      }
-    }}
-  />
-
-  {isTopicDropdownOpen && (
-    <ul className="autocomplete-dropdown">
-      {topics
-        .filter(topic =>
-          formData.fieldOfStudyId && topic.field === formData.fieldOfStudyId &&
-          topic.name.toLowerCase().includes(formData.teaching.toLowerCase())
-        )
-        .map(topic => (
-          <li
-            key={topic._id}
-            onClick={() => {
-              setFormData({
-                ...formData,
-                teaching: topic.name,
-                topicId: topic._id,
-              });
-              setIsTopicDropdownOpen(false);
-            }}
-          >
-            {topic.name}
-          </li>
+        {formData.supervision.map((supervision, index) => (
+          <div key={index} className="input-with-icon">
+            <input
+              className="inputAddDoctor"
+              name="supervision"
+              placeholder="Add supervision"
+              value={supervision}
+              onChange={(e) => {
+                const updatedSupervision = [...formData.supervision];
+                updatedSupervision[index] = e.target.value;
+                setFormData({ ...formData, supervision: updatedSupervision });
+              }}
+            />
+          </div>
         ))}
-      {
-        formData.fieldOfStudyId &&
-        !topics.some(
-          t =>
-            t.name.toLowerCase() === formData.teaching.toLowerCase() &&
-            t.field === formData.fieldOfStudyId
-        ) && formData.teaching.trim() && (
-          <li
-            className="add-new-item"
-            onClick={async () => {
-              try {
-                const token = localStorage.getItem("authToken");
-                const response = await axios.post(
-                  "http://localhost:5000/api/topics",
-                  {
-                    name: capitalizeFirstLetter(formData.teaching),
-                    fieldId: formData.fieldOfStudyId,
-                  },
-                  {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                );
-                const newTopic = response.data;
-                setTopics(prev => [...prev, newTopic]);
-                setFormData({ ...formData, topicId: newTopic._id });
-                setIsTopicDropdownOpen(false);
-              } catch (err) {
-                console.error("Error creating topic:", err.response?.data || err.message);
-              }
-            }}
-          >
-            + Add "{capitalizeFirstLetter(formData.teaching)}"
-          </li>
-        )
-      }
-    </ul>
-  )}
-</div>
 
-        <label className='top-one-line label-addDoctor'> <span className='title'>Supervision</span> <span className="plus-icon"><FaPlus/></span></label>
-        <input
-          className="inputAddDoctor"
-          name="supervision"
-          placeholder="Text"
-          value={formData.supervision}
-          onChange={handleChange}
-        />
 
-        <label className="top-one-line label-addDoctor"> <span className='title'>Experience</span></label>
-        <div className="input-with-icon">
-          <input
-            className="inputAddDoctor"
-            name="experience"
-            placeholder="Text"
-            value={formData.experience}
-            onChange={handleChange}
-          />
-          <span className="calendar-icon" onClick={() => toggleCalendar('experience')}><RxCalendar/></span>
-          {renderCalendar('experience')}
-        </div>
+
+{/* Experience section */}
+        <label className="top-one-line label-addDoctor">
+          <span className="title">Experience</span>
+          <span className="plus-icon" onClick={() =>
+            setFormData(prev => ({
+              ...prev,
+              experience: [...prev.experience, ''],
+            }))
+          }>
+            <FaPlus />
+          </span>
+        </label>
+        {formData.experience.map((exp, index) => (
+          <div key={index} className="input-with-icon">
+            <input
+              className="inputAddDoctor"
+              name="experience"
+              placeholder="Add experience"
+              value={exp}
+              onChange={(e) => {
+                const updatedExperience = [...formData.experience];
+                updatedExperience[index] = e.target.value;
+                setFormData({ ...formData, experience: updatedExperience });
+              }}
+            />
+            <span
+              className="calendar-icon"
+              onClick={() => toggleCalendar('experience', index)}
+            >
+              <RxCalendar />
+            </span>
+            {renderCalendar('experience', index)}
+          </div>
+        ))}
 
         <p className="note">
           Before completing the profile creation process, we kindly ask you to provide an initial rating for Dr. {formData.doctorName || '[Doctor\'s Name]'}.
         </p>
         <div className='flex'>
         <button className="rate-button"  type="button" >Rate Doctor</button>
-        <button className="confirm-button"  type="button" onClick={handleSubmit}>Confirm</button>
+        {/* <button className="confirm-button"  type="button" onClick={handleSubmit}>Confirm</button> */}
+
+        <button className="confirm-button" type="button" onClick={handleSubmit} disabled={isSubmitting}>
+        {isSubmitting ? "Submitting..." : "Confirm"}
+        </button>
+
         </div>
         
 

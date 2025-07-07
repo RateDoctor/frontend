@@ -53,7 +53,7 @@ function App() {
             <Route path="/addDoctor" element={<AddDoctor />} /> 
             <Route path="/helpFAQ" element={<HelpFAQ />} /> 
             <Route path="/create-university" element={<CreateUniversity />} /> 
-            <Route path="/supervisor-dr-profile" element={<SupervisorDrProfile />} /> 
+            <Route path="/supervisor-dr-profile/:doctorId" element={<SupervisorDrProfile />} /> 
             <Route path="/university-profile" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-supervisor" element={<RateSupervisor />} /> 

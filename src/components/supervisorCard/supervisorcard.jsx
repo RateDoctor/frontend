@@ -40,14 +40,18 @@ const SupervisorCard = ({ name, rating, university, field, topics, image, onClic
         <p className="university">{typeof university === 'object' ? university?.name : university || "No university"}</p>
         <p className="field">{typeof field === 'object' ? field?.name : field || "No field"}</p>
         <p className="topics">
-          {topics && topics.length > 0 ? (
-            topics.map((t, index) => (
-              <span key={index} className="topic-item">{t.name}</span>
-            ))
+          {Array.isArray(topics) && topics.length > 0 ? (
+            topics
+              .map((t) => {
+                const topic = typeof t === "string" ? t : t.name;
+                return topic.charAt(0).toUpperCase() + topic.slice(1);
+              })
+              .join(', ')
           ) : (
             <span>No topic</span>
           )}
         </p>
+
 
 
 

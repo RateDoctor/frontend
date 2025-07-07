@@ -359,11 +359,26 @@ useEffect(() => {
     <div className="scrollable-section">
       <div className="card-grid">
         {filtered.length > 0 ? (
+          // filtered.map((sup, index) => (
+          //   // <SupervisorCard key={index} {...sup} 
+          //   // onClick={() => navigate(`/rate-supervisor?doctorId=${sup._id}`)}
+          //   // />
+
+          //   <SupervisorCard topics={sup.teaching}/>
+
+          // ))
           filtered.map((sup, index) => (
-            <SupervisorCard key={index} {...sup} 
+          <SupervisorCard
+            key={index}
+            name={sup.name}
+            rating={sup.rating}
+            university={sup.university}
+            field={sup.fieldOfStudy || sup.field}
+            topics={sup.teaching}  // or sup.topics if available
+            image={sup.image}
             onClick={() => navigate(`/rate-supervisor?doctorId=${sup._id}`)}
-            />
-          ))
+          />
+        ))
         ) : (
          <p style={{ marginTop: "1rem" }}>
           Supervisor not found.{" "}

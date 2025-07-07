@@ -44,6 +44,19 @@
     padding: 12px;
 }
 
+textarea.inputAddDoctor {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+
 /* custom-file-upload */
 
 .custom-file-upload {
