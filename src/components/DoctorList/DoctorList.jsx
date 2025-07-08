@@ -12,7 +12,7 @@ const DoctorList = ({ doctors, onSelect }) => {
           key={index}
           onClick={() => {
             if (onSelect) onSelect();
-            navigate(`/doctor/${doc.name}`);
+            navigate(`/my-ratings/${doc._id}?new=true`);
           }}
           className="lists doctor-item"
         >

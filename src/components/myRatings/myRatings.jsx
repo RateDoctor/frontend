@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiArrowLeft, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+
 import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from "./data";
@@ -18,32 +20,97 @@ const MyRatings = () => {
   const [performanceRatings, setPerformanceRatings] = useState({});
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { doctorId } = useParams();
+  const [searchParams] = useSearchParams();
+  const isNewRating = searchParams.get("new") === "true";
+
 
 
   const token = localStorage.getItem("authToken");
   const userId = localStorage.getItem("userId");
 
-  useEffect(() => {
-    const fetchRatings = async () => {
-      if (!userId || !token) {
-        setError("Missing userId or token.");
-        setLoading(false);
+  // useEffect(() => {
+  //   const fetchRatings = async () => {
+  //     if (!userId || !token) {
+  //       setError("Missing userId or token.");
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     try {
+  //       const response = await axios.get(`http://localhost:5000/api/ratings/users/${userId}/ratings`, {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       });
+  //       setRatings(response.data);
+  //     } catch (err) {
+  //       console.error("Error fetching ratings:", err);
+  //       setError("Could not load ratings.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchRatings();
+  // }, [userId, token]);
+
+
+useEffect(() => {
+  console.log("doctorId:", doctorId, "isNewRating:", isNewRating);
+
+  const fetchRatings = async () => {
+    if (!userId || !token) {
+      setError("Missing userId or token.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:5000/api/ratings/users/${userId}/ratings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const ratingsData = response.data;
+      setRatings(ratingsData);
+
+      // ✅ هنا نضيف هذا التحقق:
+      if (!doctorId) {
+        setSelectedRating(null); // إعادة تعيين التقييم المختار لعرض القائمة
         return;
       }
-      try {
-        const response = await axios.get(`http://localhost:5000/api/ratings/users/${userId}/ratings`, {
+
+      // 👇 الباقي كما هو:
+      const existingRating = ratingsData.find(r => r.doctorId._id === doctorId);
+      if (existingRating) {
+        setSelectedRating(existingRating);
+        setEditableQuestionnaire(existingRating.questionnaire || {});
+        setFeedback(existingRating.additionalFeedback || "");
+      } else {
+        const doctorRes = await axios.get(`http://localhost:5000/api/doctors/${doctorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setRatings(response.data);
-      } catch (err) {
-        console.error("Error fetching ratings:", err);
-        setError("Could not load ratings.");
-      } finally {
-        setLoading(false);
+
+        const doctor = doctorRes.data;
+
+        const newRating = {
+          _id: "new",
+          doctorId: doctor,
+          additionalFeedback: "",
+          questionnaire: {},
+          performanceRatings: {},
+        };
+
+        setSelectedRating(newRating);
       }
-    };
-    fetchRatings();
-  }, [userId, token]);
+
+    } catch (err) {
+      console.error("Error fetching ratings:", err);
+      setError("Could not load ratings.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRatings();
+}, [userId, token, doctorId, isNewRating]);
+
 
   useEffect(() => {
     document.body.classList.toggle("no-scroll", feedbackEditable);
@@ -76,28 +143,47 @@ const handleSaveFeedback = async () => {
   setIsSaving(true); // Show loading
 
   try {
-    await axios.put(
-      `http://localhost:5000/api/ratings/${selectedRating._id}`,
-      {
-        additionalFeedback: feedback,
-        questionnaire: editableQuestionnaire,
-        performanceRatings: performanceRatings,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    if (selectedRating._id === "new") {
+      // إنشاء تقييم جديد
+      const response = await axios.post(
+        `http://localhost:5000/api/ratings`,
+        {
+          doctorId: selectedRating.doctorId._id, // لازم ترسل معرف الدكتور
+          additionalFeedback: feedback,
+          questionnaire: editableQuestionnaire,
+          performanceRatings: performanceRatings,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    setRatings((prev) =>
-      prev.map((r) =>
-        r._id === selectedRating._id
-          ? {
-              ...r,
-              additionalFeedback: feedback,
-              questionnaire: editableQuestionnaire,
-              performanceRatings: performanceRatings,
-            }
-          : r
-      )
-    );
+      // أضف التقييم الجديد للقائمة
+      setRatings((prev) => [...prev, response.data]);
+
+    } else {
+      // تعديل تقييم موجود
+      await axios.put(
+        `http://localhost:5000/api/ratings/${selectedRating._id}`,
+        {
+          additionalFeedback: feedback,
+          questionnaire: editableQuestionnaire,
+          performanceRatings: performanceRatings,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setRatings((prev) =>
+        prev.map((r) =>
+          r._id === selectedRating._id
+            ? {
+                ...r,
+                additionalFeedback: feedback,
+                questionnaire: editableQuestionnaire,
+                performanceRatings: performanceRatings,
+              }
+            : r
+        )
+      );
+    }
 
     setFeedbackEditable(false);
     setShowSuccessPopup(true);
@@ -115,25 +201,118 @@ const handleSaveFeedback = async () => {
 };
 
 
- const renderDoctorList = () => (
+
+// const handleSaveFeedback = async () => {
+//   if (!selectedRating) return;
+
+//   setIsSaving(true); // Show loading
+
+//   try {
+//     await axios.put(
+//       `http://localhost:5000/api/ratings/${selectedRating._id}`,
+//       {
+//         additionalFeedback: feedback,
+//         questionnaire: editableQuestionnaire,
+//         performanceRatings: performanceRatings,
+//       },
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+
+//     setRatings((prev) =>
+//       prev.map((r) =>
+//         r._id === selectedRating._id
+//           ? {
+//               ...r,
+//               additionalFeedback: feedback,
+//               questionnaire: editableQuestionnaire,
+//               performanceRatings: performanceRatings,
+//             }
+//           : r
+//       )
+//     );
+
+//     setFeedbackEditable(false);
+//     setShowSuccessPopup(true);
+
+//     setTimeout(() => {
+//       setShowSuccessPopup(false);
+//       setSelectedRating(null); // Go back to list
+//       setIsSaving(false);      // Hide loading
+//     }, 1500);
+//   } catch (err) {
+//     console.error("Failed to save feedback:", err);
+//     alert("Failed to save feedback.");
+//     setIsSaving(false); // Stop loading
+//   }
+// };
+
+
+//  const renderDoctorList = () => (
+//   <div className="ratings-list">
+//     {ratings.length === 0 && <p>No ratings found.</p>}
+//     {ratings.map((rating) => {
+//       const doctor = rating.doctorId;
+//       return (
+//         <div
+//           key={rating._id}
+//           className="ratings-item"
+//           onClick={() => handleSelectRating(rating)}
+//         >
+//           {/* {doctor?.profileImage?.fileUrl && (
+//             <img
+//                 src={doctor.profileImage.fileUrl || null} 
+//                 alt={doctor.name} 
+//               className="doctor-img"
+//             />
+//           )} */}
+
+//           <img
+//           src={doctor?.profileImage?.fileUrl || "/default-avatar.png"}
+//           alt={doctor?.name || "Doctor"}
+//           className="doctor-img"
+//         />
+
+//           <span className="doctor-name">{doctor?.name}</span>
+//           <FiTrash2
+//             className="delete-icon"
+//             onClick={(e) => {
+//               e.stopPropagation();
+//               handleDeleteRating(rating._id);
+//             }}
+//           />
+//           <hr />
+//         </div>
+//       );
+//     })}
+//   </div>
+// );
+
+const renderDoctorList = () => (
   <div className="ratings-list">
     {ratings.length === 0 && <p>No ratings found.</p>}
     {ratings.map((rating) => {
       const doctor = rating.doctorId;
+      if (!doctor) return null; // حماية لو doctor غير موجود
       return (
         <div
           key={rating._id}
           className="ratings-item"
           onClick={() => handleSelectRating(rating)}
         >
-          {doctor?.profileImage?.fileUrl && (
+          {doctor.profileImage?.fileUrl ? (
             <img
               src={doctor.profileImage.fileUrl}
               alt={doctor.name}
               className="doctor-img"
             />
+          ) : (
+            <img
+              src="/default-avatar.png"
+              alt="Default avatar"
+              className="doctor-img"
+            />
           )}
-          <span className="doctor-name">{doctor?.name}</span>
+          <span className="doctor-name">{doctor.name}</span>
           <FiTrash2
             className="delete-icon"
             onClick={(e) => {
@@ -147,6 +326,7 @@ const handleSaveFeedback = async () => {
     })}
   </div>
 );
+
 
 // setTimeout(() => {
 //   setSelectedRating(null);
@@ -273,27 +453,32 @@ const handleSaveFeedback = async () => {
     </div>
   );
 
-  return (
-    <div className="ratings-container">
-      <div className="ratings-header">
-        <FiArrowLeft
-          className="back-icon"
-          onClick={() => {
-            if (selectedRating) {
-              setSelectedRating(null);
-              setFeedbackEditable(false);
-            } else {
-              navigate(-1);
-            }
-          }}
-        />
-        <h2>My Ratings</h2>
-      </div>
-      {loading && <p>Loading ratings...</p>}
-      {error && <p className="error">{error}</p>}
-      {!loading && !error && (selectedRating ? renderEditor() : renderDoctorList())}
+    return (
+  <div className="ratings-container">
+    <div className="ratings-header">
+      <FiArrowLeft
+        className="back-icon"
+        onClick={() => {
+          if (selectedRating) {
+            setSelectedRating(null);
+            setFeedbackEditable(false);
+          } else {
+            navigate(-1);
+          }
+        }}
+      />
+      <h2>My Ratings</h2>
+    </div>
 
-        {/* ✅ Loading + Success popup should be here */}
+    {loading && <p>Loading ratings...</p>}
+    {error && <p className="error">{error}</p>}
+
+    {/* ✅ This is the main conditional rendering block */}
+    {!loading && !error && (
+      selectedRating ? renderEditor() : renderDoctorList()
+    )}
+
+    {/* ✅ Saving and Success Popups */}
     {isSaving && (
       <div className="popup-overlay">
         <div className="popup-box">
@@ -311,8 +496,10 @@ const handleSaveFeedback = async () => {
         </div>
       </div>
     )}
-    </div>
-  );
+  </div>
+);
+
+  
 };
 
 export default MyRatings;

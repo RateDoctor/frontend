@@ -1,8 +1,20 @@
 import React from "react";
-
 import './supervisorcard.css'
+import { useNavigate } from "react-router-dom";
 
-const SupervisorCard = ({ name, rating, university, field, topics, image, onClick }) => {
+
+const SupervisorCard = ({ doctorId, name, rating, university, field, topics, image }) => {
+  const navigate = useNavigate();
+
+   const handleCardClick = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role === "supervisor") {
+    navigate(`/supervisor-dr-profile/${doctorId}`);
+  } else {
+    navigate(`/my-ratings/${doctorId}`);
+  }
+};
+
   const renderStars = (rating) => {
 
     if (typeof rating !== "number" || isNaN(rating)) {
@@ -29,36 +41,30 @@ const SupervisorCard = ({ name, rating, university, field, topics, image, onClic
     );
   };
 
-  return (
-    <div className="supervisor-card"  onClick={onClick}>
-      <img src={image} alt={name} className="doctor-img" />
+   return (
+    <div className="supervisor-card" onClick={handleCardClick}>
+      {/* <img src={image} alt={name} className="doctor-img" /> */}
+      <img
+        src={image || "/default-avatar.png"}
+        alt={name}
+        className="doctor-img"
+      />
       <div className="info">
         <h3>{name}</h3>
         <div className="parent-paragraphs">
-        <p className="rating">{renderStars(rating)}</p>
-
-        <p className="university">{typeof university === 'object' ? university?.name : university || "No university"}</p>
-        <p className="field">{typeof field === 'object' ? field?.name : field || "No field"}</p>
-        <p className="topics">
-          {Array.isArray(topics) && topics.length > 0 ? (
-            topics
-              .map((t) => {
-                const topic = typeof t === "string" ? t : t.name;
-                return topic.charAt(0).toUpperCase() + topic.slice(1);
-              })
-              .join(', ')
-          ) : (
-            <span>No topic</span>
-          )}
-        </p>
-
-
-
-
-
-
+          <p className="rating">{renderStars(rating)}</p>
+          <p className="university">{typeof university === 'object' ? university?.name : university || "No university"}</p>
+          <p className="field">{typeof field === 'object' ? field?.name : field || "No field"}</p>
+          <p className="topics">
+            {Array.isArray(topics) && topics.length > 0
+              ? topics.map(t => {
+                  const topic = typeof t === "string" ? t : t.name;
+                  return topic.charAt(0).toUpperCase() + topic.slice(1);
+                }).join(", ")
+              : <span>No topic</span>
+            }
+          </p>
         </div>
-       
       </div>
     </div>
   );

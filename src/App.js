@@ -62,8 +62,9 @@ function App() {
             <Route path="/settings/change-password" element={<ChangePassword />} />
             <Route path="/saved-doctors" element={<SavedDoctors />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
             <Route path="/my-ratings" element={<MyRatings />} />
-            <Route path="/edit-rating/:id" element={<EditRating />} />
+            <Route path="/edit-rating/:doctorId" element={<EditRating />} />
             {/* <Route path="/results" element={<SearchResults />} /> */}
           </Route>
          </Route>

@@ -118,6 +118,32 @@ const normalizeDoctorData = (doctor) => {
 
 
 
+const handleDoctorClick = async (doctorId) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user?.role === "supervisor") {
+    navigate(`/supervisor-dr-profile/${doctorId}`);
+    return;
+  }
+
+  try {
+    const res = await axios.get(`http://localhost:5000/api/ratings/users/${user._id}/ratings`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
+    });
+
+    const existingRating = res.data.find(r => r.doctorId._id === doctorId);
+
+    if (existingRating) {
+      navigate(`/my-ratings/${existingRating.doctorId._id}`);
+    } else {
+      navigate(`/my-ratings/${doctorId}?new=true`);
+    }
+  } catch (error) {
+    console.error("Error checking existing rating", error);
+    navigate(`/my-ratings/${doctorId}?new=true`);
+  }
+};
+
+
 useEffect(() => {
   const fetchDoctors = async () => {
     try {
@@ -323,7 +349,7 @@ useEffect(() => {
 
 
           {/* Filtered search results */}
-        {listViewResults.length > 0 ? (
+        {/* {listViewResults.length > 0 ? (
 
         <DoctorList 
           doctors={listViewResults}
@@ -331,7 +357,23 @@ useEffect(() => {
             setIsSearchFocused(false);
             navigate(`/rate-supervisor?doctorId=${doctor._id}`);
           }}
+        /> */}
+
+        {listViewResults.length > 0 && JSON.parse(localStorage.getItem("user"))?.role === "supervisor" ? (
+        <DoctorList 
+          doctors={listViewResults}
+          onDoctorClick={(doctor) => {
+            setIsSearchFocused(false);
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (user?.role === "supervisor") {
+              navigate(`/supervisor-dr-profile/${doctor._id}`);
+            } else {
+              navigate(`/my-ratings/${doctor._id}`);
+            }
+          }}
         />
+  
+
 
 
         ) : (
@@ -370,14 +412,17 @@ useEffect(() => {
           filtered.map((sup, index) => (
           <SupervisorCard
             key={index}
+            doctorId={sup._id}        // ✅ Add this line
             name={sup.name}
             rating={sup.rating}
             university={sup.university}
             field={sup.fieldOfStudy || sup.field}
-            topics={sup.teaching}  // or sup.topics if available
+            topics={sup.teaching}     // or sup.topics
             image={sup.image}
-            onClick={() => navigate(`/rate-supervisor?doctorId=${sup._id}`)}
+            onClick={() => handleDoctorClick(sup._id)}
           />
+
+
         ))
         ) : (
          <p style={{ marginTop: "1rem" }}>
