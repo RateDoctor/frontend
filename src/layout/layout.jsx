@@ -42,14 +42,18 @@ const Layout = () => {
   "/Welcome",
   "/logout",
   "/welcome/*",
+  "/my-ratings/*"
   ]
   
 
 const shouldHideDefaultNavbar =
-  location.pathname.startsWith("/welcome") || hideNavbarRoutes.includes(location.pathname);
+  location.pathname.startsWith("/welcome") ||
+  hideNavbarRoutes.some(route => location.pathname.startsWith(route));
 
 const shouldHideDefaultFooter =
-  location.pathname.startsWith("/welcome") || hideFooterRoutes.includes(location.pathname);
+  location.pathname.startsWith("/welcome") ||
+  hideFooterRoutes.some(route => location.pathname.startsWith(route));
+
 
   return (
     <div className="app">

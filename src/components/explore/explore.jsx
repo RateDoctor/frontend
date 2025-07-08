@@ -124,6 +124,7 @@ const handleDoctorClick = async (doctorId) => {
     navigate(`/supervisor-dr-profile/${doctorId}`);
     return;
   }
+console.log("Sending token:", localStorage.getItem("authToken"));
 
   try {
     const res = await axios.get(`http://localhost:5000/api/ratings/users/${user._id}/ratings`, {
