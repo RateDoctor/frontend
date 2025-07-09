@@ -1,13 +1,31 @@
 import React from "react";
 import './supervisorcard.css'
 import { useNavigate } from "react-router-dom";
+import { faUserPen } from "@fortawesome/free-solid-svg-icons";
+import female from "../../imgs/female.svg";
+import man from "../../imgs/man-ezgif.com-gif-maker.svg";
+import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 
 
-const SupervisorCard = ({ doctorId, name, rating, university, field, topics, image }) => {
-  const navigate = useNavigate();
+const SupervisorCard = ({ doctorId, name, rating, university, field, topics, image, gender }) => {
+const navigate = useNavigate();
 
-   const handleCardClick = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+const getAvatar = () => {
+  console.log("Gender:", gender, "Image:", image);
+  if (image) return image;
+
+  if (gender === "female" || gender === "woman") {
+    return female;
+  } else if (gender === "male" || gender === "man") {
+    return man;
+  } else {
+    return defaultAvatar;
+  }
+};
+
+
+const handleCardClick = () => {
+const user = JSON.parse(localStorage.getItem("user"));
   if (user?.role === "supervisor") {
     navigate(`/supervisor-dr-profile/${doctorId}`);
   } else {
@@ -45,7 +63,7 @@ const SupervisorCard = ({ doctorId, name, rating, university, field, topics, ima
     <div className="supervisor-card" onClick={handleCardClick}>
       {/* <img src={image} alt={name} className="doctor-img" /> */}
       <img
-        src={image || "/default-avatar.png"}
+        src={getAvatar()}
         alt={name}
         className="doctor-img"
       />

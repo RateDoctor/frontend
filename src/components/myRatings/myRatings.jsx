@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import { FiArrowLeft, FiTrash2, FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useParams, useSearchParams } from "react-router-dom";
-
+import female from "../../imgs/female.svg";
+import man from "../../imgs/man-ezgif.com-gif-maker.svg";
+import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from "./data";
 import "./myRatings.css";
+
 
 const MyRatings = () => {
   const navigate = useNavigate();
@@ -30,7 +33,21 @@ console.log("doctorId:", doctorId);
   const userId = localStorage.getItem("userId");
 
 
+const getAvatarForDoctor = (doctor) => {
+  if (!doctor) return defaultAvatar;
 
+  if (doctor.profileImage && doctor.profileImage.fileUrl) {
+    return doctor.profileImage.fileUrl;
+  }
+
+  if (doctor.gender === "female" || doctor.gender === "woman") {
+    return female;
+  } else if (doctor.gender === "male" || doctor.gender === "man") {
+    return man;
+  }
+
+  return defaultAvatar;
+};
 
 useEffect(() => {
   const fetchRatings = async () => {
@@ -42,36 +59,72 @@ useEffect(() => {
 
     try {
       const response = await axios.get(`http://localhost:5000/api/ratings/users/${userId}/ratings`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {   
+          Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache"
+        },
       });
 
       const ratingsData = response.data;
-      setRatings(ratingsData);
-      console.log("Fetched ratings data:", ratingsData);
+
+      // Hydrate and normalize doctor data in one step
+      const hydratedAndNormalizedRatings = await Promise.all(
+        ratingsData.map(async (rating) => {
+          let doctor = rating.doctorId;
+
+          if (typeof doctor === "string" || !doctor?.name) {
+            try {
+              const res = await axios.get(
+                `http://localhost:5000/api/doctors/${doctor}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+              );
+              doctor = res.data.doctor;
+            } catch (err) {
+              console.warn("Failed to fetch doctor:", doctor, err);
+              doctor = { name: "Unknown Doctor", _id: doctor };
+            }
+          }
+
+          // Ensure valid doctor name fallback
+          if (!doctor.name || typeof doctor.name !== "string" || doctor.name.trim() === "") {
+            doctor.name = "Unnamed Doctor";
+          }
+
+          return { ...rating, doctorId: doctor };
+        })
+      );
+
+      setRatings(hydratedAndNormalizedRatings);
 
       if (!doctorId) {
         setSelectedRating(null);
+        setLoading(false);
         return;
       }
 
-      const existingRating = ratingsData.find((r) => {
+      // Find existing rating with matching doctorId
+      const existingRating = hydratedAndNormalizedRatings.find((r) => {
         const docId = r.doctorId?._id || r.doctorId;
-        console.log("Comparing rating doctorId:", docId, "with URL doctorId:", doctorId);
         return String(docId) === String(doctorId);
       });
 
-      console.log("existingRating after find:", existingRating);
-
-     if (existingRating) {
-      setSelectedRating(existingRating);
-      setEditableQuestionnaire(existingRating.questionnaire || {});
-      setFeedback(existingRating.additionalFeedback || "");
-    }  else {
+      if (existingRating) {
+        setSelectedRating(existingRating);
+        setEditableQuestionnaire(existingRating.questionnaire || {});
+        setFeedback(existingRating.additionalFeedback || "");
+        setPerformanceRatings({
+          communication: existingRating.communication,
+          support: existingRating.support,
+          guidance: existingRating.guidance,
+          availability: existingRating.availability,
+        });
+      } else {
+        // If no existing rating but doctorId is present, create a new one for editing
         const doctorRes = await axios.get(`http://localhost:5000/api/doctors/${doctorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const doctor = doctorRes.data.doctor;
-        console.log("Fetched doctor for new rating:", doctor);
         const newRating = {
           _id: "new",
           doctorId: doctor,
@@ -79,7 +132,6 @@ useEffect(() => {
           questionnaire: {},
           performanceRatings: {},
         };
-
         setSelectedRating(newRating);
       }
     } catch (err) {
@@ -95,15 +147,22 @@ useEffect(() => {
 
 
 
+
   useEffect(() => {
     document.body.classList.toggle("no-scroll", feedbackEditable);
     return () => document.body.classList.remove("no-scroll");
   }, [feedbackEditable]);
 
-  const handleSelectRating = (rating) => {
+    const handleSelectRating = (rating) => {
     setSelectedRating(rating);
     setEditableQuestionnaire(rating.questionnaire || {});
     setFeedback(rating.additionalFeedback || "");
+    setPerformanceRatings({
+      communication: rating.communication,
+      support: rating.support,
+      guidance: rating.guidance,
+      availability: rating.availability,
+    });
   };
 
   const handleDeleteRating = async (ratingId) => {
@@ -120,50 +179,141 @@ useEffect(() => {
     }
   };
 
-  const handleSaveFeedback = async () => {
+  // const handleSaveFeedback = async () => {
+  // if (!selectedRating) return;
+
+  // setIsSaving(true); // Show loading
+
+  // try {
+  //   if (selectedRating._id === "new") {
+  //     const response = await axios.post(
+  //       `http://localhost:5000/api/ratings`,
+  //       {
+  //           doctorId: selectedRating.doctorId._id,
+  //           communication: performanceRatings.communication,  // ✅ must be like "Excellent"
+  //           support: performanceRatings.support,
+  //           guidance: performanceRatings.guidance,
+  //           availability: performanceRatings.availability,
+  //           additionalFeedback: feedback,
+  //           questionnaire: editableQuestionnaire,
+  //       },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+
+  //     console.log("Submitting rating:", {
+  //     doctorId: selectedRating.doctorId._id,
+  //     ...performanceRatings,
+  //     additionalFeedback: feedback,
+  //     questionnaire: editableQuestionnaire,
+  //   });
+
+
+  //     setRatings((prev) => [...prev, response.data]);
+
+  //   } else {
+  //     await axios.put(
+  //       `http://localhost:5000/api/ratings/${selectedRating._id}`,
+  //       {
+  //         additionalFeedback: feedback,
+  //         questionnaire: editableQuestionnaire,
+  //         performanceRatings: performanceRatings,
+  //       },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+
+  //     setRatings((prev) =>
+  //       prev.map((r) =>
+  //         r._id === selectedRating._id
+  //           ? {
+  //               ...r,
+  //               additionalFeedback: feedback,
+  //               questionnaire: editableQuestionnaire,
+  //               performanceRatings: performanceRatings,
+  //             }
+  //           : r
+  //       )
+  //     );
+  //   }
+
+  //   setFeedbackEditable(false);
+  //   setShowSuccessPopup(true);
+
+  //   setTimeout(() => {
+  //     setShowSuccessPopup(false);
+  //     setSelectedRating(null); // Go back to list
+  //     setIsSaving(false);      // Hide loading
+  //   }, 1500);
+  // } catch (err) {
+  //   console.error("Failed to save feedback:", err);
+  //   alert("Failed to save feedback.");
+  //   setIsSaving(false); // Stop loading
+  // }
+  // };
+
+const handleSaveFeedback = async () => {
   if (!selectedRating) return;
 
   setIsSaving(true); // Show loading
 
   try {
     if (selectedRating._id === "new") {
-      // إنشاء تقييم جديد
       const response = await axios.post(
         `http://localhost:5000/api/ratings`,
         {
-          doctorId: selectedRating.doctorId._id, // لازم ترسل معرف الدكتور
+          doctorId: selectedRating.doctorId._id,
+          communication: performanceRatings.communication,
+          support: performanceRatings.support,
+          guidance: performanceRatings.guidance,
+          availability: performanceRatings.availability,
           additionalFeedback: feedback,
           questionnaire: editableQuestionnaire,
-          performanceRatings: performanceRatings,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // أضف التقييم الجديد للقائمة
-      setRatings((prev) => [...prev, response.data]);
+      let newRating = response.data;
 
+      // Hydrate doctor info if needed
+      if (typeof newRating.doctorId === "string") {
+        try {
+          const doctorRes = await axios.get(
+            `http://localhost:5000/api/doctors/${newRating.doctorId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          newRating.doctorId = doctorRes.data.doctor;
+          if (!newRating.doctorId.name) newRating.doctorId.name = "Unnamed Doctor";
+        } catch {
+          newRating.doctorId = { name: "Unknown Doctor", _id: newRating.doctorId };
+        }
+      }
+
+      setRatings((prev) => [...prev, newRating]);
+      setSelectedRating(newRating);
     } else {
-      // تعديل تقييم موجود
+      // Update existing rating
       await axios.put(
         `http://localhost:5000/api/ratings/${selectedRating._id}`,
         {
           additionalFeedback: feedback,
           questionnaire: editableQuestionnaire,
-          performanceRatings: performanceRatings,
+          performanceRatings,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // ✅ Update local state immediately
+      const updatedRating = {
+        ...selectedRating,
+        additionalFeedback: feedback,
+        questionnaire: editableQuestionnaire,
+        performanceRatings,
+      };
+
+      setSelectedRating(updatedRating);
+
       setRatings((prev) =>
         prev.map((r) =>
-          r._id === selectedRating._id
-            ? {
-                ...r,
-                additionalFeedback: feedback,
-                questionnaire: editableQuestionnaire,
-                performanceRatings: performanceRatings,
-              }
-            : r
+          r._id === selectedRating._id ? updatedRating : r
         )
       );
     }
@@ -173,45 +323,105 @@ useEffect(() => {
 
     setTimeout(() => {
       setShowSuccessPopup(false);
-      setSelectedRating(null); // Go back to list
-      setIsSaving(false);      // Hide loading
+      // setSelectedRating(null); // ❌ Remove this if you want to stay on the same view
+      setIsSaving(false);
     }, 1500);
   } catch (err) {
     console.error("Failed to save feedback:", err);
     alert("Failed to save feedback.");
-    setIsSaving(false); // Stop loading
+    setIsSaving(false);
   }
-  };
+};
 
 
+const renderDoctorList = () => {
 
+
+  console.log("Ratings in renderDoctorList:", ratings);
+console.log("Ratings with missing doctor or name:", ratings.filter(r => !r.doctorId || !r.doctorId.name));
+
+  const anyDoctorMissing = ratings.some(
+    (r) => !r.doctorId || typeof r.doctorId.name !== "string" || r.doctorId.name.trim() === ""
+  );
+
+  if (anyDoctorMissing) {
+    return (
+      <div className="ratings-loading-center">
+        <div className="spinner" />
+        <p>Loading doctors...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="ratings-list">
+      {ratings.length === 0 && <p>No ratings found.</p>}
+      {ratings.map((rating) => {
+        const doctor = rating.doctorId;
+        return (
+          <div
+            key={rating._id}
+            className="ratings-item"
+            onClick={() => handleSelectRating(rating)}
+          >
+            <img
+              src={getAvatarForDoctor(doctor)}
+              alt={doctor.name || "Doctor Avatar"}
+              className="doctor-img"
+            />
+            <span className="doctor-name">
+              {doctor.name}
+            </span>
+            <FiTrash2
+              className="delete-icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteRating(rating._id);
+              }}
+            />
+            <hr />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 // const renderDoctorList = () => (
 //   <div className="ratings-list">
 //     {ratings.length === 0 && <p>No ratings found.</p>}
 //     {ratings.map((rating) => {
 //       const doctor = rating.doctorId;
-//       if (!doctor) return null;  
+//       console.log("Doctor in list:", doctor); // 🔍 Log here
+
+//        // ✅ Skip rendering until doctor data is fully loaded
+//      if (!doctor || !doctor.name) {
+//         return (
+//           <div className="ratings-item loading">
+//             <div className="doctor-img skeleton-circle" />
+//             <div className="doctor-name skeleton-text" />
+//           </div>
+//         );
+//       }
+
 //       return (
 //         <div
 //           key={rating._id}
 //           className="ratings-item"
 //           onClick={() => handleSelectRating(rating)}
 //         >
-//           {doctor.profileImage?.fileUrl ? (
-//             <img
-//               src={doctor.profileImage.fileUrl}
-//               alt={doctor.name}
-//               className="doctor-img"
-//             />
-//           ) : (
-//             <img
-//               src="/default-avatar.png"
-//               alt="Default avatar"
-//               className="doctor-img"
-//             />
-//           )}
-//          <span className="doctor-name">{doctor?.name || "Unnamed Doctor"}</span>
+//           <img
+//             // src={doctor.profileImage?.fileUrl || "/default-avatar.png"}
+//             src={getAvatar()}
+//             alt={doctor.name || "Doctor Avatar"}
+//             className="doctor-img"
+//           />
+
+
+//           <span className="doctor-name">
+//             {doctor.name ? doctor.name : "Loading..."}
+//           </span>
+
 
 
 //           <FiTrash2
@@ -227,49 +437,6 @@ useEffect(() => {
 //     })}
 //   </div>
 // );
-
-
-const renderDoctorList = () => (
-  <div className="ratings-list">
-    {ratings.length === 0 && <p>No ratings found.</p>}
-    {ratings.map((rating) => {
-      const doctor = rating.doctorId;
-      console.log("Doctor in list:", doctor); // 🔍 Log here
-
-      if (!doctor) return null;
-
-      return (
-        <div
-          key={rating._id}
-          className="ratings-item"
-          onClick={() => handleSelectRating(rating)}
-        >
-          <img
-            src={doctor.profileImage?.fileUrl || "/default-avatar.png"}
-            alt={doctor.name || "Doctor Avatar"}
-            className="doctor-img"
-          />
-
-
-          <span className="doctor-name">
-          {doctor.name || "Unnamed Doctor"}
-          </span>
-
-
-
-          <FiTrash2
-            className="delete-icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeleteRating(rating._id);
-            }}
-          />
-          <hr />
-        </div>
-      );
-    })}
-  </div>
-);
 
 
 
@@ -367,17 +534,23 @@ const renderDoctorList = () => (
   );
 
   const renderEditor = () => (
-    <div className="edit-section-scrollable edit-section">
+    <div className="edit-section-scrollable edit-section" >
       <div className="doctor-info">
         <div className="doctor-infoBox">
           <img
-            src={selectedRating?.doctorId?.profileImage?.fileUrl || "/default-avatar.png"}
-            alt={selectedRating?.doctorId?.name}
+            // src={selectedRating?.doctorId?.profileImage?.fileUrl || "/default-avatar.png"}
+            src={getAvatarForDoctor(selectedRating?.doctorId)}
+            alt={selectedRating?.doctorId?.name || "Doctor Avatar"}
             className="doctor-img"
           />
           <h3>{selectedRating?.doctorId?.name || "Unnamed Doctor"}</h3>
         </div>
-        <button className="delete-btn" onClick={() => handleDeleteRating(selectedRating._id)}>
+        <button className="delete-btn" 
+            onClick={(e) => {
+            e.stopPropagation();
+            handleDeleteRating(selectedRating._id); 
+            }}
+          >
           Delete
         </button>
         
