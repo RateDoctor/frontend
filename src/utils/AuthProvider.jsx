@@ -13,6 +13,9 @@ export const AuthProvider = ({ children }) => {
       const savedToken = localStorage.getItem("authToken");
       const savedRole = localStorage.getItem("userRole");
 
+        console.log("Loaded token from localStorage:", savedToken);
+        console.log("Loaded role from localStorage:", savedRole);
+
       if (savedToken && savedRole) {
         setToken(savedToken);
         setRole(savedRole);
@@ -23,11 +26,10 @@ export const AuthProvider = ({ children }) => {
 
 
 const login = (userToken, userRole) => {
-  setToken(userToken);
-  setRole(userRole);
-
   localStorage.setItem("authToken", userToken);
   localStorage.setItem("userRole", userRole);
+  setToken(userToken);     // ✅ must be present
+  setRole(userRole);       // ✅ must be present
 };
 
 

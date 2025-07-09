@@ -15,7 +15,15 @@ const Login = () => {
   const [visible, setVisible] = useState(false);
   const { login } = useAuth();
 
+  const goToSignup = () => {
+    navigate("/singup");
+  };
 
+ const goToChangePassword = (e) => {
+  e.preventDefault();
+  console.log("Navigate called");
+  navigate("/");
+};
 
   const handleChange = (e) => {
   const { name, value } = e.target;
@@ -157,8 +165,12 @@ const handleSubmit = async (e) => {
           </div>
 
              <div className="register-login-box">
-             <h1 className="signup-label">Sign Up</h1>
-             <h3 className="forget-password">Forgot Password</h3>
+            <h1 className="signup-label" onClick={goToSignup}>
+              Sign Up
+            </h1>
+
+             
+             <h3 className="forget-password" onClick={goToChangePassword}>Forgot Password</h3>
              </div>
 
 

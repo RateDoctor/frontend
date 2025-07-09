@@ -1,65 +1,99 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { FiArrowLeft } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthProvider";
+import "./changeEmail.css";
 
 const ChangeEmail = () => {
+  const [enteredCurrentEmail, setEnteredCurrentEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
-  const { token } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { token, user } = useAuth(); // Assuming `user.email` is available
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (newEmail !== confirmEmail) {
-      alert("New email and confirmation email do not match.");
-      return;
+      return alert("New email and confirmation do not match.");
     }
 
     try {
-      await axios.put(
+      setLoading(true);
+      const response = await axios.put(
         "http://localhost:5000/api/auth/change-email",
         { newEmail },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Email updated. Please verify the new email.");
+
+      console.log("Token being sent:", token);
+      alert(response.data.message || "Email updated. Check your inbox.");
       setNewEmail("");
       setConfirmEmail("");
     } catch (err) {
-      if (err.response?.status === 409) {
-        alert("This email is already taken. Please use another one.");
+      const status = err.response?.status;
+      if (status === 409) {
+        alert("This email is already in use.");
+      } else if (status === 400) {
+        alert(err.response?.data?.error || "Invalid input.");
       } else {
-        alert(err.response?.data?.error || "Update failed.");
+        alert("Something went wrong. Please try again.");
       }
-      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 400, margin: "auto" }}>
-      <h3>Change Email</h3>
+    <div className="change-email-container">
+      <div className="change-email-header">
+        <FiArrowLeft className="icon" onClick={() => navigate("/settings")} />
+        <span>Settings</span>
+      </div>
 
-      <label>New Email Address</label>
-      <input
-        type="email"
-        value={newEmail}
-        onChange={(e) => setNewEmail(e.target.value)}
-        placeholder="New email"
-        required
-      />
+      <h2 className="section-title">Change Email Address</h2>
 
-      <label>Confirm New Email Address</label>
-      <input
-        type="email"
-        value={confirmEmail}
-        onChange={(e) => setConfirmEmail(e.target.value)}
-        placeholder="Confirm new email"
-        required
-      />
+      <form className="email-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Current Email Address</label>
+          <input
+            type="email"
+            value={enteredCurrentEmail}
+            onChange={(e) => setEnteredCurrentEmail(e.target.value)}
+            placeholder="Enter your current email"
+            required
+          />
+        </div>
 
-      <button type="submit" style={{ marginTop: 10 }}>
-        Update Email
-      </button>
-    </form>
+        <div className="form-group">
+          <label>New Email Address</label>
+          <input
+            type="email"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder="Enter new email"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Confirm New Email Address</label>
+          <input
+            type="email"
+            value={confirmEmail}
+            onChange={(e) => setConfirmEmail(e.target.value)}
+            placeholder="Confirm new email"
+            required
+          />
+        </div>
+
+        <button type="submit" className="change-email-button" disabled={loading}>
+          {loading ? "Updating..." : "Change Email"}
+        </button>
+      </form>
+    </div>
   );
 };
 

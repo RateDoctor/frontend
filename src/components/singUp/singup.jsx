@@ -14,8 +14,12 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  
+ 
 
+
+   const goToLogin = () => {
+    navigate("/login");
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -127,7 +131,7 @@ const handleSubmit = async (e) => {
           {submitError && <div className="error">{submitError}</div>}
 
           <div className="register-loginSingUp-box">
-            <h1 className="signupForm-label">Sign in</h1>
+            <h1 className="signupForm-label" onClick={goToLogin}>Sign in</h1>
           </div>
 
 
@@ -135,7 +139,7 @@ const handleSubmit = async (e) => {
            <div className="circle-container">
               <div className="circle-right"></div>
               <div className="singup-arrowButton">
-                <h1 className="signup">Sign Up</h1>
+                <h1 className="signup" >Sign Up</h1>
                 <button className="circle-button" type="submit" disabled={isLoading}>
                   <FaArrowRight className="arrowRight" />
                 </button>

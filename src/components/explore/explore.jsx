@@ -131,6 +131,9 @@ console.log("Sending token:", localStorage.getItem("authToken"));
       headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
     });
 
+    const token = localStorage.getItem("authToken");
+    console.log("Using token:", token);
+
     const existingRating = res.data.find(r => r.doctorId._id === doctorId);
 
     if (existingRating) {

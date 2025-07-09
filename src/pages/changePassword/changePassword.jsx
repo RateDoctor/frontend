@@ -65,7 +65,7 @@ const ChangePassword = () => {
             style={{
               position: "absolute",
               right: "10px",
-              top: "50%",
+              top: "70%",
               transform: "translateY(-50%)",
               cursor: "pointer",
               color: "#555",
@@ -90,7 +90,7 @@ const ChangePassword = () => {
             style={{
               position: "absolute",
               right: "10px",
-              top: "50%",
+              top: "70%",
               transform: "translateY(-50%)",
               cursor: "pointer",
               color: "#555",
@@ -115,7 +115,7 @@ const ChangePassword = () => {
             style={{
               position: "absolute",
               right: "10px",
-              top: "50%",
+              top: "70%",
               transform: "translateY(-50%)",
               cursor: "pointer",
               color: "#555",
