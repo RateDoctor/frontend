@@ -13,11 +13,19 @@ const AddDoctor = () => {
   const [formData, setFormData] = useState({
     doctorName: '',
     affiliations: [{ name: '', joined: '' }],
-    backgrounds:  [''],
-    teaching: [''],
-    topicIds: [], 
+    backgrounds: [{ name: '', id: '' }],   // ← now an object array
+    teaching:    [{ name: '', id: '' }],   // ← same here
     supervision: [''],
-    experience: [''],
+    experience:  [''],
+    universityId: '',
+    fieldOfStudyId: '',
+    // doctorName: '',
+    // affiliations: [{ name: '', joined: '' }],
+    // backgrounds:  [''],
+    // teaching: [''],
+    // topicIds: [], 
+    // supervision: [''],
+    // experience: [''],
   });
   const universityRef = useRef(null);
   const fieldRef = useRef(null);
@@ -218,18 +226,31 @@ if (unsaved) {
   // Step 5: Submit to backend
   setIsSubmitting(true);
 
+  // const payload = {
+  // name: formData.doctorName,
+  // universityId: formData.universityId,
+  // fieldOfStudyId: formData.fieldOfStudyId || null,
+  // affiliations: formData.affiliations,
+  // background: formData.backgrounds,
+  // teaching: formData.teaching.map(t => t.trim()),
+  // topicIds: topicIds,
+  // supervision: formData.supervision,
+  // experience: formData.experience,
+  // researchInterests: [],
+  // };
+
+
   const payload = {
   name: formData.doctorName,
   universityId: formData.universityId,
-  fieldOfStudyId: formData.fieldOfStudyId || null,
+  fieldOfStudyId: formData.fieldOfStudyId,
   affiliations: formData.affiliations,
-  background: formData.backgrounds,
-  teaching: formData.teaching.map(t => t.trim()),
-  topicIds: topicIds,
+  backgrounds: formData.backgrounds.map(b => b.name),
+  teaching:    formData.teaching.map(t => t.name),
+  topicIds:    formData.teaching.map(t => t.id),
   supervision: formData.supervision,
-  experience: formData.experience,
-  researchInterests: [],
-  };
+  experience:  formData.experience,
+};
 
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -406,7 +427,7 @@ if (unsaved) {
 {/* Multiple Background Inputs */}
 {formData.backgrounds.map((bg, index) => (
   <div key={index} className="input-with-icon">
-    <input
+    {/* <input
       className="inputAddDoctor"
       placeholder={
         index === 0
@@ -459,8 +480,44 @@ if (unsaved) {
         }
       }
     }}
+    /> */}
 
-    />
+
+    <input
+  className="inputAddDoctor"
+  placeholder={index === 0
+    ? "Primary field of study (auto‑saved)"
+    : "Add background info"}
+  value={formData.backgrounds[index].name}
+  onChange={e => {
+    const bgs = [...formData.backgrounds];
+    bgs[index].name = e.target.value;
+    setFormData(f => ({ ...f, backgrounds: bgs }));
+  }}
+  onBlur={async () => {
+    if (index !== 0) return;
+    const name = formData.backgrounds[0].name.trim();
+    if (!name) return;
+    // see if field exists
+    let field = fields.find(f => f.name.toLowerCase() === name.toLowerCase());
+    if (!field) {
+      const { data: newField } = await axios.post(
+        '/api/fields',
+        { name: name[0].toUpperCase() + name.slice(1) },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+      );
+      setFields(f => [...f, newField]);
+      field = newField;
+    }
+    // store the id
+    setFormData(f => ({
+      ...f,
+      backgrounds: [{ name, id: field._id }, ...f.backgrounds.slice(1)],
+      fieldOfStudyId: field._id
+    }));
+  }}
+/>
+
   </div>
 ))}
 
@@ -496,7 +553,7 @@ if (unsaved) {
     className="input-with-icon"
     ref={index === formData.teaching.length - 1 ? topicRef : null}
   >
-    <input
+    {/* <input
       className="inputAddDoctor"
       placeholder={index === 0 ? "Primary teaching topic (auto-saved)" : "Add teaching topic"}
       value={topic}
@@ -576,7 +633,48 @@ if (unsaved) {
           }
         }
       }}
-    />
+    /> */}
+
+    <input
+  className="inputAddDoctor"
+  placeholder={index === 0
+    ? "Primary teaching topic (auto‑saved)"
+    : "Add teaching topic"}
+  value={formData.teaching[index].name}
+  onChange={e => {
+    const t = [...formData.teaching];
+    t[index].name = e.target.value;
+    setFormData(f => ({
+      ...f,
+      teaching: t
+    }));
+  }}
+  onBlur={async () => {
+    const name = formData.teaching[index].name.trim();
+    if (!name || !formData.fieldOfStudyId) return;
+    // see if that topic exists under the selected field
+    let topic = topics.find(
+      t => t.name.toLowerCase() === name.toLowerCase()
+        && t.field === formData.fieldOfStudyId
+    );
+    if (!topic) {
+      const { data: newTopic } = await axios.post(
+        '/api/topics',
+        { name: name[0].toUpperCase() + name.slice(1), fieldId: formData.fieldOfStudyId },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+      );
+      setTopics(ts => [...ts, newTopic]);
+      topic = newTopic;
+    }
+    // store its id
+    setFormData(f => {
+      const t2 = [...f.teaching];
+      t2[index] = { name, id: topic._id };
+      return { ...f, teaching: t2 };
+    });
+  }}
+/>
+
   </div>
 ))}
       {formData.teaching.filter(t => t.trim() !== '').length > 0 && (

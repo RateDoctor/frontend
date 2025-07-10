@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./doctorList.css"; // Use this for custom styling
 
-const DoctorList = ({ doctors, onSelect }) => {
+const DoctorList = ({ doctors, onSelect, getAvatarForDoctor }) => {
   const navigate = useNavigate();
 
   return (
@@ -17,7 +17,13 @@ const DoctorList = ({ doctors, onSelect }) => {
           className="lists doctor-item"
         >
           <span className="doctor-rank">{doc.rank}</span>
-          <img src={doc.image} alt={doc.name} className="doctor-list-img" />
+          {/* <img src={doc.image} alt={doc.name} className="doctor-list-img" /> */}
+
+          <img
+            src={getAvatarForDoctor ? getAvatarForDoctor(doc) : doc.image}
+            alt={doc.name || "Doctor Avatar"}
+            className="doctor-list-img"
+          />
           <span className="doctor-name">{doc.name}</span>
 
 

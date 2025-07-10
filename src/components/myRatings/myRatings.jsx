@@ -179,153 +179,185 @@ useEffect(() => {
     }
   };
 
-  // const handleSaveFeedback = async () => {
-  // if (!selectedRating) return;
-
-  // setIsSaving(true); // Show loading
-
-  // try {
-  //   if (selectedRating._id === "new") {
-  //     const response = await axios.post(
-  //       `http://localhost:5000/api/ratings`,
-  //       {
-  //           doctorId: selectedRating.doctorId._id,
-  //           communication: performanceRatings.communication,  // ✅ must be like "Excellent"
-  //           support: performanceRatings.support,
-  //           guidance: performanceRatings.guidance,
-  //           availability: performanceRatings.availability,
-  //           additionalFeedback: feedback,
-  //           questionnaire: editableQuestionnaire,
-  //       },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-
-  //     console.log("Submitting rating:", {
-  //     doctorId: selectedRating.doctorId._id,
-  //     ...performanceRatings,
-  //     additionalFeedback: feedback,
-  //     questionnaire: editableQuestionnaire,
-  //   });
 
 
-  //     setRatings((prev) => [...prev, response.data]);
+  function buildQuestionnaire(flatObj) {
+  return {
+    teachingStyle: {
+      description: flatObj[sections[0].title] || "",
+      complexConcepts: flatObj[sections[0].questions[0]] || "",
+      criticalThinking: flatObj[sections[0].questions[1]] || ""
+    },
+    responsiveness: {
+      responsiveness: flatObj[sections[1].title] || "",
+      feedbackTurnaround: flatObj[sections[1].questions[0]] || "",
+      constructiveFeedback: flatObj[sections[1].questions[1]] || ""
+    },
+    mentorship: {
+      researchGuidance: flatObj[sections[2].questions[0]] || "",
+      methodologySupport: flatObj[sections[2].questions[1]] || "",
+      professionalDevelopment: flatObj[sections[2].questions[2]] || ""
+    },
+    overallSupport: {
+      overallSupport: flatObj[sections[3].questions[0]] || "",
+      academicChallenges: flatObj[sections[3].questions[1]] || "",
+      contributionToSuccess: flatObj[sections[3].questions[2]] || ""
+    }
+  };
+}
 
-  //   } else {
-  //     await axios.put(
-  //       `http://localhost:5000/api/ratings/${selectedRating._id}`,
-  //       {
-  //         additionalFeedback: feedback,
-  //         questionnaire: editableQuestionnaire,
-  //         performanceRatings: performanceRatings,
-  //       },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
+// const handleSaveFeedback = async () => {
+//   if (!selectedRating) return;
 
-  //     setRatings((prev) =>
-  //       prev.map((r) =>
-  //         r._id === selectedRating._id
-  //           ? {
-  //               ...r,
-  //               additionalFeedback: feedback,
-  //               questionnaire: editableQuestionnaire,
-  //               performanceRatings: performanceRatings,
-  //             }
-  //           : r
-  //       )
-  //     );
-  //   }
+//   setIsSaving(true); // Show loading
 
-  //   setFeedbackEditable(false);
-  //   setShowSuccessPopup(true);
+//   try {
+//     if (selectedRating._id === "new") {
+//       const response = await axios.post(
+//         `http://localhost:5000/api/ratings`,
+//         {
+//           doctorId: selectedRating.doctorId._id,
+//           communication: performanceRatings.communication,
+//           support: performanceRatings.support,
+//           guidance: performanceRatings.guidance,
+//           availability: performanceRatings.availability,
+//           additionalFeedback: feedback,
+//           questionnaire: editableQuestionnaire,
+//         },
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
 
-  //   setTimeout(() => {
-  //     setShowSuccessPopup(false);
-  //     setSelectedRating(null); // Go back to list
-  //     setIsSaving(false);      // Hide loading
-  //   }, 1500);
-  // } catch (err) {
-  //   console.error("Failed to save feedback:", err);
-  //   alert("Failed to save feedback.");
-  //   setIsSaving(false); // Stop loading
-  // }
-  // };
+//       let newRating = response.data;
+
+//       // Hydrate doctor info if needed
+//       if (typeof newRating.doctorId === "string") {
+//         try {
+//           const doctorRes = await axios.get(
+//             `http://localhost:5000/api/doctors/${newRating.doctorId}`,
+//             { headers: { Authorization: `Bearer ${token}` } }
+//           );
+//           newRating.doctorId = doctorRes.data.doctor;
+//           if (!newRating.doctorId.name) newRating.doctorId.name = "Unnamed Doctor";
+//         } catch {
+//           newRating.doctorId = { name: "Unknown Doctor", _id: newRating.doctorId };
+//         }
+//       }
+
+//       setRatings((prev) => [...prev, newRating]);
+//       setSelectedRating(newRating);
+//     } else {
+//       // Update existing rating
+//       await axios.put(
+//         `http://localhost:5000/api/ratings/${selectedRating._id}`,
+//         {
+//           additionalFeedback: feedback,
+//           questionnaire: editableQuestionnaire,
+//           performanceRatings,
+//         },
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+
+//       // ✅ Update local state immediately
+//       const updatedRating = {
+//         ...selectedRating,
+//         additionalFeedback: feedback,
+//         questionnaire: editableQuestionnaire,
+//         performanceRatings,
+//       };
+
+//       setSelectedRating(updatedRating);
+
+//       setRatings((prev) =>
+//         prev.map((r) =>
+//           r._id === selectedRating._id ? updatedRating : r
+//         )
+//       );
+//     }
+
+//     setFeedbackEditable(false);
+//     setShowSuccessPopup(true);
+
+//     setTimeout(() => {
+//       setShowSuccessPopup(false);
+//       // setSelectedRating(null); // ❌ Remove this if you want to stay on the same view
+//       setIsSaving(false);
+//     }, 1500);
+//   } catch (err) {
+//     console.error("Failed to save feedback:", err);
+//     alert("Failed to save feedback.");
+//     setIsSaving(false);
+//   }
+// };
+
+
 
 const handleSaveFeedback = async () => {
   if (!selectedRating) return;
 
-  setIsSaving(true); // Show loading
+  setIsSaving(true);
 
-  try {
+  // حوّل الاستبيان إلى شكل متداخل
+  const questionnairePayload = buildQuestionnaire(editableQuestionnaire, sections);
+
+   try {
     if (selectedRating._id === "new") {
       const response = await axios.post(
         `http://localhost:5000/api/ratings`,
         {
           doctorId: selectedRating.doctorId._id,
           communication: performanceRatings.communication,
-          support: performanceRatings.support,
-          guidance: performanceRatings.guidance,
-          availability: performanceRatings.availability,
+          support:       performanceRatings.support,
+          guidance:      performanceRatings.guidance,
+          availability:  performanceRatings.availability,
           additionalFeedback: feedback,
           questionnaire: editableQuestionnaire,
+          // questionnaire: questionnairePayload,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+
       let newRating = response.data;
-
-      // Hydrate doctor info if needed
-      if (typeof newRating.doctorId === "string") {
-        try {
-          const doctorRes = await axios.get(
-            `http://localhost:5000/api/doctors/${newRating.doctorId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          newRating.doctorId = doctorRes.data.doctor;
-          if (!newRating.doctorId.name) newRating.doctorId.name = "Unnamed Doctor";
-        } catch {
-          newRating.doctorId = { name: "Unknown Doctor", _id: newRating.doctorId };
-        }
-      }
-
+      // ... باقي الهيدرية كما كانت ...
       setRatings((prev) => [...prev, newRating]);
       setSelectedRating(newRating);
-    } else {
-      // Update existing rating
+
+    }  else {
       await axios.put(
         `http://localhost:5000/api/ratings/${selectedRating._id}`,
         {
           additionalFeedback: feedback,
           questionnaire: editableQuestionnaire,
+          // questionnaire: questionnairePayload,
           performanceRatings,
         },
         { headers: { Authorization: `Bearer ${token}` } }
+
+        
       );
 
-      // ✅ Update local state immediately
+
+    
       const updatedRating = {
         ...selectedRating,
         additionalFeedback: feedback,
-        questionnaire: editableQuestionnaire,
+        questionnaire: questionnairePayload,
         performanceRatings,
       };
-
       setSelectedRating(updatedRating);
-
       setRatings((prev) =>
-        prev.map((r) =>
-          r._id === selectedRating._id ? updatedRating : r
-        )
+        prev.map((r) => (r._id === selectedRating._id ? updatedRating : r))
       );
     }
 
     setFeedbackEditable(false);
     setShowSuccessPopup(true);
-
     setTimeout(() => {
       setShowSuccessPopup(false);
-      // setSelectedRating(null); // ❌ Remove this if you want to stay on the same view
-      setIsSaving(false);
+      navigate(-1);  
     }, 1500);
+
+
   } catch (err) {
     console.error("Failed to save feedback:", err);
     alert("Failed to save feedback.");
@@ -333,25 +365,20 @@ const handleSaveFeedback = async () => {
   }
 };
 
-
 const renderDoctorList = () => {
 
 
   console.log("Ratings in renderDoctorList:", ratings);
 console.log("Ratings with missing doctor or name:", ratings.filter(r => !r.doctorId || !r.doctorId.name));
 
-  const anyDoctorMissing = ratings.some(
-    (r) => !r.doctorId || typeof r.doctorId.name !== "string" || r.doctorId.name.trim() === ""
+if (loading) {
+  return (
+    <div className="ratings-loading-center">
+      <div className="spinner" />
+      <p>Loading doctors...</p>
+    </div>
   );
-
-  if (anyDoctorMissing) {
-    return (
-      <div className="ratings-loading-center">
-        <div className="spinner" />
-        <p>Loading doctors...</p>
-      </div>
-    );
-  }
+}
 
   return (
     <div className="ratings-list">
@@ -386,57 +413,6 @@ console.log("Ratings with missing doctor or name:", ratings.filter(r => !r.docto
     </div>
   );
 };
-
-// const renderDoctorList = () => (
-//   <div className="ratings-list">
-//     {ratings.length === 0 && <p>No ratings found.</p>}
-//     {ratings.map((rating) => {
-//       const doctor = rating.doctorId;
-//       console.log("Doctor in list:", doctor); // 🔍 Log here
-
-//        // ✅ Skip rendering until doctor data is fully loaded
-//      if (!doctor || !doctor.name) {
-//         return (
-//           <div className="ratings-item loading">
-//             <div className="doctor-img skeleton-circle" />
-//             <div className="doctor-name skeleton-text" />
-//           </div>
-//         );
-//       }
-
-//       return (
-//         <div
-//           key={rating._id}
-//           className="ratings-item"
-//           onClick={() => handleSelectRating(rating)}
-//         >
-//           <img
-//             // src={doctor.profileImage?.fileUrl || "/default-avatar.png"}
-//             src={getAvatar()}
-//             alt={doctor.name || "Doctor Avatar"}
-//             className="doctor-img"
-//           />
-
-
-//           <span className="doctor-name">
-//             {doctor.name ? doctor.name : "Loading..."}
-//           </span>
-
-
-
-//           <FiTrash2
-//             className="delete-icon"
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               handleDeleteRating(rating._id);
-//             }}
-//           />
-//           <hr />
-//         </div>
-//       );
-//     })}
-//   </div>
-// );
 
 
 

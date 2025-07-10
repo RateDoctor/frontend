@@ -6,7 +6,19 @@ import SearchBar from "../searchBar/searchBar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 import "../explore/explore.css";
 
-const getUnique = (arr, key) => [...new Set(arr.map(item => item[key]))];
+const getUnique = (arr, key) => {
+  const seen = new Set();
+  return arr
+    .map(item => item[key])
+    .filter(item => {
+      if (!item || !item._id) return false;
+      const id = item._id;
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+};
+
 
 const Explore = () => {
   const [supervisors, setSupervisors] = useState([]);
@@ -23,11 +35,11 @@ const Explore = () => {
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
   const [isFieldOpen, setIsFieldOpen] = useState(false);
   const [isTopicOpen, setIsTopicOpen] = useState(false);
-
   const universityRef = useRef(null);
   const fieldRef = useRef(null);
   const topicRef = useRef(null);
-
+  const overlayRef = useRef(null);
+  useOutsideClick(overlayRef, () => setIsSearchFocused(false));
 
   useOutsideClick(universityRef, () => setIsUniversityOpen(false));
   useOutsideClick(fieldRef, () => setIsFieldOpen(false));
@@ -41,53 +53,93 @@ const Explore = () => {
     setListViewResults(result);
   };
 
+  // const applyFilters = (data, queryStr, university, field, topic) => {
+  //   let result = data;
+
+  //   if (queryStr) {
+  //     result = result.filter(sup =>
+  //       sup.name.toLowerCase().includes(queryStr.toLowerCase())
+  //     );
+  //   }
+  //   if (university) {
+  //     result = result.filter(sup => {
+  //       if (typeof sup.university === 'object') {
+  //         return sup.university._id === university._id;
+  //       }
+  //       return sup.university === university;
+  //     });
+  //   }
+  //   if (field) {
+  //     result = result.filter(sup => {
+  //       if (typeof sup.field === 'object'){
+  //         return sup.field._id === field._id;
+  //       }
+  //       return sup.field._id === field._id;
+  //     });     
+  //   }
+
+  //   if (topic) {
+  //     result = result.filter(sup => {
+  //       if (typeof sup.topic === 'object'){
+  //         return sup.topic._id === topic._id;
+  //       }
+  //       return sup.topic._id === topic._id;
+  //     });
+  //   }
+
+  //   return result;
+  // };
+
+
   const applyFilters = (data, queryStr, university, field, topic) => {
-    let result = data;
+  let result = data;
 
-    if (queryStr) {
-      result = result.filter(sup =>
-        sup.name.toLowerCase().includes(queryStr.toLowerCase())
-      );
-    }
-    if (university) {
-      result = result.filter(sup => {
-        if (typeof sup.university === 'object') {
-          return sup.university._id === university._id;
-        }
-        return sup.university === university;
-      });
-    }
-    if (field) {
-      result = result.filter(sup => {
-        if (typeof sup.field === 'object'){
-          return sup.field._id === field._id;
-        }
-        return sup.field._id === field._id;
-      });     
-    }
+  if (queryStr) {
+    result = result.filter(sup =>
+      sup.name.toLowerCase().includes(queryStr.toLowerCase())
+    );
+  }
 
-    if (topic) {
-      result = result.filter(sup => {
-        if (typeof sup.topic === 'object'){
-          return sup.topic._id === topic._id;
-        }
-        return sup.topic._id === topic._id;
-      });
-    }
+  if (university && university._id) {
+    result = result.filter(sup =>
+      sup.university && sup.university._id === university._id
+    );
+  }
 
-    return result;
-  };
+  if (field && field._id) {
+    result = result.filter(sup =>
+      sup.field && sup.field._id === field._id
+    );
+  }
 
+  if (topic && topic._id) {
+    result = result.filter(sup =>
+      sup.topic && sup.topic._id === topic._id
+    );
+  }
+
+  return result;
+};
+ 
   const universities = getUnique(supervisors, "university");
-  const fields = getUnique(
-    supervisors.filter(s => selectedUniversity ? s.university === selectedUniversity : true),
-    "field"
-  );
-  const topics = getUnique(
-    supervisors.filter(s => selectedField ? s.field === selectedField : true),
-    "topics"
-  ).flat();
+//   const fields = getUnique(
+//     supervisors.filter(s => selectedUniversity ? s.university === selectedUniversity : true),
+//     "field"
+//   );
+//  const topics = getUnique(
+//   supervisors.filter(s => !selectedField || s.field === selectedField),
+//   "topic"   // ← singular key
+// );
 
+const fields = getUnique(
+  supervisors.filter(s => selectedUniversity ? s.university?._id === selectedUniversity._id : true),
+  "field"
+);
+
+const topics = getUnique(
+  supervisors.filter(s => selectedField ? s.field?._id === selectedField._id : true),
+  "topic"
+);
   const filtered = applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic);
 
 function useOutsideClick(ref, callback) {
@@ -114,7 +166,6 @@ const normalizeDoctorData = (doctor) => {
     rating: doctor.avgRating || doctor.rating || 0
   };
 };
-
 
 
 
@@ -172,29 +223,58 @@ useEffect(() => {
   fetchDoctors();
 }, []);
 
-  return (
 
+
+function useOutsideClick(ref, callback) {
+  useEffect(() => {
+    function handleClick(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [ref, callback]);
+}
+
+
+  return (
     <div className="explore-container">
       <div className="search-wrapper" style={{ position: "relative" }}>
-        <SearchBar
-         placeholder="Search Doctors..."
-          onSearch={(val) => {
-            handleSearch(val);
-            setIsSearchFocused(true);
-            setViewState("filterDoctors");
-          }}
-            onFocus={() => {
-            setIsSearchFocused(true);
-            setViewState("filterDoctors"); // Show list immediately
-            handleSearch("");
-          }}
-          value={query}
-        />
+       <SearchBar
+        placeholder="Search Doctors..."
+        onSearch={(val) => {
+          handleSearch(val);
+          setIsSearchFocused(true);
+          setViewState("filterDoctors");
+        }}
+      onFocus={() => {
+        setIsSearchFocused(true);
+        setViewState("filterDoctors");
+        setListViewResults(supervisors);
+      }}
+//  onFocus={() => {
+//    // 1) show the overlay
+//    setIsSearchFocused(true);
+//    setViewState("filterDoctors");
+//    // 2) seed with every doctor you have
+//    setListViewResults(supervisors);
+//  }}
+  // onBlur={() => setIsSearchFocused(false)}
+  // value={query}
+
+ 
+
+/>
+
+
       </div>
 
       {/* Overlay when search is focused */}
       {isSearchFocused && (
-        <div className="search-overlay">
+        <div className="search-overlay" ref={overlayRef}>
 
           <div className="filter-bar">
 
@@ -203,12 +283,14 @@ useEffect(() => {
             <div 
             className={`select-header ${selectedUniversity ? "selected-header" : ""}`}
              onClick={() => setIsUniversityOpen(!isUniversityOpen)}>
-              {selectedUniversity || "All Universities"} <span className="arrow">&#9662;</span>
+              {selectedUniversity?.name || "All Universities"} <span className="arrow">&#9662;</span>
             </div>
             {isUniversityOpen && (
                  <div className="dropdown-overlay" style={{ zIndex: 300 }}>
-              <ul className="doctor-list custom-dropdown">
-                <li
+                 <ul className="doctor-list custom-dropdown">
+
+                  
+                 <li
                   className={!selectedUniversity ? "lists selected" : "lists"}
                   onClick={() => {
                     setSelectedUniversity("");
@@ -220,15 +302,16 @@ useEffect(() => {
                 >
                   All Universities
                 </li>
-
-                console.log("universities", universities);
-                console.log("selectedUniversity", selectedUniversity);
-
                 
-                {universities.map((uni) => (
-                  <li
-                    key={uni._id}
-                    className={`lists ${selectedUniversity === uni ? "selected" : ""}`}
+               {universities
+                  .filter(uni => uni != null)      // ← drop any stray null
+                  .map(uni => (
+                    <li
+                    key={uni._id || uni}    
+          
+                    className={`lists ${selectedUniversity && 
+                      selectedUniversity._id === uni._id
+                      ? "selected" : ""}`}
                     onClick={() => {
                       setSelectedUniversity(uni);
                       setSelectedField("");
@@ -237,8 +320,13 @@ useEffect(() => {
                       handleSearch(query);
                     }}
                   >
-                    {/* {uni.name} */}
-                     {typeof uni === 'object' ? uni.name : uni}
+                    {/* {uni.name}
+                     {typeof uni === 'object'
+                        ? (uni.name || "—Unnamed—")
+                        : uni
+                      } */}
+
+                        {uni.name || "—Unnamed—"}
                   </li>
                 ))
                 }
@@ -264,7 +352,9 @@ useEffect(() => {
               <div 
               className={`select-header ${selectedField ? "selected-header" : ""}`}
               onClick={() => setIsFieldOpen(!isFieldOpen)}>
-                {selectedField || "All Fields"} <span className="arrow">&#9662;</span>
+                {/* {selectedField || "All Fields"} <span className="arrow">&#9662;</span> */}
+                {selectedField?.name || "All Fields"} <span className="arrow">&#9662;</span>
+
               </div>
               {isFieldOpen && (
                  <div className="dropdown-overlay" style={{ zIndex: 300 }}>
@@ -284,17 +374,15 @@ useEffect(() => {
                   {fields.map((field, index) => (
                     <li
                       key={index}
-                      
-                      className={selectedField === field ? "lists selected" : "lists"}
+                      className={selectedField?._id === field._id ? "lists selected" : "lists"}
                       onClick={() => {
                             setSelectedField(field);
                             setSelectedTopic(""); // Only clear downstream filters
                             setIsFieldOpen(false);
                             handleSearch(query);
-
                       }}
                     >
-                     {field}
+                     {field.name}
                     </li>
                   ))}
                 </ul>
@@ -307,11 +395,13 @@ useEffect(() => {
 
           {/* Topic Dropdown */}
           {selectedField && (
-            <div1111 className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
+            <div className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
               <div 
                className={`select-header ${selectedTopic ? "selected-header" : ""}`}
                onClick={() => setIsTopicOpen(!isTopicOpen)}>
-                {selectedTopic || "All Topics"} <span className="arrow">&#9662;</span>
+                {/* {selectedTopic || "All Topics"} <span className="arrow">&#9662;</span> */}
+                {selectedTopic?.name || "All Topics" } <span className="arrow">&#9662;</span>
+
               </div>
               {isTopicOpen && (
                  <div className="dropdown-overlay" style={{ zIndex: 300 }}>
@@ -329,20 +419,20 @@ useEffect(() => {
                   {topics.map((topic, index) => (
                     <li
                       key={index}
-                      className={selectedTopic === topic ? "lists selected" : "lists"}
+                      className={selectedTopic?._id === topic?._id ? "lists selected" : "lists"}
                       onClick={() => {
                           setSelectedTopic(topic);
                           setIsTopicOpen(false);
                           handleSearch(query);
                       }}
                     >
-                     {topic}
+                     {topic.name}
                     </li>
                   ))}
                 </ul>
                 </div>
               )}
-            </div1111>
+            </div>
           )}
 
             {!query && !selectedUniversity && !selectedField && !selectedTopic && (
@@ -353,17 +443,8 @@ useEffect(() => {
 
 
           {/* Filtered search results */}
-        {/* {listViewResults.length > 0 ? (
 
-        <DoctorList 
-          doctors={listViewResults}
-          onDoctorClick={(doctor) => {
-            setIsSearchFocused(false);
-            navigate(`/rate-supervisor?doctorId=${doctor._id}`);
-          }}
-        /> */}
-
-        {listViewResults.length > 0 && JSON.parse(localStorage.getItem("user"))?.role === "supervisor" ? (
+        {/* {listViewResults.length > 0 && JSON.parse(localStorage.getItem("user"))?.role === "supervisor" ? (
         <DoctorList 
           doctors={listViewResults}
           onDoctorClick={(doctor) => {
@@ -375,10 +456,31 @@ useEffect(() => {
               navigate(`/my-ratings/${doctor._id}`);
             }
           }}
-        />
+        /> */}
+
+        {listViewResults.length > 0 ? (
+  <DoctorList 
+    doctors={listViewResults}
+    onDoctorClick={(doctor) => {
+      setIsSearchFocused(false);
+      handleDoctorClick(doctor._id);
+    }}
+  />
+// ) : (
+//   <p style={{ marginTop: "1rem" }}>
+//     Supervisor not found.
+//     <span
+//       style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+//       onClick={() => navigate("/addDoctor")}
+//     >
+//       Add doctor
+//     </span>
+//   </p>
+// )}
+
   
-
-
+// </div>
+// )}
 
         ) : (
          <p style={{ marginTop: "1rem" }}>
@@ -448,6 +550,7 @@ useEffect(() => {
 
     
     </div>
-  );};
+    );
+  }
 
 export default Explore;

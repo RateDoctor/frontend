@@ -371,7 +371,7 @@
     height: 64vh;
     transform: translate(-57%, -50%);
     width: min(100%, 600px);
-    max-height: clamp(200px, 70vh, 500px);
+    max-height: clamp(200px, 70vh, 610px);
     background-color: white;
     padding: 1rem;
     /* overflow-y: auto; */
@@ -423,7 +423,7 @@
 }
 @media (max-width: 430px) {
   .custom-dropdown{
-      top: 48%;
+      top: 55.5%;
       width: 100%;
       height: 100vh;
   }
@@ -457,7 +457,7 @@ margin-left: 12px;
 }
 
 .search-overlay{
-   /* overflow-y: auto; */
+   overflow-y: auto;
    margin-bottom: 100px;
 }
 

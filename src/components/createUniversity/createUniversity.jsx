@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { FiArrowLeft } from "react-icons/fi";
 import DoctorList from "../DoctorList/DoctorList.jsx";
+import female from "../../imgs/female.svg";
+import man from "../../imgs/man-ezgif.com-gif-maker.svg";
+import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 import axios from "axios";
 import './createUniversity.css';
-import { supervisors } from "../explore/data.js";
+
 
 
 
@@ -20,8 +23,27 @@ const navigate = useNavigate();
   phone: '',
 });
 
- 
+const getAvatarForDoctor = (doctor) => {
+  if (!doctor) return defaultAvatar;
 
+  if (doctor.profileImage && typeof doctor.profileImage === "object" && doctor.profileImage.fileUrl) {
+    return doctor.profileImage.fileUrl;
+  }
+
+  if (typeof doctor.profileImage === "string") {
+    return doctor.profileImage;
+  }
+
+  if (doctor.gender === "female" || doctor.gender === "woman") {
+    return female;
+  }
+
+  if (doctor.gender === "male" || doctor.gender === "man") {
+    return man;
+  }
+
+  return defaultAvatar;
+};
 
  const handleSubmit = async () => {
   try {
@@ -66,11 +88,42 @@ const navigate = useNavigate();
   };
 
 
+ 
+useEffect(() => {
+  const fetchDoctors = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.warn("No auth token found.");
+        return;
+      }
+
+      const res = await axios.get("http://localhost:5000/api/doctors", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const normalizedDoctors = res.data.doctors.map((doctor) => ({
+        ...doctor,
+        field: doctor.fieldOfStudy || doctor.field || "N/A",
+        topics: Array.isArray(doctor.topic) ? doctor.topic : doctor.topic ? [doctor.topic] : [],
+        image: doctor.profileImage?.fileUrl || doctor.profileImage || "",
+        rating: doctor.avgRating ?? doctor.rating ?? 0,
+      }));
+
+      setListViewResults(normalizedDoctors);
+    } catch (err) {
+      console.error("❌ Error fetching doctors:", err.response?.data || err.message);
+      setListViewResults([]); // fallback
+    }
+  };
+
+  fetchDoctors();
+}, []);
 
 
-   useEffect(() => {
-    setListViewResults(supervisors);
-  }, []); 
+
 
   return (
     <div className="form-container">
@@ -128,13 +181,15 @@ const navigate = useNavigate();
 
         <div className="phd-doctor-box">
         <span className="phd-label">Phd Doctors *</span>
-        <DoctorList doctors={listViewResults.slice(1,4)} onSelect={() => setIsSearchFocused(false)} />
+        <DoctorList doctors={listViewResults.slice(1,4)} onSelect={() => setIsSearchFocused(false)}
+         getAvatarForDoctor={getAvatarForDoctor} />
         </div>
 
 
 
         <div className='flex'>
-        <button className="add-doctor" > <span className="plus-add-doc"><FaPlus/></span> <span className='add-doc'>Add Doctor</span> </button>
+        <button className="add-doctor" onClick={() => navigate("/addDoctor")}>
+         <span className="plus-add-doc"><FaPlus/></span> <span className='add-doc'>Add Doctor</span> </button>
         <button className="confirm-button" onClick={handleSubmit}>Confirm</button>
         </div>
         
