@@ -13,19 +13,11 @@ const AddDoctor = () => {
   const [formData, setFormData] = useState({
     doctorName: '',
     affiliations: [{ name: '', joined: '' }],
-    backgrounds: [{ name: '', id: '' }],   // ← now an object array
-    teaching:    [{ name: '', id: '' }],   // ← same here
+    backgrounds:  [''],
+    teaching: [''],
+    topicIds: [], 
     supervision: [''],
-    experience:  [''],
-    universityId: '',
-    fieldOfStudyId: '',
-    // doctorName: '',
-    // affiliations: [{ name: '', joined: '' }],
-    // backgrounds:  [''],
-    // teaching: [''],
-    // topicIds: [], 
-    // supervision: [''],
-    // experience: [''],
+    experience: [''],
   });
   const universityRef = useRef(null);
   const fieldRef = useRef(null);
@@ -46,10 +38,10 @@ const AddDoctor = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newBackground, setNewBackground] = useState('');
   const [isAddingBackground, setIsAddingBackground] = useState(false);
+  const [calendarFor, setCalendarFor] = useState({ field: null, idx: null });
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
-
 
 
 useEffect(() => {
@@ -100,19 +92,29 @@ useEffect(() => {
 
 
 
+  // useEffect(() => {
+  //     const role = localStorage.getItem("userRole");
+  //     if (role !== "supervisor") {
+  //       // Redirect students or unauthorized users
+  //       navigate("/");
+  //     }
+  //   }, []);
+
   useEffect(() => {
-      const role = localStorage.getItem("userRole");
-      if (role !== "supervisor") {
-        // Redirect students or unauthorized users
-        navigate("/");
-      }
-    }, []);
+  const role = localStorage.getItem("userRole");
+  if (!role) return;           // still loading
+  if (role !== "supervisor") navigate("/");
+}, []);
+
 
 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    // setFormData({ ...formData, [name]: value });
+    if (name === "doctorName" /*|| name==="universityId" etc.*/) {
+    setFormData(f => ({ ...f, [name]: value }));
+  }
   };
 
   const handleFileChange = (e) => {
@@ -190,7 +192,8 @@ const handleSubmit = async () => {
         );
         const newField = response.data;
         setFields((prev) => [...prev, newField]);
-        formData.fieldOfStudyId = newField._id;
+        // formData.fieldOfStudyId = newField._id;
+        setFormData(prev => ({ ...prev, fieldOfStudyId: newField._id }))
       } catch (err) {
         console.error("❌ Error creating field on submit:", err.response?.data || err.message);
         alert("Error creating field. Please try again.");
@@ -226,31 +229,18 @@ if (unsaved) {
   // Step 5: Submit to backend
   setIsSubmitting(true);
 
-  // const payload = {
-  // name: formData.doctorName,
-  // universityId: formData.universityId,
-  // fieldOfStudyId: formData.fieldOfStudyId || null,
-  // affiliations: formData.affiliations,
-  // background: formData.backgrounds,
-  // teaching: formData.teaching.map(t => t.trim()),
-  // topicIds: topicIds,
-  // supervision: formData.supervision,
-  // experience: formData.experience,
-  // researchInterests: [],
-  // };
-
-
   const payload = {
   name: formData.doctorName,
   universityId: formData.universityId,
-  fieldOfStudyId: formData.fieldOfStudyId,
+  fieldOfStudyId: formData.fieldOfStudyId || null,
   affiliations: formData.affiliations,
-  backgrounds: formData.backgrounds.map(b => b.name),
-  teaching:    formData.teaching.map(t => t.name),
-  topicIds:    formData.teaching.map(t => t.id),
+  background: formData.backgrounds,
+  teaching: formData.teaching.map(t => t.trim()),
+  topicIds: topicIds,
   supervision: formData.supervision,
-  experience:  formData.experience,
-};
+  experience: formData.experience,
+  researchInterests: [],
+  };
 
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -427,7 +417,7 @@ if (unsaved) {
 {/* Multiple Background Inputs */}
 {formData.backgrounds.map((bg, index) => (
   <div key={index} className="input-with-icon">
-    {/* <input
+    <input
       className="inputAddDoctor"
       placeholder={
         index === 0
@@ -480,44 +470,8 @@ if (unsaved) {
         }
       }
     }}
-    /> */}
 
-
-    <input
-  className="inputAddDoctor"
-  placeholder={index === 0
-    ? "Primary field of study (auto‑saved)"
-    : "Add background info"}
-  value={formData.backgrounds[index].name}
-  onChange={e => {
-    const bgs = [...formData.backgrounds];
-    bgs[index].name = e.target.value;
-    setFormData(f => ({ ...f, backgrounds: bgs }));
-  }}
-  onBlur={async () => {
-    if (index !== 0) return;
-    const name = formData.backgrounds[0].name.trim();
-    if (!name) return;
-    // see if field exists
-    let field = fields.find(f => f.name.toLowerCase() === name.toLowerCase());
-    if (!field) {
-      const { data: newField } = await axios.post(
-        '/api/fields',
-        { name: name[0].toUpperCase() + name.slice(1) },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
-      );
-      setFields(f => [...f, newField]);
-      field = newField;
-    }
-    // store the id
-    setFormData(f => ({
-      ...f,
-      backgrounds: [{ name, id: field._id }, ...f.backgrounds.slice(1)],
-      fieldOfStudyId: field._id
-    }));
-  }}
-/>
-
+    />
   </div>
 ))}
 
@@ -553,7 +507,7 @@ if (unsaved) {
     className="input-with-icon"
     ref={index === formData.teaching.length - 1 ? topicRef : null}
   >
-    {/* <input
+    <input
       className="inputAddDoctor"
       placeholder={index === 0 ? "Primary teaching topic (auto-saved)" : "Add teaching topic"}
       value={topic}
@@ -633,48 +587,7 @@ if (unsaved) {
           }
         }
       }}
-    /> */}
-
-    <input
-  className="inputAddDoctor"
-  placeholder={index === 0
-    ? "Primary teaching topic (auto‑saved)"
-    : "Add teaching topic"}
-  value={formData.teaching[index].name}
-  onChange={e => {
-    const t = [...formData.teaching];
-    t[index].name = e.target.value;
-    setFormData(f => ({
-      ...f,
-      teaching: t
-    }));
-  }}
-  onBlur={async () => {
-    const name = formData.teaching[index].name.trim();
-    if (!name || !formData.fieldOfStudyId) return;
-    // see if that topic exists under the selected field
-    let topic = topics.find(
-      t => t.name.toLowerCase() === name.toLowerCase()
-        && t.field === formData.fieldOfStudyId
-    );
-    if (!topic) {
-      const { data: newTopic } = await axios.post(
-        '/api/topics',
-        { name: name[0].toUpperCase() + name.slice(1), fieldId: formData.fieldOfStudyId },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
-      );
-      setTopics(ts => [...ts, newTopic]);
-      topic = newTopic;
-    }
-    // store its id
-    setFormData(f => {
-      const t2 = [...f.teaching];
-      t2[index] = { name, id: topic._id };
-      return { ...f, teaching: t2 };
-    });
-  }}
-/>
-
+    />
   </div>
 ))}
       {formData.teaching.filter(t => t.trim() !== '').length > 0 && (
@@ -719,40 +632,185 @@ if (unsaved) {
 
 
 
-{/* Experience section */}
-        <label className="top-one-line label-addDoctor">
-          <span className="title">Experience</span>
-          <span className="plus-icon" onClick={() =>
-            setFormData(prev => ({
-              ...prev,
-              experience: [...prev.experience, ''],
-            }))
-          }>
-            <FaPlus />
-          </span>
-        </label>
-        {formData.experience.map((exp, index) => (
-          <div key={index} className="input-with-icon">
-            <input
-              className="inputAddDoctor"
-              name="experience"
-              placeholder="Add experience"
-              value={exp}
-              onChange={(e) => {
-                const updatedExperience = [...formData.experience];
-                updatedExperience[index] = e.target.value;
-                setFormData({ ...formData, experience: updatedExperience });
-              }}
-            />
+          {/* Experience section */}
+            {/* <label className="top-one-line label-addDoctor">
+            <span className="title">Experience</span>
             <span
-              className="calendar-icon"
-              onClick={() => toggleCalendar('experience', index)}
+              className="plus-icon"
+              onClick={() =>
+                setFormData(prev => ({
+                  ...prev,
+                  experience: [...prev.experience, ''],
+                }))
+              }
             >
-              <RxCalendar />
+              <FaPlus />
             </span>
-            {renderCalendar('experience', index)}
-          </div>
-        ))}
+          </label>
+
+          {Array.isArray(formData.experience) &&
+            formData.experience.map((exp, index) => (
+              <div key={index} className="input-with-icon">
+                <input
+                  className="inputAddDoctor"
+                  placeholder="Add experience"
+                  value={exp}
+                  onChange={e => {
+                    const updated = [...formData.experience];
+                    updated[index] = e.target.value;
+                    setFormData(f => ({ ...f, experience: updated }));
+                  }}
+                />
+
+                {/* built-in calendar toggle (if you still want this): */}
+                {/* <span
+                  className="calendar-icon"
+                  onClick={() =>
+                    setShowCalendarFor(
+                      showCalendarFor === `experience-${index}`
+                        ? null
+                        : `experience-${index}`
+                    )
+                  }
+                >
+                  <RxCalendar />
+                </span>
+                {showCalendarFor === `experience-${index}` && (
+                  <div className="calendar-popup">
+                    <input
+                      type="date"
+                      onChange={e => {
+                        const updated = [...formData.experience];
+                        updated[index] = e.target.value;
+                        setFormData(f => ({ ...f, experience: updated }));
+                        setShowCalendarFor(null);
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* per-item date‑picker via calendarFor state: */}
+                {/* <span
+                  className="calendar-icon"
+                  onClick={() =>
+                    setCalendarFor({ field: 'experience', idx: index })
+                  }
+                >
+                  <RxCalendar />
+                </span>
+                {calendarFor.field === 'experience' &&
+                  calendarFor.idx === index && (
+                    <div className="calendar-popup">
+                      <input
+                        type="date"
+                        onChange={e => {
+                          setFormData(f => {
+                            const arr = [...f.experience];
+                            arr[index] = e.target.value;
+                            return { ...f, experience: arr };
+                          });
+                          setCalendarFor({ field: null, idx: null });
+                        }}
+                      />
+                    </div>
+                )}
+              </div>
+          ))} */} 
+
+
+
+      
+
+    {/* … other sections … */}
+
+    {/* Experience section */}
+    <label className="top-one-line label-addDoctor">
+      <span className="title">Experience</span>
+      <span
+        className="plus-icon"
+        onClick={() =>
+          setFormData(prev => ({
+            ...prev,
+            experience: [...prev.experience, ''],
+          }))
+        }
+      >
+        <FaPlus />
+      </span>
+    </label>
+
+    {Array.isArray(formData.experience) &&
+      formData.experience.map((exp, index) => (
+        <div key={index} className="input-with-icon">
+          <input
+            className="inputAddDoctor"
+            placeholder="Add experience"
+            value={exp}
+            onChange={e => {
+              const updated = [...formData.experience];
+              updated[index] = e.target.value;
+              setFormData(f => ({ ...f, experience: updated }));
+            }}
+          />
+
+          {/* built‑in date picker (optional) */}
+          <span
+            className="calendar-icon"
+            onClick={() =>
+              setShowCalendarFor(
+                showCalendarFor === `experience-${index}`
+                  ? null
+                  : `experience-${index}`
+              )
+            }
+          >
+            <RxCalendar />
+          </span>
+          {showCalendarFor === `experience-${index}` && (
+            <div className="calendar-popup">
+              <input
+                type="date"
+                onChange={e => {
+                  const updated = [...formData.experience];
+                  updated[index] = e.target.value;
+                  setFormData(f => ({ ...f, experience: updated }));
+                  setShowCalendarFor(null);
+                }}
+              />
+            </div>
+          )}
+
+          {/* per‑item date picker via calendarFor */}
+          <span
+            className="calendar-icon"
+            onClick={() =>
+              setCalendarFor({ field: 'experience', idx: index })
+            }
+          >
+            <RxCalendar />
+          </span>
+          {calendarFor.field === 'experience' &&
+            calendarFor.idx === index && (
+              <div className="calendar-popup">
+                <input
+                  type="date"
+                  onChange={e => {
+                    setFormData(f => {
+                      const arr = [...f.experience];
+                      arr[index] = e.target.value;
+                      return { ...f, experience: arr };
+                    });
+                    setCalendarFor({ field: null, idx: null });
+                  }}
+                />
+              </div>
+          )}
+        </div>
+    ))}
+
+
+
+
 
         <p className="note">
           Before completing the profile creation process, we kindly ask you to provide an initial rating for Dr. {formData.doctorName || '[Doctor\'s Name]'}.
