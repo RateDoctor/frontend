@@ -371,7 +371,7 @@
     height: 64vh;
     transform: translate(-57%, -50%);
     width: min(100%, 600px);
-    max-height: clamp(200px, 70vh, 610px);
+    max-height: clamp(200px, 70vh, 550px);
     background-color: white;
     padding: 1rem;
     /* overflow-y: auto; */

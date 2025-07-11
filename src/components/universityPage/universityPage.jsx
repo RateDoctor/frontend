@@ -1,129 +1,136 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import SearchBar from "../searchBar/searchBar";
-import { FiArrowLeft } from "react-icons/fi";
-import { renderStars } from "../../utils/renderStars";
-import imagePlaceholder from "../../imgs/defaultAvatar.jpg";
 import axios from "axios";
+import { renderStars } from "../../utils/renderStars";
 import "./universityPage.css";
 
-const groupByFirstLetter = doctors => {
-  const groups = {};
-  doctors.forEach(d => {
-    const L = d.name.charAt(0).toUpperCase();
-    groups[L] = groups[L] || [];
-    groups[L].push(d);
+const groupDoctorsByFirstLetter = (doctors) => {
+  const grouped = {};
+  doctors.forEach((doc) => {
+    const firstLetter = doc.name[0].toUpperCase();
+    if (!grouped[firstLetter]) grouped[firstLetter] = [];
+    grouped[firstLetter].push(doc);
   });
-  return Object.keys(groups)
-    .sort()
-    .reduce((acc, L) => {
-      acc[L] = groups[L].sort((a, b) => a.name.localeCompare(b.name));
-      return acc;
-    }, {});
+  return Object.fromEntries(
+    Object.entries(grouped).sort().map(([k, v]) => [k, v.sort((a, b) => a.name.localeCompare(b.name))])
+  );
 };
 
-export default function UniversityProfile() {
-  const { uniId } = useParams();             // from route /university/:uniId
-  const navigate     = useNavigate();
-  const [loading, setLoading]         = useState(true);
-  const [allDoctors, setAllDoctors]   = useState([]);
-  const [filtered, setFiltered]       = useState([]);
-  const [query, setQuery]             = useState("");
-  const avatarRef                     = useRef(null);
+const UniversityProfile = () => {
+  const { universityId } = useParams();
+  console.log("👉 universityId is:", universityId);
+  const navigate = useNavigate();
+  const [university, setUniversity] = useState(null);
+  const [doctors, setDoctors] = useState([]);
+  const [query, setQuery] = useState("");
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // 1️⃣ Fetch doctors for this university
   useEffect(() => {
-    (async () => {
+    const fetchUniversityAndDoctors = async () => {
       try {
-        setLoading(true);
-        const token = localStorage.getItem("authToken");
-        const { data } = await axios.get(
-          `http://localhost:5000/api/universities/${uniId}/doctors`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        // normalize
-        const docs = data.doctors.map(doc => ({
-          _id: doc._id,
-          name: doc.name,
-          image:
-            doc.profileImage?.fileUrl ||
-            doc.profileImage ||
-            imagePlaceholder,
-          field: doc.fieldOfStudy?.name ?? "N/A",
-          topics: Array.isArray(doc.topics)
-            ? doc.topics.map(t => t.name)
-            : [],
-          rating: doc.avgRating ?? doc.rating ?? 0,
+       const [uniRes, docRes] = await Promise.all([
+         axios.get(`http://localhost:5000/api/universities/${universityId}`),
+         axios.get(`http://localhost:5000/api/universities/${universityId}/doctors`)
+       ]);
+        const normalizedDoctors = docRes.data.map(doc => ({
+          ...doc,
+          image: doc.profileImage?.fileUrl || doc.profileImage || "",
         }));
 
-        setAllDoctors(docs);
-        setFiltered(docs);
+        setUniversity(uniRes.data);
+        setDoctors(normalizedDoctors);
+        setFilteredDoctors(normalizedDoctors);
       } catch (err) {
-        console.error("Failed to load doctors:", err);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching university or doctors", err);
       }
-    })();
-  }, [uniId]);
+    };
 
-  // 2️⃣ Re‐filter when the search query changes
-  useEffect(() => {
-    setFiltered(
-      allDoctors.filter(d =>
-        d.name.toLowerCase().includes(query.toLowerCase())
-      )
+    fetchUniversityAndDoctors();
+  }, [universityId]);
+
+  const handleSearch = (q) => {
+    setQuery(q);
+    const filtered = doctors.filter(doc =>
+      doc.name.toLowerCase().includes(q.toLowerCase())
     );
-  }, [query, allDoctors]);
+    setFilteredDoctors(filtered);
+  };
 
-  if (loading) return <div>Loading doctors…</div>;
+  const groupedDoctors = groupDoctorsByFirstLetter(filteredDoctors);
 
-  const grouped = groupByFirstLetter(filtered);
+  if (!university) return <div>Loading...</div>;
 
   return (
-    <div className="universityProfile-parent-box">
-      <button className="back" onClick={() => navigate(-1)}>
-        <FiArrowLeft /> Back
-      </button>
-      {/* … your header/logo/rating … */}
+    <div className='universityProfile-parent-box'>
+      <div className="university-container">
+        <div className="universityProfile-box">
+          <div className="universityProfile-left">
+            <img
+              className='universityImgProfile'
+              src={university.logo || "/default-university-logo.png"}
+              alt="University"
+            />
+          </div>
+
+          <div className="drProfile-right">
+            <div className="rating-stars">
+              {renderStars(Number(university.rating || 0))}
+              <span className='overallRating'>Overall rating</span>
+            </div>
+            <div className="name-and-bookmark">
+              <h2 className="superVisor-doctor-name">{university.name}</h2>
+            </div>
+            <p className="university-fields">{university.location}</p>
+            <h5 className='phone-university'>Phone: <span>{university.phone}</span></h5>
+            <button className="uni-rate-btn">
+              <span className='rate-button-university-span'>Rate</span>
+            </button>
+          </div>
+        </div>
+        <div className="universityProfile-line"></div>
+      </div>
 
       <div className="searching-box">
         <h5 className="searching-title">PhD Doctors</h5>
         <SearchBar
-          placeholder="Search Doctors…"
+          placeholder="Search Doctors..."
+          onSearch={handleSearch}
+          onFocus={() => setIsSearchFocused(true)}
           value={query}
-          onSearch={setQuery}
-          onFocus={() => setQuery("")}
         />
       </div>
 
       <div className="grouped-doctor-list">
-        {Object.entries(grouped).map(([letter, docs]) => (
+        {Object.entries(groupedDoctors).map(([letter, docs]) => (
           <div key={letter} className="doctor-group">
             <h3 className="group-letter">{letter}</h3>
             <div className="doctor-list">
-              {docs.map(doc => (
+              {docs.map((doc, index) => (
                 <div
-                  key={doc._id}
+                  key={index}
                   className="doctor--card"
-                  onClick={() => navigate(`/doctor/${doc._id}`)}
+                  onClick={() => navigate(`/my-ratings/${doc._id}`)}
                 >
-                  <img
-                    className="doctor--image"
-                    src={doc.image}
-                    alt={doc.name}
-                  />
-                  <p className="doctor-name">{doc.name}</p>
+                  <div className="doctor-container">
+                    <img className="doctor--image" src={doc.image} alt="doctorImage" />
+                    <p className="doctor-name">{doc.name}</p>
+                  </div>
                   <div className="underline" />
-              </div>
+                </div>
               ))}
             </div>
           </div>
         ))}
       </div>
-    </div> // ✅ إغلاق صحيح للعنصر الرئيسي
+    </div>
   );
-}
+};
+
+export default UniversityProfile;
+
+
 
 // import React, { useState,useEffect,useRef } from "react";import { useNavigate } from "react-router-dom";
 // import SearchBar from "../searchBar/searchBar";
@@ -245,16 +252,6 @@ export default function UniversityProfile() {
 
 //   return (
 // <div className='universityProfile-parent-box'>
-//      {/* <Navbar
-//             title="Explore"
-//             onBack={() => {
-//              if (window.history.length > 2) {
-//             navigate(-1);
-//               } else {
-//             navigate("/");
-//           }
-//         }}
-//       /> */}
 //       <div className="university-container">
 //            <div className="universityProfile-box">
 //           <div className="universityProfile-left">
