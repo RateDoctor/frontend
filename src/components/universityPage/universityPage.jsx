@@ -82,7 +82,11 @@ const UniversityProfile = () => {
             <div className="name-and-bookmark">
               <h2 className="superVisor-doctor-name">{university.name}</h2>
             </div>
-            <p className="university-fields">{university.location}</p>
+            <p className="university-fields">
+
+                {university.location?.city}, {university.location?.country}
+
+            </p>
             <h5 className='phone-university'>Phone: <span>{university.phone}</span></h5>
             <button className="uni-rate-btn">
               <span className='rate-button-university-span'>Rate</span>
