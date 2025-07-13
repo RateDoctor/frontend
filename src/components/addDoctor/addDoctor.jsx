@@ -2,6 +2,7 @@ import { useState , useEffect , useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { FaStar } from "react-icons/fa";
 import { RxCalendar } from "react-icons/rx";
 import { FiArrowLeft } from "react-icons/fi";
 import axios from "axios";
@@ -39,54 +40,57 @@ const AddDoctor = () => {
   const [newBackground, setNewBackground] = useState('');
   const [isAddingBackground, setIsAddingBackground] = useState(false);
   const [calendarFor, setCalendarFor] = useState({ field: null, idx: null });
+  const [rating, setRating] = useState(0);
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
 
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (universityRef.current && !universityRef.current.contains(event.target)) {
-      setIsUniversityDropdownOpen(false);
-    }
+const renderStars = () => {
+  return [1,2,3,4,5].map(star => (
+    <FaStar
+      key={star}
+      size={24}   // set star icon size here (24px)
+      color={star <= rating ? "#ffc107" : "#e4e5e9"} // filled vs empty color
+      style={{ cursor: 'pointer', marginRight: 4 }}
+      onClick={() => setRating(star)}
+      title={`${star} Star${star > 1 ? 's' : ''}`}
+    />
+  ));
+};
 
-    if (fieldRef.current && !fieldRef.current.contains(event.target)) {
-      setIsFieldDropdownOpen(false);
-    }
+ useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (universityRef.current && !universityRef.current.contains(event.target)) {
+        setIsUniversityDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    if (topicRef.current && !topicRef.current.contains(event.target)) {
-      setIsTopicDropdownOpen(false);
-    }
-  };
+// useEffect(() => {
+//   const fetchData = async () => {
+//     try {
+//       const token = localStorage.getItem('authToken');
+//       const headers = { Authorization: `Bearer ${token}` };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => document.removeEventListener("mousedown", handleClickOutside);
-}, []);
+//       const [uniRes, fieldRes, topicRes] = await Promise.all([
+//         axios.get('http://localhost:5000/api/universities', { headers }),
+//         axios.get('http://localhost:5000/api/fields', { headers }),
+//         axios.get('http://localhost:5000/api/topics', { headers }),
+//       ]);
 
- 
+//       setUniversities(uniRes.data);
+//       setFields(fieldRes.data);
+//       setTopics(topicRes.data);
+//     } catch (err) {
+//       console.error('Error fetching lists:', err);
+//     }
+//   };
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const headers = { Authorization: `Bearer ${token}` };
-
-      const [uniRes, fieldRes, topicRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/universities', { headers }),
-        axios.get('http://localhost:5000/api/fields', { headers }),
-        axios.get('http://localhost:5000/api/topics', { headers }),
-      ]);
-
-      setUniversities(uniRes.data);
-      setFields(fieldRes.data);
-      setTopics(topicRes.data);
-    } catch (err) {
-      console.error('Error fetching lists:', err);
-    }
-  };
-
-  fetchData();
-}, []);
+//   fetchData();
+// }, []);
 
 
 
@@ -100,11 +104,35 @@ useEffect(() => {
   //     }
   //   }, []);
 
-  useEffect(() => {
-  const role = localStorage.getItem("userRole");
-  if (!role) return;           // still loading
-  if (role !== "supervisor") navigate("/");
-}, []);
+ useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const [uniRes, fieldRes, topicRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/universities', { headers }),
+          axios.get('http://localhost:5000/api/fields', { headers }),
+          axios.get('http://localhost:5000/api/topics', { headers }),
+        ]);
+
+        setUniversities(uniRes.data);
+        setFields(fieldRes.data);
+        setTopics(topicRes.data);
+      } catch (err) {
+        console.error('Error fetching lists:', err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
+useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    if (role && role !== "supervisor") navigate("/");
+  }, []);
 
 
 
@@ -128,148 +156,207 @@ useEffect(() => {
 
 
 
-const ensureTopicId = async (topicName, fieldId, index) => {
-  const topic = topicName.trim();
-  console.log(`➡️ ensureTopicId: "${topic}" for field "${fieldId}"`);
+// const ensureTopicId = async (topicName, fieldId, index) => {
+//   const topic = topicName.trim();
+//   console.log(`➡️ ensureTopicId: "${topic}" for field "${fieldId}"`);
 
-  if (!topic || !fieldId) return null;
+//   if (!topic || !fieldId) return null;
 
-  const existingTopic = topics.find(
-    (t) => t.name.toLowerCase() === topic.toLowerCase() && t.field === fieldId
-  );
+//   const existingTopic = topics.find(
+//     (t) => t.name.toLowerCase() === topic.toLowerCase() && t.field === fieldId
+//   );
 
-  if (existingTopic) {
-    return existingTopic._id;
-  }
+//   if (existingTopic) {
+//     return existingTopic._id;
+//   }
 
-  try {
-    const token = localStorage.getItem("authToken");
-    const response = await axios.post(
-      "http://localhost:5000/api/topics",
-      { name: capitalizeFirstLetter(topic), fieldId },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    const newTopic = response.data;
-    setTopics((prev) => [...prev, newTopic]);
-    return newTopic._id;
-  } catch (err) {
-    console.error(`❌ Error creating topic "${topic}":`, err.response?.data || err.message);
-    throw new Error(`Error creating topic: "${topic}". Please try again.`);
-  }
-};
+//   try {
+//     const token = localStorage.getItem("authToken");
+//     const response = await axios.post(
+//       "http://localhost:5000/api/topics",
+//       { name: capitalizeFirstLetter(topic), fieldId },
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+//     const newTopic = response.data;
+//     setTopics((prev) => [...prev, newTopic]);
+//     return newTopic._id;
+//   } catch (err) {
+//     console.error(`❌ Error creating topic "${topic}":`, err.response?.data || err.message);
+//     throw new Error(`Error creating topic: "${topic}". Please try again.`);
+//   }
+// };
 
 
-const handleSubmit = async () => {
-  console.log("📨 Submitting doctor:", formData);
+ const ensureEntityId = async (list, setList, endpoint, name, payload = {}) => {
+    const match = list.find(item => item.name.toLowerCase() === name.toLowerCase());
+    if (match) return match._id;
 
-  // Step 1: Validate university selection
-  if (!formData.universityId) {
-    alert("Please select or wait for university to be saved.");
-    return;
-  }
-
-  // Step 2: Ensure fieldOfStudyId is set using first background
-  const primaryBackground = formData.backgrounds[0]?.trim();
-  if (!primaryBackground) {
-    alert("Please enter a background and wait for it to be saved.");
-    return;
-  }
-
-  if (!formData.fieldOfStudyId) {
-    const existingField = fields.find(
-      (f) => f.name.toLowerCase() === primaryBackground.toLowerCase()
-    );
-
-    if (existingField) {
-      formData.fieldOfStudyId = existingField._id;
-    } else {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.post(
-          "http://localhost:5000/api/fields",
-          { name: capitalizeFirstLetter(primaryBackground) },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        const newField = response.data;
-        setFields((prev) => [...prev, newField]);
-        // formData.fieldOfStudyId = newField._id;
-        setFormData(prev => ({ ...prev, fieldOfStudyId: newField._id }))
-      } catch (err) {
-        console.error("❌ Error creating field on submit:", err.response?.data || err.message);
-        alert("Error creating field. Please try again.");
-        return;
-      }
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await axios.post(`http://localhost:5000/api/${endpoint}`,
+        { name: capitalizeFirstLetter(name), ...payload },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setList(prev => [...prev, res.data]);
+      return res.data._id;
+    } catch (err) {
+      console.error(`Error creating ${endpoint}:`, err.response?.data || err.message);
+      throw new Error(`Failed to create ${endpoint}`);
     }
-  }
-
-  // Step 3: Ensure teaching topics are all saved and topicIds are filled
-let topicIds = [];
-try {
-  topicIds = await Promise.all(
-    formData.teaching.map((topic, i) => {
-      const trimmed = topic.trim();
-      if (!trimmed) return null;
-
-      if (formData.topicIds[i]) return formData.topicIds[i];
-      return ensureTopicId(trimmed, formData.fieldOfStudyId, i);
-    })
-  );
-} catch (err) {
-  alert(err.message);
-  return;
-}
-
-// Step 4: Validate topicIds
-const unsaved = topicIds.some((id, i) => formData.teaching[i].trim() && !id);
-if (unsaved) {
-  alert("Please select or wait for all teaching topics to be saved.");
-  return;
-}
-
-  // Step 5: Submit to backend
-  setIsSubmitting(true);
-
-  const payload = {
-  name: formData.doctorName,
-  universityId: formData.universityId,
-  fieldOfStudyId: formData.fieldOfStudyId || null,
-  affiliations: formData.affiliations,
-  background: formData.backgrounds,
-  teaching: formData.teaching.map(t => t.trim()),
-  topicIds: topicIds,
-  supervision: formData.supervision,
-  experience: formData.experience,
-  researchInterests: [],
   };
 
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    alert("You're not logged in");
-    return;
-  }
+// const handleSubmit = async () => {
+//   console.log("📨 Submitting doctor:", formData);
 
-  try {
-    const response = await axios.post("http://localhost:5000/api/doctors", payload, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+//   // Step 1: Validate university selection
+//   if (!formData.universityId) {
+//     alert("Please select or wait for university to be saved.");
+//     return;
+//   }
 
-    const newDoctor = response.data?.doctor;
-    if (!newDoctor || !newDoctor._id) {
-      alert("Error: created doctor ID missing.");
-      return;
+//   // Step 2: Ensure fieldOfStudyId is set using first background
+//   const primaryBackground = formData.backgrounds[0]?.trim();
+//   if (!primaryBackground) {
+//     alert("Please enter a background and wait for it to be saved.");
+//     return;
+//   }
+
+//   if (!formData.fieldOfStudyId) {
+//     const existingField = fields.find(
+//       (f) => f.name.toLowerCase() === primaryBackground.toLowerCase()
+//     );
+
+//     if (existingField) {
+//       formData.fieldOfStudyId = existingField._id;
+//     } else {
+//       try {
+//         const token = localStorage.getItem("authToken");
+//         const response = await axios.post(
+//           "http://localhost:5000/api/fields",
+//           { name: capitalizeFirstLetter(primaryBackground) },
+//           { headers: { Authorization: `Bearer ${token}` } }
+//         );
+//         const newField = response.data;
+//         setFields((prev) => [...prev, newField]);
+//         // formData.fieldOfStudyId = newField._id;
+//         setFormData(prev => ({ ...prev, fieldOfStudyId: newField._id }))
+//       } catch (err) {
+//         console.error("❌ Error creating field on submit:", err.response?.data || err.message);
+//         alert("Error creating field. Please try again.");
+//         return;
+//       }
+//     }
+//   }
+
+//   // Step 3: Ensure teaching topics are all saved and topicIds are filled
+// let topicIds = [];
+// try {
+//   topicIds = await Promise.all(
+//     formData.teaching.map((topic, i) => {
+//       const trimmed = topic.trim();
+//       if (!trimmed) return null;
+
+//       if (formData.topicIds[i]) return formData.topicIds[i];
+//       return ensureTopicId(trimmed, formData.fieldOfStudyId, i);
+//     })
+//   );
+// } catch (err) {
+//   alert(err.message);
+//   return;
+// }
+
+// // Step 4: Validate topicIds
+// const unsaved = topicIds.some((id, i) => formData.teaching[i].trim() && !id);
+// if (unsaved) {
+//   alert("Please select or wait for all teaching topics to be saved.");
+//   return;
+// }
+
+//   // Step 5: Submit to backend
+//   setIsSubmitting(true);
+
+//   const payload = {
+//   name: formData.doctorName,
+//   universityId: formData.universityId,
+//   fieldOfStudyId: formData.fieldOfStudyId || null,
+//   affiliations: formData.affiliations,
+//   background: formData.backgrounds,
+//   teaching: formData.teaching.map(t => t.trim()),
+//   topicIds: topicIds,
+//   supervision: formData.supervision,
+//   experience: formData.experience,
+//   researchInterests: [],
+//   };
+
+//   const token = localStorage.getItem("authToken");
+//   if (!token) {
+//     alert("You're not logged in");
+//     return;
+//   }
+
+//   try {
+//     const response = await axios.post("http://localhost:5000/api/doctors", payload, {
+//       headers: { Authorization: `Bearer ${token}` },
+//     });
+
+//     const newDoctor = response.data?.doctor;
+//     if (!newDoctor || !newDoctor._id) {
+//       alert("Error: created doctor ID missing.");
+//       return;
+//     }
+
+//     console.log("🚀 New doctor created:", newDoctor);
+//     navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
+//   } catch (err) {
+//     console.error("Add Doctor error:", err.response?.data || err.message);
+//     alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
+//   } finally {
+//     setIsSubmitting(false);
+//   }
+// };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const primaryUni = formData.affiliations[0]?.name?.trim();
+      const universityId = await ensureEntityId(universities, setUniversities, 'universities', primaryUni);
+
+      const primaryField = formData.backgrounds[0]?.trim();
+      const fieldOfStudyId = await ensureEntityId(fields, setFields, 'fields', primaryField);
+
+      const topicIds = await Promise.all(
+        formData.teaching.map(t => ensureEntityId(topics, setTopics, 'topics', t.trim(), { fieldId: fieldOfStudyId }))
+      );
+
+      const payload = {
+        name: formData.doctorName,
+        universityId,
+        fieldOfStudyId,
+        affiliations: formData.affiliations,
+        background: formData.backgrounds,
+        teaching: formData.teaching,
+        topicIds,
+        supervision: formData.supervision,
+        experience: formData.experience,
+        researchInterests: [],
+        initialRating: rating,
+      };
+      console.log("📦 Payload to be sent:", payload);
+
+      const token = localStorage.getItem("authToken");
+      const res = await axios.post("http://localhost:5000/api/doctors", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const newDoctor = res.data?.doctor;
+      if (!newDoctor || !newDoctor._id) throw new Error("Doctor creation failed.");
+      navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    console.log("🚀 New doctor created:", newDoctor);
-    navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
-  } catch (err) {
-    console.error("Add Doctor error:", err.response?.data || err.message);
-    alert("Error creating doctor: " + (err.response?.data?.error || "Unknown error"));
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
+  };
 
   const toggleCalendar = (field) => {
     setShowCalendarFor(showCalendarFor === field ? null : field);
@@ -815,6 +902,14 @@ if (unsaved) {
         <p className="note">
           Before completing the profile creation process, we kindly ask you to provide an initial rating for Dr. {formData.doctorName || '[Doctor\'s Name]'}.
         </p>
+
+        <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+        <label className="top-one-line label-addDoctor">Initial Rating *</label>
+        <div className="stars-container">
+          {renderStars()}
+        </div>
+        </div>
+
         <div className='flex'>
         <button className="rate-button"  type="button" >Rate Doctor</button>
         {/* <button className="confirm-button"  type="button" onClick={handleSubmit}>Confirm</button> */}

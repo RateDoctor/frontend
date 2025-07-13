@@ -54,7 +54,7 @@ function App() {
             <Route path="/helpFAQ" element={<HelpFAQ />} /> 
             <Route path="/create-university" element={<CreateUniversity />} /> 
             <Route path="/supervisor-dr-profile/:doctorId" element={<SupervisorDrProfile />} /> 
-            <Route path="/university-profile/:universityId" element={<UniversityProfile />} /> 
+            <Route path="/university/:universityId" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-supervisor" element={<RateSupervisor />} /> 
             <Route path="/settings" element={<Settings />} />

@@ -1,66 +1,93 @@
-import React, { useState, useEffect, useRef } from "react";
+// universityProfile.jsx
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import uni from "../../imgs/uni.png";
 import SearchBar from "../searchBar/searchBar";
 import axios from "axios";
 import { renderStars } from "../../utils/renderStars";
 import "./universityPage.css";
 
-const groupDoctorsByFirstLetter = (doctors) => {
-  const grouped = {};
-  doctors.forEach((doc) => {
-    const firstLetter = doc.name[0].toUpperCase();
-    if (!grouped[firstLetter]) grouped[firstLetter] = [];
-    grouped[firstLetter].push(doc);
-  });
-  return Object.fromEntries(
-    Object.entries(grouped).sort().map(([k, v]) => [k, v.sort((a, b) => a.name.localeCompare(b.name))])
-  );
+// Utilities
+const groupByFirstLetter = (doctors) => {
+  return doctors.reduce((groups, doctor) => {
+    const letter = doctor?.name?.[0]?.toUpperCase();
+    if (!letter) return groups;
+    groups[letter] = groups[letter] || [];
+    groups[letter].push(doctor);
+    return groups;
+  }, {});
 };
+
+const getDisplayPhone = (phone) => {
+  if (!phone || phone.trim() === "" || phone === "Unknown") return "N/A";
+  return phone;
+};
+
+const normalizeDoctor = (doc) => ({
+  ...doc,
+  image: doc.profileImage?.fileUrl || doc.profileImage || "",
+});
 
 const UniversityProfile = () => {
   const { universityId } = useParams();
-  console.log("👉 universityId is:", universityId);
   const navigate = useNavigate();
+
   const [university, setUniversity] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [query, setQuery] = useState("");
-  const [filteredDoctors, setFilteredDoctors] = useState([]);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUniversityAndDoctors = async () => {
-      try {
-       const [uniRes, docRes] = await Promise.all([
-         axios.get(`http://localhost:5000/api/universities/${universityId}`),
-         axios.get(`http://localhost:5000/api/universities/${universityId}/doctors`)
-       ]);
-        const normalizedDoctors = docRes.data.map(doc => ({
-          ...doc,
-          image: doc.profileImage?.fileUrl || doc.profileImage || "",
-        }));
-
-        setUniversity(uniRes.data);
-        setDoctors(normalizedDoctors);
-        setFilteredDoctors(normalizedDoctors);
-      } catch (err) {
-        console.error("Error fetching university or doctors", err);
-      }
-    };
-
-    fetchUniversityAndDoctors();
-  }, [universityId]);
-
-  const handleSearch = (q) => {
-    setQuery(q);
-    const filtered = doctors.filter(doc =>
-      doc.name.toLowerCase().includes(q.toLowerCase())
-    );
-    setFilteredDoctors(filtered);
+useEffect(() => {
+  const fetchUniversityAndDoctors = async () => {
+    try {
+      const [uniRes, docRes] = await Promise.all([
+        axios.get(`http://localhost:5000/api/universities/${universityId}`),
+        axios.get(`http://localhost:5000/api/universities/${universityId}/doctors`)
+      ]);
+      console.log("University API response:", uniRes.data);
+      console.log("Doctors API response:", docRes.data);
+      setUniversity(uniRes.data);
+      setDoctors(docRes.data.map(normalizeDoctor));
+    } catch (err) {
+      console.error("Error fetching university or doctors", err);
+    } finally {
+      setLoading(false);
+    }
   };
+  fetchUniversityAndDoctors();
+}, [universityId]);
 
-  const groupedDoctors = groupDoctorsByFirstLetter(filteredDoctors);
+useEffect(() => {
+  if (university) {
+    console.log("University location field:", university.location);
+  }
+}, [university]);
 
-  if (!university) return <div>Loading...</div>;
+
+  const handleSearchChange = (e) => setQuery(e.target.value);
+  const handleDoctorClick = (id) => navigate(`/my-ratings/${id}`);
+
+  const filteredDoctors = doctors.filter(doc =>
+    doc.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const groupedDoctors = groupByFirstLetter(filteredDoctors);
+
+  if (loading) return <div>Loading...</div>;
+  if (!university) return <div>University not found.</div>;
+
+let locationDisplay = "N/A";
+
+if (university.location) {
+  if (typeof university.location === "string" && university.location.trim()) {
+    locationDisplay = university.location;
+  } else if (typeof university.location === "object") {
+    const parts = [university.location.city, university.location.country].filter(Boolean);
+    locationDisplay = parts.length ? parts.join(", ") : "N/A";
+  }
+}
+
+
 
   return (
     <div className='universityProfile-parent-box'>
@@ -69,25 +96,18 @@ const UniversityProfile = () => {
           <div className="universityProfile-left">
             <img
               className='universityImgProfile'
-              src={university.logo || "/default-university-logo.png"}
+              src={university.logo || uni}
               alt="University"
             />
           </div>
-
           <div className="drProfile-right">
             <div className="rating-stars">
               {renderStars(Number(university.rating || 0))}
               <span className='overallRating'>Overall rating</span>
             </div>
-            <div className="name-and-bookmark">
-              <h2 className="superVisor-doctor-name">{university.name}</h2>
-            </div>
-            <p className="university-fields">
-
-                {university.location?.city}, {university.location?.country}
-
-            </p>
-            <h5 className='phone-university'>Phone: <span>{university.phone}</span></h5>
+            <h2 className="superVisor-doctor-name">{university.name}</h2>
+            <p className="university-fields">{locationDisplay}</p>
+            <h5 className='phone-university'>Phone: <span>{getDisplayPhone(university.phone)}</span></h5>
             <button className="uni-rate-btn">
               <span className='rate-button-university-span'>Rate</span>
             </button>
@@ -99,10 +119,10 @@ const UniversityProfile = () => {
       <div className="searching-box">
         <h5 className="searching-title">PhD Doctors</h5>
         <SearchBar
-          placeholder="Search Doctors..."
-          onSearch={handleSearch}
-          onFocus={() => setIsSearchFocused(true)}
-          value={query}
+            placeholder="Search Doctors..."
+            value={query}
+            onChange={handleSearchChange}
+            onSearch={(val) => setQuery(val)}
         />
       </div>
 
@@ -111,14 +131,14 @@ const UniversityProfile = () => {
           <div key={letter} className="doctor-group">
             <h3 className="group-letter">{letter}</h3>
             <div className="doctor-list">
-              {docs.map((doc, index) => (
+              {docs.map((doc) => (
                 <div
-                  key={index}
+                  key={doc._id}
                   className="doctor--card"
-                  onClick={() => navigate(`/my-ratings/${doc._id}`)}
+                  onClick={() => handleDoctorClick(doc._id)}
                 >
                   <div className="doctor-container">
-                    <img className="doctor--image" src={doc.image} alt="doctorImage" />
+                    <img className="doctor--image" src={doc.image} alt={doc.name} />
                     <p className="doctor-name">{doc.name}</p>
                   </div>
                   <div className="underline" />
@@ -133,6 +153,7 @@ const UniversityProfile = () => {
 };
 
 export default UniversityProfile;
+
 
 
 

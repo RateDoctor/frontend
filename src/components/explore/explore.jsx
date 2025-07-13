@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
 import axios from "axios"; 
@@ -9,548 +9,399 @@ import "../explore/explore.css";
 const getUnique = (arr, key) => {
   const seen = new Set();
   return arr
-    .map(item => item[key])
+    .map(item => item?.[key])
     .filter(item => {
-      if (!item || !item._id) return false;
-      const id = item._id;
-      if (seen.has(id)) return false;
-      seen.add(id);
+      if (!item || typeof item !== "object" || !item._id) return false;
+      if (seen.has(item._id)) return false;
+      seen.add(item._id);
       return true;
     });
 };
 
+function useOutsideClick(ref, callback) {
+  useEffect(() => {
+    function handleClick(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        callback();
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [ref, callback]);
+}
 
 const Explore = () => {
   const [supervisors, setSupervisors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
-  const [recentQueries, setRecentQueries] = useState([]);
-  const [selectedUniversity, setSelectedUniversity] = useState("");
-  const [selectedField, setSelectedField] = useState("");
-  const [selectedTopic, setSelectedTopic] = useState("");
+  const [selectedUniversity, setSelectedUniversity] = useState(null);
+  const [selectedField, setSelectedField] = useState(null);
+  const [selectedTopic, setSelectedTopic] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [searchContext, setSearchContext] = useState("doctor");
-  const [listViewResults, setListViewResults] = useState([]);
-  const [viewState, setViewState] = useState("home");
+  const [matchedUniversity, setMatchedUniversity] = useState(null);
+  const [universities, setUniversities] = useState([]);
+
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
   const [isFieldOpen, setIsFieldOpen] = useState(false);
   const [isTopicOpen, setIsTopicOpen] = useState(false);
+
   const universityRef = useRef(null);
   const fieldRef = useRef(null);
   const topicRef = useRef(null);
   const overlayRef = useRef(null);
-  useOutsideClick(overlayRef, () => setIsSearchFocused(false));
 
+  useOutsideClick(overlayRef, () => setIsSearchFocused(false));
   useOutsideClick(universityRef, () => setIsUniversityOpen(false));
   useOutsideClick(fieldRef, () => setIsFieldOpen(false));
   useOutsideClick(topicRef, () => setIsTopicOpen(false));
 
   const navigate = useNavigate();
 
-  const handleSearch = (queryValue) => {
-    setQuery(queryValue);
-    const result = applyFilters(supervisors, queryValue, selectedUniversity, selectedField, selectedTopic);
-    setListViewResults(result);
-  };
-
-  // const applyFilters = (data, queryStr, university, field, topic) => {
-  //   let result = data;
-
-  //   if (queryStr) {
-  //     result = result.filter(sup =>
-  //       sup.name.toLowerCase().includes(queryStr.toLowerCase())
-  //     );
-  //   }
-  //   if (university) {
-  //     result = result.filter(sup => {
-  //       if (typeof sup.university === 'object') {
-  //         return sup.university._id === university._id;
-  //       }
-  //       return sup.university === university;
-  //     });
-  //   }
-  //   if (field) {
-  //     result = result.filter(sup => {
-  //       if (typeof sup.field === 'object'){
-  //         return sup.field._id === field._id;
-  //       }
-  //       return sup.field._id === field._id;
-  //     });     
-  //   }
-
-  //   if (topic) {
-  //     result = result.filter(sup => {
-  //       if (typeof sup.topic === 'object'){
-  //         return sup.topic._id === topic._id;
-  //       }
-  //       return sup.topic._id === topic._id;
-  //     });
-  //   }
-
-  //   return result;
-  // };
-
-
+  // Apply filters to supervisors
   const applyFilters = (data, queryStr, university, field, topic) => {
-  let result = data;
+    let result = data;
 
-  if (queryStr) {
-    result = result.filter(sup =>
-      sup.name.toLowerCase().includes(queryStr.toLowerCase())
-    );
-  }
-
-  if (university && university._id) {
-    result = result.filter(sup =>
-      sup.university && sup.university._id === university._id
-    );
-  }
-
-  if (field && field._id) {
-    result = result.filter(sup =>
-      sup.field && sup.field._id === field._id
-    );
-  }
-
-  if (topic && topic._id) {
-    result = result.filter(sup =>
-      sup.topic && sup.topic._id === topic._id
-    );
-  }
-
-  return result;
-};
- 
-  const universities = getUnique(supervisors, "university");
-//   const fields = getUnique(
-//     supervisors.filter(s => selectedUniversity ? s.university === selectedUniversity : true),
-//     "field"
-//   );
-//  const topics = getUnique(
-//   supervisors.filter(s => !selectedField || s.field === selectedField),
-//   "topic"   // ← singular key
-// );
-
-const fields = getUnique(
-  supervisors.filter(s => selectedUniversity ? s.university?._id === selectedUniversity._id : true),
-  "field"
-);
-
-const topics = getUnique(
-  supervisors.filter(s => selectedField ? s.field?._id === selectedField._id : true),
-  "topic"
-);
-  const filtered = applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic);
-
-function useOutsideClick(ref, callback) {
-  useEffect(() => {
-    function handleClick(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        callback();
-      }
+    if (queryStr) {
+      const lowerQuery = queryStr.toLowerCase();
+      result = result.filter(sup => sup.name.toLowerCase().includes(lowerQuery));
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, [ref, callback]);
-}
- 
 
-const normalizeDoctorData = (doctor) => {
-  return {
-    ...doctor,
-    field: doctor.fieldOfStudy || doctor.field || "No field",
-    topics: doctor.topic ? [doctor.topic] : [], // ✅ FIXED: always an array
-    image: doctor.profileImage?.fileUrl || doctor.profileImage || "",
-    rating: doctor.avgRating || doctor.rating || 0
-  };
-};
-
-
-
-const handleDoctorClick = async (doctorId) => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user?.role === "supervisor") {
-    navigate(`/supervisor-dr-profile/${doctorId}`);
-    return;
-  }
-console.log("Sending token:", localStorage.getItem("authToken"));
-
-  try {
-    const res = await axios.get(`http://localhost:5000/api/ratings/users/${user._id}/ratings`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
-    });
-
-    const token = localStorage.getItem("authToken");
-    console.log("Using token:", token);
-
-    const existingRating = res.data.find(r => r.doctorId._id === doctorId);
-
-    if (existingRating) {
-      navigate(`/my-ratings/${existingRating.doctorId._id}`);
-    } else {
-      navigate(`/my-ratings/${doctorId}?new=true`);
-    }
-  } catch (error) {
-    console.error("Error checking existing rating", error);
-    navigate(`/my-ratings/${doctorId}?new=true`);
-  }
-};
-
-
-useEffect(() => {
-  const fetchDoctors = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/doctors", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}` // if your API is protected
-        }
+    if (university && university._id) {
+      result = result.filter(sup => {
+        const uni = sup.university;
+        if (!uni) return false;
+        const uniId = typeof uni === "object" ? uni._id : uni;
+        return String(uniId) === String(university._id);
       });
-
-       // Normalize and update supervisors
-      const doctorList = response.data?.doctors.map(normalizeDoctorData) || [];
-      setSupervisors(doctorList);
-
-    } catch (error) {
-      console.error("Error fetching doctors:", error.response?.data || error.message);
-      setSupervisors([]); // fallback to empty array on error
-    } finally {
-      setLoading(false);
     }
+
+    if (field && field._id) {
+      result = result.filter(sup => sup.field && sup.field._id === field._id);
+    }
+
+    if (topic && topic._id) {
+      result = result.filter(sup => sup.topic && sup.topic._id === topic._id);
+    }
+
+    return result;
   };
 
-  fetchDoctors();
-}, []);
+  // Search handler
+  const handleSearch = (queryValue, university = selectedUniversity, field = selectedField, topic = selectedTopic) => {
+    setQuery(queryValue);
 
+    // Try to find exact university match to navigate
+    // const foundUniversity = universities.find(
+    //   uni => uni.name.toLowerCase() === queryValue.trim().toLowerCase()
+    // );
+    // setMatchedUniversity(foundUniversity);
 
+    // if (foundUniversity) {
+    //   navigate(`/university/${foundUniversity._id}`);
+    //   setIsSearchFocused(false);
+    //   return;
+    // }
 
-function useOutsideClick(ref, callback) {
+    // Else filter supervisors list
+    const filteredResults = applyFilters(supervisors, queryValue, university, field, topic);
+    setListViewResults(filteredResults);
+  };
+
+  // Derive filtered fields and topics from current supervisors and filters
+  const fields = getUnique(
+    supervisors.filter(s => !selectedUniversity || s.university?._id === selectedUniversity._id),
+    "field"
+  );
+
+  const topics = getUnique(
+    supervisors.filter(s => !selectedField || s.field?._id === selectedField._id),
+    "topic"
+  );
+
+  const [listViewResults, setListViewResults] = useState(supervisors);
+
+  // Fetch supervisors
   useEffect(() => {
-    function handleClick(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        callback();
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, [ref, callback]);
-}
+    const fetchDoctors = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/doctors", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+        });
+        const doctorList = res.data?.doctors.map(doc => ({
+          ...doc,
+          field: doc.fieldOfStudy || doc.field || null,
+          topic: doc.topic || null,
+          image: doc.profileImage?.fileUrl || doc.profileImage || "",
+          rating: doc.averageRating || doc.rating || 0,
 
+        })) || [];
+        setSupervisors(doctorList);
+        setListViewResults(doctorList);
+      } catch (err) {
+        setSupervisors([]);
+        setListViewResults([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDoctors();
+  }, []);
+
+  // Fetch universities
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/universities");
+        setUniversities(res.data || []);
+      } catch (err) {
+        setUniversities([]);
+      }
+    };
+    fetchUniversities();
+  }, []);
+
+  // Scroll lock when dropdown open
+  useEffect(() => {
+    if (isUniversityOpen || isFieldOpen || isTopicOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [isUniversityOpen, isFieldOpen, isTopicOpen]);
+
+  // Handle doctor card click
+  const handleDoctorClick = async (doctorId) => {
+    // Your existing logic for routing on doctor click
+  };
 
   return (
     <div className="explore-container">
       <div className="search-wrapper" style={{ position: "relative" }}>
-       <SearchBar
-        placeholder="Search Doctors..."
-        onSearch={(val) => {
-          handleSearch(val);
-          setIsSearchFocused(true);
-          setViewState("filterDoctors");
-        }}
-      onFocus={() => {
-        setIsSearchFocused(true);
-        setViewState("filterDoctors");
-        setListViewResults(supervisors);
-      }}
-//  onFocus={() => {
-//    // 1) show the overlay
-//    setIsSearchFocused(true);
-//    setViewState("filterDoctors");
-//    // 2) seed with every doctor you have
-//    setListViewResults(supervisors);
-//  }}
-  // onBlur={() => setIsSearchFocused(false)}
-  // value={query}
-
- 
-
-/>
-
-
+        <SearchBar
+          placeholder="Search Doctors or Universities..."
+          onSearch={val => {
+            handleSearch(val);
+            setIsSearchFocused(true);
+          }}
+          onFocus={() => {
+            setIsSearchFocused(true);
+            setListViewResults(supervisors);
+          }}
+          value={query}
+        />
       </div>
 
-      {/* Overlay when search is focused */}
       {isSearchFocused && (
         <div className="search-overlay" ref={overlayRef}>
-
-          <div className="filter-bar">
+          {matchedUniversity && (
+            <div
+              onClick={() => {
+                setIsSearchFocused(false);
+                navigate(`/university-profile/${matchedUniversity._id}`);
+              }}
+              className="search-university-result"
+            >
+              {matchedUniversity.name} → Go to University Page
+            </div>
+          )}
 
           {/* University Dropdown */}
           <div className={`custom-select ${isUniversityOpen ? "open" : ""}`} ref={universityRef}>
-            <div 
-            className={`select-header ${selectedUniversity ? "selected-header" : ""}`}
-             onClick={() => setIsUniversityOpen(!isUniversityOpen)}>
+            <div
+              className={`select-header ${selectedUniversity ? "selected-header" : ""}`}
+              onClick={() => setIsUniversityOpen(!isUniversityOpen)}
+            >
               {selectedUniversity?.name || "All Universities"} <span className="arrow">&#9662;</span>
             </div>
             {isUniversityOpen && (
-                 <div className="dropdown-overlay" style={{ zIndex: 300 }}>
-                 <ul className="doctor-list custom-dropdown">
-
-                  
-                 <li
-                  className={!selectedUniversity ? "lists selected" : "lists"}
-                  onClick={() => {
-                    setSelectedUniversity("");
-                    setSelectedField("");
-                    setSelectedTopic("");
-                    setIsUniversityOpen(false);
-                    handleSearch(query);
-                  }}
-                >
-                  All Universities
-                </li>
-                
-               {universities
-                  .filter(uni => uni != null)      // ← drop any stray null
-                  .map(uni => (
-                    <li
-                    key={uni._id || uni}    
-          
-                    className={`lists ${selectedUniversity && 
-                      selectedUniversity._id === uni._id
-                      ? "selected" : ""}`}
+              <div className="dropdown-overlay" style={{ zIndex: 300 }}>
+                <ul className="doctor-list custom-dropdown">
+                  <li
+                    className={!selectedUniversity ? "lists selected" : "lists"}
                     onClick={() => {
-                      setSelectedUniversity(uni);
-                      setSelectedField("");
-                      setSelectedTopic("");
+                      setSelectedUniversity(null);
+                      setSelectedField(null);
+                      setSelectedTopic(null);
                       setIsUniversityOpen(false);
-                      handleSearch(query);
+                      handleSearch(query, null, null, null);
                     }}
                   >
-                    {/* {uni.name}
-                     {typeof uni === 'object'
-                        ? (uni.name || "—Unnamed—")
-                        : uni
-                      } */}
-
-                        {uni.name || "—Unnamed—"}
+                    All Universities
                   </li>
-                ))
-                }
-
-                 <div className="not-found">
-                  <p className="paragraph-not-found">University not found.</p>
-                 <li
-                 className="hyperlink-not-found"
-                  style={{ color: "#0074E4", cursor: "pointer",  }}
-                  onClick={() => navigate("/create-university")}
-                >
-                  Create University
-                </li>
-                </div>
-              </ul>
-             </div>
+                  {universities.map(uni => (
+                    <li
+                      key={uni._id}
+                      className={selectedUniversity?._id === uni._id ? "lists selected" : "lists"}
+                      onClick={() => {
+                        setSelectedUniversity(uni);
+                        setSelectedField(null);
+                        setSelectedTopic(null);
+                        setIsUniversityOpen(false);
+                        handleSearch(query, uni, null, null);
+                      }}
+                    >
+                      {uni.name || "Unnamed"}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
 
           {/* Field Dropdown */}
           {selectedUniversity && (
-          <div className={`custom-select ${isFieldOpen ? "open" : ""}`} ref={fieldRef}>
-              <div 
-              className={`select-header ${selectedField ? "selected-header" : ""}`}
-              onClick={() => setIsFieldOpen(!isFieldOpen)}>
-                {/* {selectedField || "All Fields"} <span className="arrow">&#9662;</span> */}
+            <div className={`custom-select ${isFieldOpen ? "open" : ""}`} ref={fieldRef}>
+              <div
+                className={`select-header ${selectedField ? "selected-header" : ""}`}
+                onClick={() => setIsFieldOpen(!isFieldOpen)}
+              >
                 {selectedField?.name || "All Fields"} <span className="arrow">&#9662;</span>
-
               </div>
               {isFieldOpen && (
-                 <div className="dropdown-overlay" style={{ zIndex: 300 }}>
-                <ul className="doctor-list custom-dropdown">
-                  <li
-                    className={!selectedField ? "lists selected" : "lists"}
-                    onClick={() => {
-                      setSelectedField("");
-                      setSelectedTopic("");
-                      setIsFieldOpen(false);
-                      handleSearch(query);
-    
-                    }}
-                  >
-                    All Fields
-                  </li>
-                  {fields.map((field, index) => (
+                <div className="dropdown-overlay" style={{ zIndex: 300 }}>
+                  <ul className="doctor-list custom-dropdown">
                     <li
-                      key={index}
-                      className={selectedField?._id === field._id ? "lists selected" : "lists"}
+                      className={!selectedField ? "lists selected" : "lists"}
                       onClick={() => {
-                            setSelectedField(field);
-                            setSelectedTopic(""); // Only clear downstream filters
-                            setIsFieldOpen(false);
-                            handleSearch(query);
+                        setSelectedField(null);
+                        setSelectedTopic(null);
+                        setIsFieldOpen(false);
+                        handleSearch(query, selectedUniversity, null, null);
                       }}
                     >
-                     {field.name}
+                      All Fields
                     </li>
-                  ))}
-                </ul>
-              </div>
-              )}
-            </div>
-          )}
-
-         
-
-          {/* Topic Dropdown */}
-          {selectedField && (
-            <div className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
-              <div 
-               className={`select-header ${selectedTopic ? "selected-header" : ""}`}
-               onClick={() => setIsTopicOpen(!isTopicOpen)}>
-                {/* {selectedTopic || "All Topics"} <span className="arrow">&#9662;</span> */}
-                {selectedTopic?.name || "All Topics" } <span className="arrow">&#9662;</span>
-
-              </div>
-              {isTopicOpen && (
-                 <div className="dropdown-overlay" style={{ zIndex: 300 }}>
-                <ul className="doctor-list custom-dropdown">
-                  <li
-                    className={!selectedTopic ? "lists selected" : "lists"}
-                    onClick={() => {
-                    setSelectedTopic("");      
-                    setIsTopicOpen(false);     
-                    handleSearch(query);       
-                    }}
-                  >
-                    All Topics
-                  </li>
-                  {topics.map((topic, index) => (
-                    <li
-                      key={index}
-                      className={selectedTopic?._id === topic?._id ? "lists selected" : "lists"}
-                      onClick={() => {
-                          setSelectedTopic(topic);
-                          setIsTopicOpen(false);
-                          handleSearch(query);
-                      }}
-                    >
-                     {topic.name}
-                    </li>
-                  ))}
-                </ul>
+                    {fields.map(field => (
+                      <li
+                        key={field._id}
+                        className={selectedField?._id === field._id ? "lists selected" : "lists"}
+                        onClick={() => {
+                          setSelectedField(field);
+                          setSelectedTopic(null);
+                          setIsFieldOpen(false);
+                          handleSearch(query, selectedUniversity, field, null);
+                        }}
+                      >
+                        {field.name}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </div>
           )}
 
-            {!query && !selectedUniversity && !selectedField && !selectedTopic && (
-            <p className="recent">Recent</p>
-            )}
+          {/* Topic Dropdown */}
+          {selectedField && (
+            <div className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
+              <div
+                className={`select-header ${selectedTopic ? "selected-header" : ""}`}
+                onClick={() => setIsTopicOpen(!isTopicOpen)}
+              >
+                {selectedTopic?.name || "All Topics"} <span className="arrow">&#9662;</span>
+              </div>
+              {isTopicOpen && (
+                <div className="dropdown-overlay" style={{ zIndex: 300 }}>
+                  <ul className="doctor-list custom-dropdown">
+                    <li
+                      className={!selectedTopic ? "lists selected" : "lists"}
+                      onClick={() => {
+                        setSelectedTopic(null);
+                        setIsTopicOpen(false);
+                        handleSearch(query, selectedUniversity, selectedField, null);
+                      }}
+                    >
+                      All Topics
+                    </li>
+                    {topics.map(topic => (
+                      <li
+                        key={topic._id}
+                        className={selectedTopic?._id === topic._id ? "lists selected" : "lists"}
+                        onClick={() => {
+                          setSelectedTopic(topic);
+                          setIsTopicOpen(false);
+                          handleSearch(query, selectedUniversity, selectedField, topic);
+                        }}
+                      >
+                        {topic.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
-        </div>
-
-
-          {/* Filtered search results */}
-
-        {/* {listViewResults.length > 0 && JSON.parse(localStorage.getItem("user"))?.role === "supervisor" ? (
-        <DoctorList 
-          doctors={listViewResults}
-          onDoctorClick={(doctor) => {
-            setIsSearchFocused(false);
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (user?.role === "supervisor") {
-              navigate(`/supervisor-dr-profile/${doctor._id}`);
-            } else {
-              navigate(`/my-ratings/${doctor._id}`);
-            }
-          }}
-        /> */}
-
-        {listViewResults.length > 0 ? (
-  <DoctorList 
-    doctors={listViewResults}
-    onDoctorClick={(doctor) => {
-      setIsSearchFocused(false);
-      handleDoctorClick(doctor._id);
-    }}
-  />
-// ) : (
-//   <p style={{ marginTop: "1rem" }}>
-//     Supervisor not found.
-//     <span
-//       style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-//       onClick={() => navigate("/addDoctor")}
-//     >
-//       Add doctor
-//     </span>
-//   </p>
-// )}
-
-  
-// </div>
-// )}
-
-        ) : (
-         <p style={{ marginTop: "1rem" }}>
-          Supervisor not found.
-          <span
-            style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => navigate("/addDoctor")}
-          >
-            Add doctor
-          </span>
-        </p>
-
-        )}
+          {/* Doctor List Results */}
+          {listViewResults.length > 0 ? (
+            <DoctorList
+              doctors={listViewResults}
+              onDoctorClick={(doctor) => {
+                setIsSearchFocused(false);
+                handleDoctorClick(doctor._id);
+              }}
+            />
+          ) : (
+            <p style={{ marginTop: "1rem" }}>
+              Supervisor not found.{" "}
+              <span
+                style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+                onClick={() => navigate("/addDoctor")}
+              >
+                Add doctor
+              </span>
+            </p>
+          )}
         </div>
       )}
 
+      {/* Explore Cards when search is not focused */}
       {!isSearchFocused && (
-  <>
-    <div className="header-text">
-      <h2>Rate Your PhD Experience:<br />Explore and Evaluate Supervisors</h2>
-      <p>Explore PhD Supervisors and share your academic experiences by rating your PhD supervisor</p>
+        <>
+          <div className="header-text">
+            <h2>Rate Your PhD Experience:<br />Explore and Evaluate Supervisors</h2>
+            <p>Explore PhD Supervisors and share your academic experiences by rating your PhD supervisor</p>
+          </div>
+
+          <div className="scrollable-section">
+            <div className="card-grid">
+              {applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
+                applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
+                  <SupervisorCard
+                    key={index}
+                    doctorId={sup._id}
+                    name={sup.name}
+                    rating={sup.rating}
+                    university={sup.university}
+                    field={sup.fieldOfStudy || sup.field}
+                    topics={sup.teaching}
+                    image={sup.image}
+                    onClick={() => handleDoctorClick(sup._id)}
+                  />
+                ))
+              ) : (
+                <p style={{ marginTop: "1rem" }}>
+                  Supervisor not found.{" "}
+                  <span
+                    style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+                    onClick={() => navigate("/addDoctor")}
+                  >
+                    Add doctor
+                  </span>
+                </p>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
-
-    <div className="scrollable-section">
-      <div className="card-grid">
-        {filtered.length > 0 ? (
-          // filtered.map((sup, index) => (
-          //   // <SupervisorCard key={index} {...sup} 
-          //   // onClick={() => navigate(`/rate-supervisor?doctorId=${sup._id}`)}
-          //   // />
-
-          //   <SupervisorCard topics={sup.teaching}/>
-
-          // ))
-          filtered.map((sup, index) => (
-          <SupervisorCard
-            key={index}
-            doctorId={sup._id}        // ✅ Add this line
-            name={sup.name}
-            rating={sup.rating}
-            university={sup.university}
-            field={sup.fieldOfStudy || sup.field}
-            topics={sup.teaching}     // or sup.topics
-            image={sup.image}
-            onClick={() => handleDoctorClick(sup._id)}
-          />
-
-
-        ))
-        ) : (
-         <p style={{ marginTop: "1rem" }}>
-          Supervisor not found.{" "}
-          <span
-            style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => navigate("/addDoctor")}
-          >
-            Add doctor
-          </span>
-        </p>
-
-        )}
-      </div>
-    </div>
-  </>
-)}
-
-
-    
-    </div>
-    );
-  }
+  );
+};
 
 export default Explore;

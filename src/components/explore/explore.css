@@ -365,16 +365,16 @@
 }
 
 .custom-dropdown {
-    position: fixed;
+  position: fixed;
     top: 55%;
     left: 52%;
     height: 64vh;
     transform: translate(-57%, -50%);
     width: min(100%, 600px);
-    max-height: clamp(200px, 70vh, 550px);
+    max-height: clamp(200px, 70vh, 640px);
     background-color: white;
     padding: 1rem;
-    /* overflow-y: auto; */
+    overflow-y: auto;    /* مهم جداً للسماح بالتمرير هنا */
     z-index: 9999;
 }
 
@@ -457,7 +457,7 @@ margin-left: 12px;
 }
 
 .search-overlay{
-   overflow-y: auto;
+   overflow-y: hidden;
    margin-bottom: 100px;
 }
 
