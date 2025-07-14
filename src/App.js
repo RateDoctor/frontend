@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from './layout/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SingUp from './components/singUp/singup.jsx';
-import Upload from './components/UploadFile/UploadFile.jsx';
+// import Upload from './components/UploadFile/UploadFile.jsx';
 // import Verify from './components/verify/verify.jsx'
 import Checking from './components/checking/checking.jsx';
 import Welcome from './components/welcome/welcome.jsx';
@@ -45,7 +45,7 @@ function App() {
          <Route element={<PrivateRoutes />}>
             <Route index element={<Explore />} />
             <Route path="/checking" element={<Checking />} /> 
-            <Route path="/upload" element={<Upload />} /> 
+            {/* <Route path="/upload" element={<Upload />} />  */}
             <Route path="/welcome/:token" element={<Welcome />} /> 
             {/* <Route path="/verify/:token" element={<Verify />} /> */}
             <Route path="/logout" element={<Logout />} /> 
