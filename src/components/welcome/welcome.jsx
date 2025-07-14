@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaArrowRight } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import "./welcome.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 
 
@@ -17,7 +18,7 @@ const Welcome  = () => {
 useEffect(() => {
   const verify = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+      const res = await axios.get(`${BASE_URL}/auth/verify/${token}`);
       if (res.data.userId) {
         setUserId(res.data.userId);
       } else {

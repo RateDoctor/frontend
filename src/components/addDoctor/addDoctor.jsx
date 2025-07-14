@@ -7,6 +7,7 @@ import { RxCalendar } from "react-icons/rx";
 import { FiArrowLeft } from "react-icons/fi";
 import axios from "axios";
 import './addDoctor.css';
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 
 const AddDoctor = () => {
@@ -111,9 +112,9 @@ const renderStars = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [uniRes, fieldRes, topicRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/universities', { headers }),
-          axios.get('http://localhost:5000/api/fields', { headers }),
-          axios.get('http://localhost:5000/api/topics', { headers }),
+          axios.get(`${BASE_URL}/universities`, { headers }),
+          axios.get(`${BASE_URL}/fields`, { headers }),
+          axios.get(`${BASE_URL}/topics`, { headers }),
         ]);
 
         setUniversities(uniRes.data);
@@ -193,7 +194,7 @@ useEffect(() => {
 
     try {
       const token = localStorage.getItem("authToken");
-      const res = await axios.post(`http://localhost:5000/api/${endpoint}`,
+      const res = await axios.post(`${BASE_URL}/${endpoint}`,
         { name: capitalizeFirstLetter(name), ...payload },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -344,7 +345,7 @@ useEffect(() => {
       console.log("📦 Payload to be sent:", payload);
 
       const token = localStorage.getItem("authToken");
-      const res = await axios.post("http://localhost:5000/api/doctors", payload, {
+      const res = await axios.post(`${BASE_URL}/doctors`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -535,7 +536,7 @@ useEffect(() => {
           try {
             const token = localStorage.getItem("authToken");
             const response = await axios.post(
-              "http://localhost:5000/api/fields",
+              `${BASE_URL}/fields`,
               { name: capitalizeFirstLetter(bg) },
               { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -649,7 +650,7 @@ useEffect(() => {
             try {
               const token = localStorage.getItem("authToken");
               const response = await axios.post(
-                "http://localhost:5000/api/topics",
+                `${BASE_URL}/topics`,
                 {
                   name: capitalizeFirstLetter(topic),
                   fieldId: formData.fieldOfStudyId,

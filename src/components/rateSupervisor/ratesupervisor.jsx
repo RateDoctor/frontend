@@ -6,6 +6,8 @@ import { useSearchParams } from "react-router-dom";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from '../myRatings/data.js';
 import "./ratesupervisor.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 
 const RateSupervisor = () => {
   const navigate = useNavigate();
@@ -75,7 +77,7 @@ useEffect(() => {
   const fetchDoctor = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const res = await axios.get(`http://localhost:5000/api/doctors/${doctorId}`, {
+      const res = await axios.get(`${BASE_URL}/doctors/${doctorId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDoctorData(res.data.doctor);
@@ -120,7 +122,7 @@ const handleSubmit = async () => {
       questionnaire
     };
 
-    await axios.post("http://localhost:5000/api/ratings", payload, {
+    await axios.post(`${BASE_URL}/ratings`, payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }

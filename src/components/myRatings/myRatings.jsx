@@ -9,6 +9,7 @@ import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from "./data";
 import "./myRatings.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 
 const MyRatings = () => {
@@ -58,7 +59,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await axios.get(`http://localhost:5000/api/ratings/users/${userId}/ratings`, {
+      const response = await axios.get(`${BASE_URL}/ratings/users/${userId}/ratings`, {
         headers: {   
           Authorization: `Bearer ${token}`,
           "Cache-Control": "no-cache",
@@ -76,7 +77,7 @@ useEffect(() => {
           if (typeof doctor === "string" || !doctor?.name) {
             try {
               const res = await axios.get(
-                `http://localhost:5000/api/doctors/${doctor}`,
+                `${BASE_URL}/doctors/${doctor}`,
                 { headers: { Authorization: `Bearer ${token}` } }
               );
               doctor = res.data.doctor;
@@ -121,7 +122,7 @@ useEffect(() => {
         });
       } else {
         // If no existing rating but doctorId is present, create a new one for editing
-        const doctorRes = await axios.get(`http://localhost:5000/api/doctors/${doctorId}`, {
+        const doctorRes = await axios.get(`${BASE_URL}/doctors/${doctorId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const doctor = doctorRes.data.doctor;
@@ -168,7 +169,7 @@ useEffect(() => {
   const handleDeleteRating = async (ratingId) => {
     if (!window.confirm("Are you sure you want to delete this rating?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/ratings/${ratingId}`, {
+      await axios.delete(`${BASE_URL}/ratings/${ratingId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRatings((prev) => prev.filter((r) => r._id !== ratingId));
@@ -302,7 +303,7 @@ const handleSaveFeedback = async () => {
    try {
     if (selectedRating._id === "new") {
       const response = await axios.post(
-        `http://localhost:5000/api/ratings`,
+        `${BASE_URL}/ratings`,
         {
           doctorId: selectedRating.doctorId._id,
           communication: performanceRatings.communication,
@@ -324,7 +325,7 @@ const handleSaveFeedback = async () => {
 
     }  else {
       await axios.put(
-        `http://localhost:5000/api/ratings/${selectedRating._id}`,
+        `${BASE_URL}/ratings/${selectedRating._id}`,
         {
           additionalFeedback: feedback,
           questionnaire: editableQuestionnaire,

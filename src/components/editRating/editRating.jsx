@@ -3,6 +3,7 @@ import { FiArrowLeft, FiTrash2, FiEdit } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import "./editRating.css";
 
+
 const EditRating = () => {
   const navigate = useNavigate();
   const { id } = useParams();

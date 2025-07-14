@@ -5,6 +5,7 @@ import axios from "axios";
 import SearchBar from "../searchBar/searchBar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 import "../explore/explore.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 const getUnique = (arr, key) => {
   const seen = new Set();
@@ -124,7 +125,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/doctors", {
+        const res = await axios.get(`${BASE_URL}/doctors`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
         });
         const doctorList = res.data?.doctors.map(doc => ({
@@ -151,7 +152,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchUniversities = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/universities");
+        const res = await axios.get(`${BASE_URL}/universities`);
         setUniversities(res.data || []);
       } catch (err) {
         setUniversities([]);

@@ -8,6 +8,7 @@ import man from "../../imgs/man-ezgif.com-gif-maker.svg";
 import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 import axios from "axios";
 import './createUniversity.css';
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 
 
@@ -59,7 +60,7 @@ const getAvatarForDoctor = (doctor) => {
       phone: formData.phone
     };
 
-    const res = await axios.post("http://localhost:5000/api/universities", payload, {
+    const res = await axios.post(`${BASE_URL}/universities`, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -98,7 +99,7 @@ useEffect(() => {
         return;
       }
 
-      const res = await axios.get("http://localhost:5000/api/doctors", {
+      const res = await axios.get(`${BASE_URL}/doctors`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

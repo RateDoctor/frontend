@@ -6,6 +6,7 @@ import SearchBar from "../searchBar/searchBar";
 import axios from "axios";
 import { renderStars } from "../../utils/renderStars";
 import "./universityPage.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Utilities
 const groupByFirstLetter = (doctors) => {
@@ -41,8 +42,8 @@ useEffect(() => {
   const fetchUniversityAndDoctors = async () => {
     try {
       const [uniRes, docRes] = await Promise.all([
-        axios.get(`http://localhost:5000/api/universities/${universityId}`),
-        axios.get(`http://localhost:5000/api/universities/${universityId}/doctors`)
+        axios.get(`${BASE_URL}/universities/${universityId}`),
+        axios.get(`${BASE_URL}/universities/${universityId}/doctors`)
       ]);
       console.log("University API response:", uniRes.data);
       console.log("Doctors API response:", docRes.data);

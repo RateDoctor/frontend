@@ -4,6 +4,7 @@ import { FaArrowRight } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import axios from "axios";
 import "./checking.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 
 const Checking = () => {
@@ -19,7 +20,7 @@ useEffect(() => {
     console.log("Using token to verify:", token); // ✅ Add this log
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+      const res = await axios.get(`${BASE_URL}/auth/verify/${token}`);
       console.log("Email verified:", res.data);
       navigate("/login");
     } catch (err) {
@@ -36,7 +37,7 @@ useEffect(() => {
 
    const handleResend = async () => {
     try {
-      await axios.post("http://localhost:5000/api/auth/resend-verification", { email });
+      await axios.post(`${BASE_URL}/auth/resend-verification`, { email });
       alert("Verification email resent!");
     } catch (err) {
       alert("Failed to resend verification.");
