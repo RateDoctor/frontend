@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../utils/AuthProvider";
+const BASE_URL = process.env.REACT_APP_API_URL;
+
+
 
 const ChangeEmail = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +13,7 @@ const ChangeEmail = () => {
     e.preventDefault();
     try {
       await axios.put(
-        "http://localhost:5000/api/auth/change-email",
+        `${BASE_URL}/auth/change-email`,
         { newEmail: email },
         { headers: { Authorization: `Bearer ${token}` } }
       );

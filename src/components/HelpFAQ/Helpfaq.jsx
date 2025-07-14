@@ -9,18 +9,6 @@ const HelpFAQ = () => {
 
   return (
     <div className="faq-container  ">
-
-          {/* <Navbar
-          title="Help/FAQ"
-          onBack={() => {
-          if (window.history.length > 2) {
-            navigate(-1);
-          } else {
-            navigate("/");
-          }
-        }}
-      /> */}
-
        <div className="settings-header">
                     <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
                     <h2>Help/FAQ</h2>

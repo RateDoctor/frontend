@@ -32,14 +32,7 @@ const AddDoctor = () => {
   const [fields, setFields] = useState([]);
   const [topics, setTopics] = useState([]);
   const [isUniversityDropdownOpen, setIsUniversityDropdownOpen] = useState(false);
-  const [isFieldDropdownOpen, setIsFieldDropdownOpen] = useState(false);
-  const [isTopicDropdownOpen, setIsTopicDropdownOpen] = useState(false);
-  const [isSavingField, setIsSavingField] = useState(false);
-  const [isSavingTopic, setIsSavingTopic] = useState(false);
-  const [isReadyToSubmit, setIsReadyToSubmit] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [newBackground, setNewBackground] = useState('');
-  const [isAddingBackground, setIsAddingBackground] = useState(false);
   const [calendarFor, setCalendarFor] = useState({ field: null, idx: null });
   const [rating, setRating] = useState(0);
 

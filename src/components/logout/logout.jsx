@@ -5,8 +5,8 @@ import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 const Logout = () => {
   return (
-    <div className="signup-wrapper">
-            <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
+  <div className="signup-wrapper">
+       <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
       
   <div className="paragraphs-welcome-box"> 
       <p className="middle-paragraph  successfully-paragraph">You have successfully logged out! </p>

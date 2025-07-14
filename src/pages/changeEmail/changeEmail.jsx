@@ -4,6 +4,8 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthProvider";
 import "./changeEmail.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 
 const ChangeEmail = () => {
   const [enteredCurrentEmail, setEnteredCurrentEmail] = useState("");
@@ -23,7 +25,7 @@ const ChangeEmail = () => {
     try {
       setLoading(true);
       const response = await axios.put(
-        "http://localhost:5000/api/auth/change-email",
+        `${BASE_URL}/auth/change-email`,
         { newEmail },
         { headers: { Authorization: `Bearer ${token}` } }
       );

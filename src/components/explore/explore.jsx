@@ -91,18 +91,6 @@ const Explore = () => {
   const handleSearch = (queryValue, university = selectedUniversity, field = selectedField, topic = selectedTopic) => {
     setQuery(queryValue);
 
-    // Try to find exact university match to navigate
-    // const foundUniversity = universities.find(
-    //   uni => uni.name.toLowerCase() === queryValue.trim().toLowerCase()
-    // );
-    // setMatchedUniversity(foundUniversity);
-
-    // if (foundUniversity) {
-    //   navigate(`/university/${foundUniversity._id}`);
-    //   setIsSearchFocused(false);
-    //   return;
-    // }
-
     // Else filter supervisors list
     const filteredResults = applyFilters(supervisors, queryValue, university, field, topic);
     setListViewResults(filteredResults);

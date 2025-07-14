@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../utils/AuthProvider";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+const BASE_URL = process.env.REACT_APP_API_URL;
+
+
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -14,7 +17,7 @@ const ChangePassword = () => {
     e.preventDefault();
     try {
       await axios.put(
-        "http://localhost:5000/api/auth/change-password",
+        `${BASE_URL}/auth/change-password`,
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

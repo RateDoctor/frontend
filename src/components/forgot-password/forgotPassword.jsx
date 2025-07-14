@@ -1,7 +1,7 @@
 import "./forgotPassword.css";  
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 
 const Forgot = () => {

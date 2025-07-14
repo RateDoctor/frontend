@@ -207,89 +207,6 @@ useEffect(() => {
   };
 }
 
-// const handleSaveFeedback = async () => {
-//   if (!selectedRating) return;
-
-//   setIsSaving(true); // Show loading
-
-//   try {
-//     if (selectedRating._id === "new") {
-//       const response = await axios.post(
-//         `http://localhost:5000/api/ratings`,
-//         {
-//           doctorId: selectedRating.doctorId._id,
-//           communication: performanceRatings.communication,
-//           support: performanceRatings.support,
-//           guidance: performanceRatings.guidance,
-//           availability: performanceRatings.availability,
-//           additionalFeedback: feedback,
-//           questionnaire: editableQuestionnaire,
-//         },
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-
-//       let newRating = response.data;
-
-//       // Hydrate doctor info if needed
-//       if (typeof newRating.doctorId === "string") {
-//         try {
-//           const doctorRes = await axios.get(
-//             `http://localhost:5000/api/doctors/${newRating.doctorId}`,
-//             { headers: { Authorization: `Bearer ${token}` } }
-//           );
-//           newRating.doctorId = doctorRes.data.doctor;
-//           if (!newRating.doctorId.name) newRating.doctorId.name = "Unnamed Doctor";
-//         } catch {
-//           newRating.doctorId = { name: "Unknown Doctor", _id: newRating.doctorId };
-//         }
-//       }
-
-//       setRatings((prev) => [...prev, newRating]);
-//       setSelectedRating(newRating);
-//     } else {
-//       // Update existing rating
-//       await axios.put(
-//         `http://localhost:5000/api/ratings/${selectedRating._id}`,
-//         {
-//           additionalFeedback: feedback,
-//           questionnaire: editableQuestionnaire,
-//           performanceRatings,
-//         },
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-
-//       // ✅ Update local state immediately
-//       const updatedRating = {
-//         ...selectedRating,
-//         additionalFeedback: feedback,
-//         questionnaire: editableQuestionnaire,
-//         performanceRatings,
-//       };
-
-//       setSelectedRating(updatedRating);
-
-//       setRatings((prev) =>
-//         prev.map((r) =>
-//           r._id === selectedRating._id ? updatedRating : r
-//         )
-//       );
-//     }
-
-//     setFeedbackEditable(false);
-//     setShowSuccessPopup(true);
-
-//     setTimeout(() => {
-//       setShowSuccessPopup(false);
-//       // setSelectedRating(null); // ❌ Remove this if you want to stay on the same view
-//       setIsSaving(false);
-//     }, 1500);
-//   } catch (err) {
-//     console.error("Failed to save feedback:", err);
-//     alert("Failed to save feedback.");
-//     setIsSaving(false);
-//   }
-// };
-
 
 
 const handleSaveFeedback = async () => {
@@ -297,7 +214,7 @@ const handleSaveFeedback = async () => {
 
   setIsSaving(true);
 
-  // حوّل الاستبيان إلى شكل متداخل
+  
   const questionnairePayload = buildQuestionnaire(editableQuestionnaire, sections);
 
    try {
@@ -319,7 +236,6 @@ const handleSaveFeedback = async () => {
 
 
       let newRating = response.data;
-      // ... باقي الهيدرية كما كانت ...
       setRatings((prev) => [...prev, newRating]);
       setSelectedRating(newRating);
 

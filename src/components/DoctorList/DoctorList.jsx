@@ -25,8 +25,6 @@ const DoctorList = ({ doctors, onSelect, getAvatarForDoctor }) => {
             className="doctor-list-img"
           />
           <span className="doctor-name">{doc.name}</span>
-
-
         </li>
       ))}
     </ul>
