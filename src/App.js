@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from './layout/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SingUp from './components/singUp/singup.jsx';
-import Upload from './components/uploadFile/uploadFile.jsx';
+import Upload from './components/UploadFile/uploadFile.jsx';
 // import Verify from './components/verify/verify.jsx'
 import Checking from './components/checking/checking.jsx';
 import Welcome from './components/welcome/welcome.jsx';
