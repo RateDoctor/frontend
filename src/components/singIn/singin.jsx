@@ -5,6 +5,7 @@ import "./singin.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
 import { useAuth } from "../../utils/AuthProvider";
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Login = () => {
   const [form, setForm] = useState({ userId: "", password: "" });
@@ -43,8 +44,7 @@ const handleSubmit = async (e) => {
   });
 
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/auth/login",
+    const response = await axios.post(`${BASE_URL}/users/login`,
       {
         id: form.userId.trim(),
         password: form.password.trim(),

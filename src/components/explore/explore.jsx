@@ -140,7 +140,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchUniversities = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/universities`);
+        const res = await axios.get(`${BASE_URL}universities`);
         setUniversities(res.data || []);
       } catch (err) {
         setUniversities([]);

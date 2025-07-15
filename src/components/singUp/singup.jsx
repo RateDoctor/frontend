@@ -4,8 +4,9 @@ import axios from "axios";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-
 import "./singup.css";
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const handleSubmit = async (e) => {
 
   setIsLoading(true);
   try {
-    const response = await axios.post("http://localhost:5000/api/auth/register", form);
+    const response = await axios.post(`${BASE_URL}/auth/register`, form);
     const { userId, verificationToken } = response.data;
 
 
