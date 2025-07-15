@@ -61,9 +61,10 @@ const handleSubmit = async (e) => {
     console.log("Response data:", response.data);
 
     const { token, user } = response.data;
+    console.log("Login success:", response.data);
     console.log("Logging in with role:", user.role);
 
-  
+    
 
         // Validate presence of critical fields
     if (!token || !user?.role) {
