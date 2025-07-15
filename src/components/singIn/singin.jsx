@@ -46,7 +46,7 @@ const handleSubmit = async (e) => {
   try {
     const response = await axios.post(`https://rate-doctor-a589a6f15d3a.herokuapp.com/api/users/login`,
       {
-        id: form.userId.trim(),
+        userId: form.userId.trim(),
         password: form.password.trim(),
       },
       {
