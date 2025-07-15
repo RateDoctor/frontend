@@ -113,7 +113,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/doctors`, {
+        const res = await axios.get(`${BASE_URL}/api/doctors`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
         });
         const doctorList = res.data?.doctors.map(doc => ({
@@ -140,7 +140,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchUniversities = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}universities`);
+        const res = await axios.get(`${BASE_URL}/api/universities`);
         setUniversities(res.data || []);
       } catch (err) {
         setUniversities([]);

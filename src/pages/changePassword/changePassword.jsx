@@ -28,7 +28,7 @@ const ChangePassword = () => {
 
     try {
       await axios.put(
-        `${BASE_URL}/auth/change-password`,
+        `${BASE_URL}/api/users/change-password`,
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

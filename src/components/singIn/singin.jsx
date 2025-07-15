@@ -44,7 +44,7 @@ const handleSubmit = async (e) => {
   });
 
   try {
-    const response = await axios.post(`${BASE_URL}/users/login`,
+    const response = await axios.post(`${BASE_URL}/api/users/login`,
       {
         id: form.userId.trim(),
         password: form.password.trim(),

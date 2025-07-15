@@ -105,9 +105,9 @@ const renderStars = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [uniRes, fieldRes, topicRes] = await Promise.all([
-          axios.get(`${BASE_URL}/universities`, { headers }),
-          axios.get(`${BASE_URL}/fields`, { headers }),
-          axios.get(`${BASE_URL}/topics`, { headers }),
+          axios.get(`${BASE_URL}/api/universities`, { headers }),
+          axios.get(`${BASE_URL}/api/fields`, { headers }),
+          axios.get(`${BASE_URL}/api/topics`, { headers }),
         ]);
 
         setUniversities(uniRes.data);
@@ -187,7 +187,7 @@ useEffect(() => {
 
     try {
       const token = localStorage.getItem("authToken");
-      const res = await axios.post(`${BASE_URL}/${endpoint}`,
+      const res = await axios.post(`${BASE_URL}/api/${endpoint}`,
         { name: capitalizeFirstLetter(name), ...payload },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -338,7 +338,7 @@ useEffect(() => {
       console.log("📦 Payload to be sent:", payload);
 
       const token = localStorage.getItem("authToken");
-      const res = await axios.post(`${BASE_URL}/doctors`, payload, {
+      const res = await axios.post(`${BASE_URL}/api/doctors`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -529,7 +529,7 @@ useEffect(() => {
           try {
             const token = localStorage.getItem("authToken");
             const response = await axios.post(
-              `${BASE_URL}/fields`,
+              `${BASE_URL}/api/fields`,
               { name: capitalizeFirstLetter(bg) },
               { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -643,7 +643,7 @@ useEffect(() => {
             try {
               const token = localStorage.getItem("authToken");
               const response = await axios.post(
-                `${BASE_URL}/topics`,
+                `${BASE_URL}/api/topics`,
                 {
                   name: capitalizeFirstLetter(topic),
                   fieldId: formData.fieldOfStudyId,

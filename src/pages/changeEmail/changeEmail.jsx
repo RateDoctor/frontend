@@ -25,7 +25,7 @@ const ChangeEmail = () => {
     try {
       setLoading(true);
       const response = await axios.put(
-        `${BASE_URL}/auth/change-email`,
+        `${BASE_URL}/api/users/change-email`,
         { newEmail },
         { headers: { Authorization: `Bearer ${token}` } }
       );

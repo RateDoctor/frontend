@@ -42,8 +42,8 @@ useEffect(() => {
   const fetchUniversityAndDoctors = async () => {
     try {
       const [uniRes, docRes] = await Promise.all([
-        axios.get(`${BASE_URL}/universities/${universityId}`),
-        axios.get(`${BASE_URL}/universities/${universityId}/doctors`)
+        axios.get(`${BASE_URL}/api/universities/${universityId}`),
+        axios.get(`${BASE_URL}/api/universities/${universityId}/doctors`)
       ]);
       console.log("University API response:", uniRes.data);
       console.log("Doctors API response:", docRes.data);

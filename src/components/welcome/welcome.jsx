@@ -18,7 +18,7 @@ const Welcome  = () => {
 useEffect(() => {
   const verify = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/auth/verify/${token}`);
+      const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
       if (res.data.userId) {
         setUserId(res.data.userId);
       } else {

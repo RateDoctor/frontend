@@ -76,7 +76,7 @@ useEffect(() => {
   const fetchDoctor = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const res = await axios.get(`${BASE_URL}/doctors/${doctorId}`, {
+      const res = await axios.get(`${BASE_URL}/api/doctors/${doctorId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDoctorData(res.data.doctor);
@@ -121,7 +121,7 @@ const handleSubmit = async () => {
       questionnaire
     };
 
-    await axios.post(`${BASE_URL}/ratings`, payload, {
+    await axios.post(`${BASE_URL}/api/ratings`, payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }

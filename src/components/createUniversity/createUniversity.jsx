@@ -60,7 +60,7 @@ const getAvatarForDoctor = (doctor) => {
       phone: formData.phone
     };
 
-    const res = await axios.post(`${BASE_URL}/universities`, payload, {
+    const res = await axios.post(`${BASE_URL}/api/universities`, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -99,7 +99,7 @@ useEffect(() => {
         return;
       }
 
-      const res = await axios.get(`${BASE_URL}/doctors`, {
+      const res = await axios.get(`${BASE_URL}/api/doctors`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
