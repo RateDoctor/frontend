@@ -50,7 +50,7 @@ const handleSubmit = async (e) => {
 
   setIsLoading(true);
   try {
-    const response = await axios.post(`https://rate-doctor-a589a6f15d3a.herokuapp.com/user/register`, form);
+    const response = await axios.post(`${BASE_URL}/users/register`, form);
     const { userId, verificationToken } = response.data;
 
 
