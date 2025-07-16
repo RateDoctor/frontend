@@ -113,7 +113,7 @@ const Explore = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/doctors`, {
+        const res = await axios.get(`https://rate-doctor-a589a6f15d3a.herokuapp.com/api/doctors`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
         });
         const doctorList = res.data?.doctors.map(doc => ({
