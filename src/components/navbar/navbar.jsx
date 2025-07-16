@@ -40,6 +40,7 @@ const Navbar = ({ title = "Explore", onBack }) => {
             <li onClick={() => navigate("/saved-doctors")}>Saved Doctors</li>
             <li onClick={() => navigate("/my-ratings")}>My Ratings</li>
             <li onClick={() => navigate("/contact")}>Contact Us</li>
+            <li onClick={() => navigate("/AddDoctor")}>addDoctor</li>
           </ul>
         )}
       </div>

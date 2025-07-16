@@ -30,6 +30,7 @@ const Layout = () => {
     "/Welcome",
     "/logout",
     "/welcome/*",
+    "/addDoctor",
   ];
 
   const hideFooterRoutes  = 
@@ -42,7 +43,8 @@ const Layout = () => {
   "/Welcome",
   "/logout",
   "/welcome/*",
-  "/my-ratings/*"
+  "/my-ratings/*",
+  "/addDoctor",
   ]
   
 
