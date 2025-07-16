@@ -49,6 +49,7 @@ const Layout = () => {
 
 const shouldHideDefaultNavbar =
   location.pathname.startsWith("/welcome") ||
+   location.pathname.startsWith("/addDoctor") ||
   hideNavbarRoutes.some(route => location.pathname.startsWith(route));
 
 const shouldHideDefaultFooter =
