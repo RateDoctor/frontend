@@ -1,51 +1,49 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || "https://your-backend.com";
 
 const Welcome = () => {
   const { token } = useParams();
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) {
-      setError("Verification token missing.");
-      return;
-    }
-
-    const verifyEmail = async () => {
+    async function verifyEmail() {
       try {
         const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
         if (res.data.userId) {
           setUserId(res.data.userId);
-        } else if (res.data.message) {
-          setError(res.data.message);
+          setError("");
         } else {
-          setError("Verification failed.");
+          setError("Verification succeeded but no user ID returned.");
         }
       } catch (err) {
-        setError(
-          err.response?.data?.error || "Verification failed. Please try again."
-        );
+        setError(err.response?.data?.error || "Verification failed. Please try again later.");
+      } finally {
+        setLoading(false);
       }
-    };
+    }
 
     verifyEmail();
   }, [token]);
+
+  if (loading) return <p>Verifying your email...</p>;
 
   return (
     <div>
       <h3>Congratulations!</h3>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {userId && <p>Your unique ID is <strong>{userId}</strong></p>}
-      <p>Thanks for joining our community!</p>
+      <p>Thank you for joining our community!</p>
     </div>
   );
 };
 
 export default Welcome;
+
 
 
 // import { useParams, useNavigate } from "react-router-dom";
