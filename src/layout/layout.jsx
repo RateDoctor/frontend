@@ -44,7 +44,6 @@ const Layout = () => {
   "/logout",
   "/welcome/*",
   "/my-ratings/*",
-  "/addDoctor",
   ]
   
 
