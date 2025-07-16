@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
 import axios from "axios"; 
@@ -41,10 +42,13 @@ const Explore = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [matchedUniversity, setMatchedUniversity] = useState(null);
   const [universities, setUniversities] = useState([]);
+  const [listViewResults, setListViewResults] = useState(supervisors);
+
 
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
   const [isFieldOpen, setIsFieldOpen] = useState(false);
   const [isTopicOpen, setIsTopicOpen] = useState(false);
+  const location = useLocation();
 
   const universityRef = useRef(null);
   const fieldRef = useRef(null);
@@ -87,6 +91,12 @@ const Explore = () => {
     return result;
   };
 
+
+  useEffect(() => {
+  // refetch when route changes to /explore
+  fetchExploreData();
+}, [location.pathname]);
+
   // Search handler
   const handleSearch = (queryValue, university = selectedUniversity, field = selectedField, topic = selectedTopic) => {
     setQuery(queryValue);
@@ -107,47 +117,77 @@ const Explore = () => {
     "topic"
   );
 
-  const [listViewResults, setListViewResults] = useState(supervisors);
+
+const fetchExploreData = async () => {
+  setLoading(true);
+  try {
+    // Fetch doctors
+    const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+    });
+    const doctorList = doctorsRes.data?.doctors.map(doc => ({
+      ...doc,
+      field: doc.fieldOfStudy || doc.field || null,
+      topic: doc.topic || null,
+      image: doc.profileImage?.fileUrl || doc.profileImage || "",
+      rating: doc.averageRating || doc.rating || 0,
+    })) || [];
+    setSupervisors(doctorList);
+    setListViewResults(doctorList);
+
+    // Fetch universities
+    const uniRes = await axios.get(`${BASE_URL}/api/universities`);
+    setUniversities(uniRes.data || []);
+
+  } catch (err) {
+    setSupervisors([]);
+    setListViewResults([]);
+    setUniversities([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Fetch supervisors
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/doctors`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
-        });
-        const doctorList = res.data?.doctors.map(doc => ({
-          ...doc,
-          field: doc.fieldOfStudy || doc.field || null,
-          topic: doc.topic || null,
-          image: doc.profileImage?.fileUrl || doc.profileImage || "",
-          rating: doc.averageRating || doc.rating || 0,
+  // useEffect(() => {
+  //   const fetchDoctors = async () => {
+  //     try {
+  //       const res = await axios.get(`${BASE_URL}/api/doctors`, {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+  //       });
+  //       const doctorList = res.data?.doctors.map(doc => ({
+  //         ...doc,
+  //         field: doc.fieldOfStudy || doc.field || null,
+  //         topic: doc.topic || null,
+  //         image: doc.profileImage?.fileUrl || doc.profileImage || "",
+  //         rating: doc.averageRating || doc.rating || 0,
 
-        })) || [];
-        setSupervisors(doctorList);
-        setListViewResults(doctorList);
-      } catch (err) {
-        setSupervisors([]);
-        setListViewResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDoctors();
-  }, []);
+  //       })) || [];
+  //       setSupervisors(doctorList);
+  //       setListViewResults(doctorList);
+  //     } catch (err) {
+  //       setSupervisors([]);
+  //       setListViewResults([]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchDoctors();
+  // }, []);
 
-  // Fetch universities
-  useEffect(() => {
-    const fetchUniversities = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/universities`);
-        setUniversities(res.data || []);
-      } catch (err) {
-        setUniversities([]);
-      }
-    };
-    fetchUniversities();
-  }, []);
+  // // Fetch universities
+  // useEffect(() => {
+  //   const fetchUniversities = async () => {
+  //     try {
+  //       const res = await axios.get(`${BASE_URL}/api/universities`);
+  //       setUniversities(res.data || []);
+  //     } catch (err) {
+  //       setUniversities([]);
+  //     }
+  //   };
+  //   fetchUniversities();
+  // }, []);
 
   // Scroll lock when dropdown open
   useEffect(() => {
@@ -163,6 +203,16 @@ const Explore = () => {
       document.documentElement.style.overflow = "";
     };
   }, [isUniversityOpen, isFieldOpen, isTopicOpen]);
+
+
+
+useEffect(() => {
+  if (location.pathname.includes("/explore")) {
+    fetchExploreData();
+  }
+}, [location.pathname]);
+
+
 
   // Handle doctor card click
   const handleDoctorClick = async (doctorId) => {

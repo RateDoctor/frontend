@@ -1,36 +1,32 @@
-import React, { useState, useRef, useEffect } from "react";
 import { FiSearch, FiInfo } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
 import { TbChartBar } from "react-icons/tb";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import "./footer.css";
 
-const Footer = ({ title = "Explore", onBack }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef();
+const Footer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const isLeaderboard = location.pathname.includes("leaderboard");
+  const isHelp = location.pathname.includes("helpFAQ") || location.pathname.includes("faq");
+  const isExplore = !isLeaderboard && !isHelp; // Everything else highlights search
 
   return (
-        <footer className="footer">
-        <FiSearch className="icon" />
-        <TbChartBar className="icon" />
-        <FiInfo className="icon" />
-      </footer>
+    <footer className="footer">
+      <FiSearch
+        className={`iconFooter ${isExplore ? "active" : ""}`}
+        onClick={() => navigate("/")}
+      />
+      <TbChartBar
+        className={`iconFooter ${isLeaderboard ? "active" : ""}`}
+        onClick={() => navigate("/leaderboard")}
+      />
+      <FiInfo
+        className={`iconFooter ${isHelp ? "active" : ""}`}
+        onClick={() => navigate("/helpFAQ")}
+      />
+    </footer>
   );
 };
 
 export default Footer;
-
-
-
- 

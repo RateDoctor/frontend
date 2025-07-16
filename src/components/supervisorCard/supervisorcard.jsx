@@ -70,7 +70,7 @@ const StarRating = ({ rating }) => {
               {typeof university === 'object' && university?._id ? (
                 <span
                   onClick={e => {
-                    e.stopPropagation();  // عشان ما يفعلش onClick للبطاقة كلها
+                    e.stopPropagation();   
                     navigate(`/university/${university._id}`);
                   }}
                   style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
@@ -87,7 +87,7 @@ const StarRating = ({ rating }) => {
             {Array.isArray(topics) && topics.length > 0
               ? topics.map(t => {
                   const topic = typeof t === "string" ? t : t.name;
-                  return topic.charAt(0).toUpperCase() + topic.slice(1);
+                  return topic.charAt(0).toUpperCase() + topic.slice(0,4);
                 }).join(", ")
               : <span>No topic</span>
             }

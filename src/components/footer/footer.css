@@ -1,0 +1,22 @@
+.footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem;
+}
+
+.iconFooter {
+  font-size: 1.8rem;
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.3s, color 0.3s;
+  opacity: 0.6; /* INACTIVE state */
+}
+
+.iconFooter:hover {
+  color: #70777f;
+}
+
+.iconFooter.active {
+  color: #ffffff;
+  opacity: 1; /* ACTIVE state - bold white */
+}
