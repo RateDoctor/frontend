@@ -53,12 +53,14 @@ const handleSubmit = async (e) => {
           withCredentials: true,
         }
     );
-
+      
  
     console.log("Full login response:", response);
     console.log("Response data:", response.data);
 
     const { token, user } = response.data;
+
+    
     console.log("Login success:", response.data);
   console.log("Logging in with role:", user.role);
 
