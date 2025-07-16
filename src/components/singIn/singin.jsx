@@ -48,12 +48,10 @@ const handleSubmit = async (e) => {
         id: form.userId.trim(),
         password: form.password.trim(),
       },
-        {
-        headers: {
-          "Content-Type": "application/json"
-        },
-        withCredentials: true
-      }
+         {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
     );
 
  
