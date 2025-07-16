@@ -1,29 +1,44 @@
 import { useEffect, useState } from "react";
-// import axios from "axios";
-// const BASE_URL = process.env.REACT_APP_API_URL;
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Welcome = () => {
+  const { token } = useParams();
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Option 1: Get userId from localStorage if stored on signup
-    const savedUserId = localStorage.getItem("userId");
-    if (savedUserId) {
-      setUserId(savedUserId);
-    } else {
-      // Option 2: Or fetch user info from backend (if you have auth token)
-      // axios.get(`${BASE_URL}/api/users/me`)
-      //   .then(res => setUserId(res.data.userId))
-      //   .catch(() => setError("Unable to load user info."));
-      setError("User ID not found.");
+    if (!token) {
+      setError("Verification token missing.");
+      return;
     }
-  }, []);
+
+    const verifyEmail = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
+        if (res.data.userId) {
+          setUserId(res.data.userId);
+        } else if (res.data.message) {
+          setError(res.data.message);
+        } else {
+          setError("Verification failed.");
+        }
+      } catch (err) {
+        setError(
+          err.response?.data?.error || "Verification failed. Please try again."
+        );
+      }
+    };
+
+    verifyEmail();
+  }, [token]);
 
   return (
     <div>
       <h3>Congratulations!</h3>
-      {error && <p>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {userId && <p>Your unique ID is <strong>{userId}</strong></p>}
       <p>Thanks for joining our community!</p>
     </div>

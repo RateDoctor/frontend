@@ -46,8 +46,8 @@ function App() {
             <Route index element={<Explore />} />
             <Route path="/checking" element={<Checking />} /> 
             {/* <Route path="/upload" element={<Upload />} />  */}
-            <Route path="/welcome" element={<Welcome />} /> 
-            {/* <Route path="/verify/:token" element={<Verify />} /> */}
+            {/* <Route path="/welcome" element={<Welcome />} />  */}
+            <Route path="/verify/:token" element={<Verify />} />
             <Route path="/logout" element={<Logout />} /> 
             <Route path="/forgot-password" element={<ForgotPassword />} /> 
             <Route path="/addDoctor" element={<AddDoctor />} /> 
