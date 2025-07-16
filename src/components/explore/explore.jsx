@@ -216,7 +216,7 @@ useEffect(() => {
 
   // Handle doctor card click
   const handleDoctorClick = async (doctorId) => {
-    // Your existing logic for routing on doctor click
+    navigate(`/doctor/${doctorId}`);
   };
 
   return (
