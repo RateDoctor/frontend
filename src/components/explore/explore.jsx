@@ -47,6 +47,7 @@ const Explore = () => {
  
 
 
+
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
   const [isFieldOpen, setIsFieldOpen] = useState(false);
   const [isTopicOpen, setIsTopicOpen] = useState(false);

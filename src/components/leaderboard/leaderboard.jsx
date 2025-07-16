@@ -45,6 +45,13 @@ function useOutsideClick(ref, callback) {
 const LeaderBoard = () => {
   const navigate = useNavigate();
 
+  const role = localStorage.getItem('userRole');
+  useEffect(() => {
+      if (role !== 'supervisor') {
+          navigate('/unauthorized'); // or navigate to home "/"
+      }
+  }, [role, navigate]);
+
   // States
   const [loading, setLoading] = useState(true);
   const [supervisors, setSupervisors] = useState([]);

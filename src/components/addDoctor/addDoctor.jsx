@@ -897,7 +897,7 @@ useEffect(() => {
           Before completing the profile creation process, we kindly ask you to provide an initial rating for Dr. {formData.doctorName || '[Doctor\'s Name]'}.
         </p>
 
-        <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+        <div className="starts-rating" >
         <label className="top-one-line label-addDoctor">Initial Rating *</label>
         <div className="stars-container">
           {renderStars()}

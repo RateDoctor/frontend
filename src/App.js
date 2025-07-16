@@ -24,7 +24,7 @@ import SavedDoctors  from "./pages/savedDoctors/savedDoctors.jsx";
 import ContactUs  from "./pages/contactUs/contactUs.jsx";
 import MyRatings from './components/myRatings/myRatings.jsx';
 import EditRating from './components/editRating/editRating.jsx';
-// import SearchResults from "./components/searchBar/searchResults.jsx";
+import Unauthorized from "./pages/Unauthorized/Unauthorized.jsx";
 import PrivateRoutes from "./utils/PrivateRoutes.jsx";
 import { AuthProvider } from "./utils/AuthProvider.jsx";
 
@@ -65,6 +65,8 @@ function App() {
             <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
             <Route path="/my-ratings" element={<MyRatings />} />
             <Route path="/edit-rating/:doctorId" element={<EditRating />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+
             {/* <Route path="/results" element={<SearchResults />} /> */}
           </Route>
          </Route>

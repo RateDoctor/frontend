@@ -197,7 +197,11 @@ textarea.inputAddDoctor {
   background-color: #f0f0f0;
 }
 
-
+.starts-rating{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
 @media (max-width: 768px) {
   .form-container {
     flex-direction: column;
@@ -209,13 +213,14 @@ textarea.inputAddDoctor {
   }
 }
 
-
+.stars-container{
+  margin-left: 14px;
+}
 .top-one-line {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 0 0;
-    margin-bottom: -10px;
 }
 
 .title{
