@@ -4,10 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { getAvatar } from "../../utils/getAvatar";
 import StarRating from '../starRating/StarRating';  // remove this import
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faStarHalfAlt, faStar as faStarOutline } from '@fortawesome/free-solid-svg-icons';
-
-
 
 const SupervisorCard = ({ doctorId, name, rating, university, field, topics,gender, image}) => {
 const navigate = useNavigate();
