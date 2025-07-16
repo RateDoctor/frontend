@@ -6,6 +6,23 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 const DoctorRatingSummary = ({ doctorId }) => {
   const [data, setData] = useState(null);
 
+
+
+  const getEmojiForLabel = (label) => {
+  switch (label.toLowerCase()) {
+    case "excellent":
+      return "😄";
+    case "good":
+      return "🙂";
+    case "Fair":
+      return "😐";
+    case "poor":
+      return "😕";
+    default:
+      return "⭐";
+  }
+};
+
   useEffect(() => {
     const fetchSummary = async () => {
       try {
@@ -35,6 +52,7 @@ const DoctorRatingSummary = ({ doctorId }) => {
                 <div key={label} style={{ textAlign: "center" }}>
                   <div className="percentage-text">{percent}%</div>
                   <div className="overallRating">{label}</div>
+                  <div style={{ fontSize: "1.2rem", marginTop: "0.3rem" }}>{getEmojiForLabel(label)}</div>
                 </div>
               ))}
             </div>
