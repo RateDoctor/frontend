@@ -43,6 +43,8 @@ const Explore = () => {
   const [matchedUniversity, setMatchedUniversity] = useState(null);
   const [universities, setUniversities] = useState([]);
   const [listViewResults, setListViewResults] = useState(supervisors);
+  const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
+ 
 
 
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
@@ -93,8 +95,13 @@ const Explore = () => {
 
 
   useEffect(() => {
-  // refetch when route changes to /explore
   fetchExploreData();
+}, [location.pathname]);
+
+useEffect(() => {
+    const role = localStorage.getItem("userRole");
+    
+    setUserRole(role);
 }, [location.pathname]);
 
   // Search handler
@@ -215,9 +222,19 @@ useEffect(() => {
 
 
   // Handle doctor card click
-  const handleDoctorClick = async (doctorId) => {
-    navigate(`/doctor/${doctorId}`);
-  };
+const handleDoctorClick = (doctorId) => {
+ const userRole = localStorage.getItem("userRole");
+   console.log("userRole is:", userRole);
+    console.log("doctorId is:", doctorId);
+
+    if (userRole === "supervisor") {
+        navigate(`/supervisor-dr-profile/${doctorId}`);
+    } else {
+        navigate(`/my-ratings/${doctorId}`);
+    }
+};
+
+
 
   return (
     <div className="explore-container">
@@ -385,6 +402,7 @@ useEffect(() => {
                 setIsSearchFocused(false);
                 handleDoctorClick(doctor._id);
               }}
+              showRank={false}
             />
           ) : (
             <p style={{ marginTop: "1rem" }}>

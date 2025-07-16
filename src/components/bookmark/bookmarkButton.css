@@ -1,0 +1,13 @@
+/* bookmarkButton.css */
+.bookmark-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #0074e4;
+  font-size: 1.2rem;
+  padding: 0.25rem;
+  transition: color 0.3s ease;
+}
+.bookmark-btn:hover {
+  color: #005bb5;
+}

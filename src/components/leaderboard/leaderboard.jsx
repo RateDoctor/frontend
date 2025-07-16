@@ -72,6 +72,20 @@ const LeaderBoard = () => {
   useOutsideClick(fieldRef, () => setIsFieldOpen(false));
   useOutsideClick(topicRef, () => setIsTopicOpen(false));
 
+
+
+  const handleSaveDoctor = (doctor) => {
+  const saved = JSON.parse(localStorage.getItem("savedDoctors")) || [];
+  const alreadySaved = saved.some((doc) => doc.id === doctor.id);
+  if (!alreadySaved) {
+    const updated = [...saved, doctor];
+    localStorage.setItem("savedDoctors", JSON.stringify(updated));
+    alert("Doctor saved successfully!");
+  } else {
+    alert("Already saved.");
+  }
+};
+
   // Fetch supervisors and universities on mount
   useEffect(() => {
     fetchLeaderBoardData();
@@ -211,7 +225,7 @@ const LeaderBoard = () => {
 
         <div className="filter-bar">
           {/* University Dropdown */}
-          <div className={`custom-select ${isUniversityOpen ? "open" : ""}`} ref={universityRef}>
+          <div className={`customLeader-select ${isUniversityOpen ? "open" : ""}`} ref={universityRef}>
             <div
               className={`select-header ${selectedUniversity ? "selected-header" : ""}`}
               onClick={() => setIsUniversityOpen(!isUniversityOpen)}
@@ -255,7 +269,7 @@ const LeaderBoard = () => {
 
           {/* Field Dropdown */}
           {selectedUniversity && (
-            <div className={`custom-select ${isFieldOpen ? "open" : ""}`} ref={fieldRef}>
+            <div className={`customLeader-select ${isFieldOpen ? "open" : ""}`} ref={fieldRef}>
               <div
                 className={`select-header ${selectedField ? "selected-header" : ""}`}
                 onClick={() => setIsFieldOpen(!isFieldOpen)}
@@ -298,7 +312,7 @@ const LeaderBoard = () => {
 
           {/* Topic Dropdown */}
           {selectedField && (
-            <div className={`custom-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
+            <div className={`customLeader-select ${isTopicOpen ? "open" : ""}`} ref={topicRef}>
               <div
                 className={`select-header ${selectedTopic ? "selected-header" : ""}`}
                 onClick={() => setIsTopicOpen(!isTopicOpen)}
@@ -339,10 +353,10 @@ const LeaderBoard = () => {
         </div>
 
         {/* Doctor List */}
-                {/* Doctor List */}
           {loading ? (
           <p>Loading supervisors...</p>
         ) : listViewResults.length > 0 ? (
+          
           <DoctorList
               doctors={listViewResults.map((doc, index) => ({
                 ...doc,
@@ -356,7 +370,17 @@ const LeaderBoard = () => {
                 setIsSearchFocused(false);
                 handleDoctorClick(doctor._id);
               }}
+
+               onSaveDoctor={(doctor) =>
+                handleSaveDoctor({
+                  id: doctor._id,
+                  name: doctor.name,
+                  image: doctor.image || "",
+                })
+              }
+              showRank={true}   
             />
+            
 
         ) : (
           renderNoDoctorFound()

@@ -26,14 +26,16 @@ const getAvatar = () => {
 };
 
 
-const handleCardClick = () => {
-const user = JSON.parse(localStorage.getItem("user"));
-  if (user?.role === "supervisor") {
-    navigate(`/supervisor-dr-profile/${doctorId}`);
-  } else {
-    navigate(`/my-ratings/${doctorId}`);
-  }
-};
+
+  // Handle card click
+  const handleCardClick = () => {
+    const userRole = localStorage.getItem("userRole");
+    if (userRole === "supervisor") {
+      navigate(`/supervisor-dr-profile/${doctorId}`);
+    } else {
+      navigate(`/my-ratings/${doctorId}`);
+    }
+  };
 
 const StarRating = ({ rating }) => {
   if (typeof rating !== "number" || isNaN(rating)) {

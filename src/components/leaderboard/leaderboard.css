@@ -4,6 +4,8 @@
 }
 .container-leaderboard{
     margin-top: 1.4rem;
+    height: 100vh;
+    overflow-y: auto;
 }
 
 
@@ -85,6 +87,6 @@
 
 .search-overlay {
   max-width: 900px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
 }
 
