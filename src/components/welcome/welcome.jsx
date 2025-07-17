@@ -15,49 +15,27 @@ const Welcome  = () => {
   const [error, setError] = useState("");
 
 
-// useEffect(() => {
-//   const verify = async () => {
-//     try {
-//       const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
-//       if (res.data.userId) {
-//         setUserId(res.data.userId);
-//       } else {
-//         setError("Verification succeeded but no ID returned.");
-//       }
-//     } catch (err) {
-//   if (err.response && err.response.data && err.response.data.error) {
-//     setError(err.response.data.error);
-//   } else {
-//     setError("Verification failed. Please try again later.");
-//   }
-// }
-
-//   };
-//   verify();
-// }, [token]);
-
 useEffect(() => {
   const verify = async () => {
     try {
-      console.log("Verifying with token:", token);
-      const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`
-);
-      console.log("Verify response:", res.data);
+      const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
       if (res.data.userId) {
         setUserId(res.data.userId);
       } else {
         setError("Verification succeeded but no ID returned.");
       }
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("Verification failed. Please try again later.");
-      }
-    }
+  if (err.response && err.response.data && err.response.data.error) {
+    setError(err.response.data.error);
+  } else {
+    setError("Verification failed. Please try again later.");
+  }
+}
+
   };
   verify();
 }, [token]);
+
 
 
   return (
