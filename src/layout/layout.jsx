@@ -2,20 +2,29 @@ import React from 'react';
 import Navbar from '../components/navbar/navbar.jsx';
 import Footer from '../components/footer/footer.jsx';
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { matchPath } from "react-router-dom";
+
+/** Clean helper function to match routes properly */
+const isPathMatch = (pathname, pattern) => {
+  const isWildcard = pattern.endsWith("/*");
+  const cleanPattern = isWildcard ? pattern.replace("/*", "") : pattern;
+
+  return matchPath(
+    { path: cleanPattern, end: !isWildcard },
+    pathname
+  );
+};
 
 const Layout = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
+  const { pathname } = location;
 
-
-  // Define routes that should NOT show the default Navbar
-  const hideNavbarRoutes  = [
-    "/my-ratings",
-    "/settings",
-    "/settings/change-email",
-    "/settings/change-password",
-    "/addDoctor",
+  /** Routes where Navbar should not appear */
+  const hideNavbarRoutes = [
+    "/my-ratings/*",
+    "/settings/*",
+    "/addDoctor/*",
     "/saved-doctors",
     "/contact",
     "/create-university",
@@ -25,48 +34,38 @@ const Layout = () => {
     "/login",
     "/singup",
     "/checking",
-    "/Upload",
+    "/upload",
     "/forgot-password",
-    "/Welcome",
-    "/logout",
     "/welcome/*",
-    "/addDoctor",
+    "/logout",
   ];
 
-  const hideFooterRoutes  = 
-  [
-  "/login",
-  "/singup",
-  "/Upload",
-  "/checking",
-  "/forgot-password",
-  "/Welcome",
-  "/logout",
-  "/welcome/*",
-  "/my-ratings/*",
-  ]
-  
+  /** Routes where Footer should not appear */
+  const hideFooterRoutes = [
+    "/login",
+    "/singup",
+    "/upload",
+    "/checking",
+    "/forgot-password",
+    "/welcome/*",
+    "/logout",
+    "/my-ratings/*",
+  ];
 
-const shouldHideDefaultNavbar =
-  location.pathname.startsWith("/welcome") ||
-   location.pathname.startsWith("/addDoctor") ||
-  hideNavbarRoutes.some(route => location.pathname.startsWith(route));
-
-const shouldHideDefaultFooter =
-  location.pathname.startsWith("/welcome") ||
-  hideFooterRoutes.some(route => location.pathname.startsWith(route));
-
+  /** Evaluate Navbar and Footer visibility */
+  const shouldHideNavbar = hideNavbarRoutes.some(pattern => isPathMatch(pathname, pattern));
+  const shouldHideFooter = hideFooterRoutes.some(pattern => isPathMatch(pathname, pattern));
 
   return (
     <div className="app">
-     {!shouldHideDefaultNavbar && (
+      {!shouldHideNavbar && (
         <Navbar
           title="Explore"
           onBack={() => {
             if (window.history.length > 2) {
               window.history.back();
             } else {
-              window.location.href = "/";
+              navigate("/");
             }
           }}
         />
@@ -74,9 +73,7 @@ const shouldHideDefaultFooter =
       <div className="content">
         <Outlet />
       </div>
-        {!shouldHideDefaultFooter && (
-      <Footer />
-      )}      
+      {!shouldHideFooter && <Footer />}
     </div>
   );
 };

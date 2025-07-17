@@ -35,6 +35,8 @@ const AddDoctor = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [calendarFor, setCalendarFor] = useState({ field: null, idx: null });
   const [rating, setRating] = useState(0);
+  const role = localStorage.getItem('userRole');
+
 
   console.log("➡️ Full location state:", location.state);
   console.log("👨‍⚕️ Received doctorId:", doctorId);
@@ -89,12 +91,13 @@ const renderStars = () => {
 
 
 
-useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    if (role && role !== "supervisor") navigate("/");
-  }, []);
 
-
+  useEffect(() => {
+      if (role !== 'supervisor') {
+          navigate('/unauthorized'); // or navigate to home "/"
+      }
+  }, [role, navigate]);
+  
 
 
   const handleChange = (e) => {

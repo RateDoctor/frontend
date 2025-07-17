@@ -241,7 +241,7 @@ const handleDoctorClick = (doctorId) => {
     <div className="explore-container">
       <div className="search-wrapper" style={{ position: "relative" }}>
         <SearchBar
-          placeholder="Search Doctors or Universities..."
+          placeholder="Search Doctors..."
           onSearch={val => {
             handleSearch(val);
             setIsSearchFocused(true);
