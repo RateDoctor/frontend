@@ -8,7 +8,7 @@ export default function WelcomePage() {
 
   useEffect(() => {
     if (token) {
-      axios.get(`${BACKEND_URL}/api/users/verify/${token}`)
+      axios.get(`${BASE_URL}/api/users/verify/${token}`)
         .then(() => setStatus('success'))
         .catch(() => setStatus('error'));
     }
