@@ -1,19 +1,27 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function WelcomePage() {
   const [searchParams] = useSearchParams();
   const status = searchParams.get('status');
   const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(8); // 8 seconds countdown
 
   useEffect(() => {
     if (status === 'success') {
-      // After a short delay, navigate to login page automatically
-      const timer = setTimeout(() => {
-        navigate('/login');
-      }, 8000); // 3 seconds
+      // Start countdown timer
+      const timerId = setInterval(() => {
+        setCountdown(c => {
+          if (c <= 1) {
+            clearInterval(timerId);
+            navigate('/login');
+            return 0;
+          }
+          return c - 1;
+        });
+      }, 1000);
 
-      return () => clearTimeout(timer);
+      return () => clearInterval(timerId);
     }
   }, [status, navigate]);
 
@@ -24,7 +32,12 @@ export default function WelcomePage() {
       <div style={{ textAlign: 'center', marginTop: '50px' }}>
         <h1>🎉 Congratulations!</h1>
         <p>Your email has been verified successfully.</p>
-        <p>You will be redirected to the login page shortly...</p>
+        <p>
+          You will be redirected to the login page in {countdown} second{countdown !== 1 ? 's' : ''}.
+        </p>
+        <button onClick={() => navigate('/login')}>
+          Go to Login Now &rarr;
+        </button>
       </div>
     );
   }
@@ -34,7 +47,7 @@ export default function WelcomePage() {
       <div style={{ textAlign: 'center', marginTop: '50px' }}>
         <h1>✅ Email already verified</h1>
         <p>You can now log in.</p>
-        <button onClick={() => navigate('/login')}>Go to Login</button>
+        <button onClick={() => navigate('/login')}>Go to Login &rarr;</button>
       </div>
     );
   }
