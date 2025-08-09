@@ -1,42 +1,60 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+import { useLocation } from "react-router-dom";
 
 const Welcome = () => {
-  const { token } = useParams();
-  const [userId, setUserId] = useState("");
-  const [error, setError] = useState("");
+  const location = useLocation();
 
-  useEffect(() => {
-    if (!token) {
-      setError("No token provided.");
-      return;
-    }
-    const verify = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
-        if (res.data.userId) {
-          setUserId(res.data.userId);
-        } else {
-          setError("Verification succeeded but no ID returned.");
-        }
-      } catch (err) {
-        setError("Invalid or expired token.");
-      }
-    };
-    verify();
-  }, [token]);
+  const query = new URLSearchParams(location.search);
+  const status = query.get("status");
 
-  return (
-    <div>
-      {error && <p>{error}</p>}
-      {userId && <p>Your unique ID is: <strong>{userId}</strong></p>}
-    </div>
-  );
+  if (status === "success") return <p>Email verified successfully!</p>;
+  if (status === "already-verified") return <p>Email already verified.</p>;
+  if (status === "error") return <p>Verification failed or token expired.</p>;
+  return <p> Welcome! Please check your email to verify your account. </p>;
 };
+
 export default Welcome;
+
+
+// import { useParams, useNavigate } from "react-router-dom";
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+
+// const BASE_URL = process.env.REACT_APP_API_URL;
+
+// const Welcome = () => {
+//   const { token } = useParams();
+//   const [userId, setUserId] = useState("");
+//   const [error, setError] = useState("");
+
+//   useEffect(() => {
+//     if (!token) {
+//       setError("No token provided.");
+//       return;
+//     }
+//     const verify = async () => {
+//       try {
+//         const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
+//         if (res.data.userId) {
+//           setUserId(res.data.userId);
+//         } else {
+//           setError("Verification succeeded but no ID returned.");
+//         }
+//       } catch (err) {
+//         setError("Invalid or expired token.");
+//       }
+//     };
+//     verify();
+//   }, [token]);
+
+//   return (
+//     <div>
+//       {error && <p>{error}</p>}
+//       {userId && <p>Your unique ID is: <strong>{userId}</strong></p>}
+//     </div>
+//   );
+// };
+// export default Welcome;
 
 
 // import { useParams, useNavigate } from "react-router-dom";
