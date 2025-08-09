@@ -1,6 +1,7 @@
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 export default function WelcomePage() {
   const { token } = useParams();
