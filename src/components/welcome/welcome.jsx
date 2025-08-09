@@ -1,23 +1,51 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-const BASE_URL = process.env.REACT_APP_API_URL;
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function WelcomePage() {
-  const { token } = useParams();
-  const [status, setStatus] = useState('verifying');
+  const [searchParams] = useSearchParams();
+  const status = searchParams.get('status');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) {
-      axios.get(`${BASE_URL}/api/users/verify/${token}`)
-        .then(() => setStatus('success'))
-        .catch(() => setStatus('error'));
-    }
-  }, [token]);
+    if (status === 'success') {
+      // After a short delay, navigate to login page automatically
+      const timer = setTimeout(() => {
+        navigate('/login');
+      }, 3000); // 3 seconds
 
-  if (status === 'verifying') return <p>Verifying your email...</p>;
-  if (status === 'success') return <p>Email verified! Welcome.</p>;
-  return <p>Verification failed or invalid token.</p>;
+      return () => clearTimeout(timer);
+    }
+  }, [status, navigate]);
+
+  if (!status) return <p>Loading...</p>;
+
+  if (status === 'success') {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <h1>🎉 Congratulations!</h1>
+        <p>Your email has been verified successfully.</p>
+        <p>You will be redirected to the login page shortly...</p>
+      </div>
+    );
+  }
+
+  if (status === 'already-verified') {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <h1>✅ Email already verified</h1>
+        <p>You can now log in.</p>
+        <button onClick={() => navigate('/login')}>Go to Login</button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ textAlign: 'center', marginTop: '50px', color: 'red' }}>
+      <h1>❌ Verification failed</h1>
+      <p>Invalid or expired token.</p>
+      <p>Please try again or request a new verification email.</p>
+    </div>
+  );
 }
 
 
