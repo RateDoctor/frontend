@@ -11,7 +11,7 @@ export default function WelcomePage() {
       // After a short delay, navigate to login page automatically
       const timer = setTimeout(() => {
         navigate('/login');
-      }, 3000); // 3 seconds
+      }, 8000); // 3 seconds
 
       return () => clearTimeout(timer);
     }
