@@ -9,7 +9,7 @@ import "./rateAdmin.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 
-const RateSupervisor = () => {
+const RateAdmin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [doctorData, setDoctorData] = useState(null);
@@ -240,4 +240,4 @@ const handleSubmit = async () => {
   );
 };
 
-export default RateSupervisor;
+export default RateAdmin;
