@@ -34,9 +34,9 @@ const HelpFAQ = () => {
       <section className="faq-section">
         <h2 className="faq-title">Ratings and Reviews</h2>
         <div className="faq-item">
-          <p className="faq-question">Q: How do I rate a supervisor?</p>
+          <p className="faq-question">Q: How do I rate a admin?</p>
           <p className="faq-answer">
-            A: Visit the supervisor's profile, select the “Rate” button, then follow the relevant criteria, and submit your rating along with optional comments.
+            A: Visit the admin's profile, select the “Rate” button, then follow the relevant criteria, and submit your rating along with optional comments.
           </p>
         </div>
         <div className="faq-item">

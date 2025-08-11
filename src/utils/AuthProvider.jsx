@@ -42,7 +42,7 @@ const login = (userToken, userRole) => {
   };
 
   const isAuthenticated = !!token;
-  const isSupervisor = role === "supervisor";
+  const isAdmin = role === "admin";
   const isStudent = role === "student";
 
   return (
@@ -51,7 +51,7 @@ const login = (userToken, userRole) => {
         isAuthenticated,
         token,
         role,
-        isSupervisor,
+        isAdmin,
         isStudent,
         login,
         logout,

@@ -46,7 +46,7 @@ const DoctorRatingSummary = ({ doctorId }) => {
 
         {Object.entries(percentages).map(([category, ratings]) => (
           <div key={category} style={{ marginBottom: "1rem" }}>
-            <p className="superVisor-doctor-name">{category.charAt(0).toUpperCase() + category.slice(1)}</p>
+            <p className="admin-doctor-name">{category.charAt(0).toUpperCase() + category.slice(1)}</p>
             <div className="drProfile-box" style={{ justifyContent: "space-between", maxWidth: "400px" }}>
               {Object.entries(ratings).map(([label, percent]) => (
                 <div key={label} style={{ textAlign: "center" }}>

@@ -1,7 +1,7 @@
 import menMuslim from "../../imgs/men-muslim.jpeg";
 import men from "../../imgs/men.jpg";
 import woman from "../../imgs/woman.jpg";
-export const supervisors = [
+export const Admins = [
    {
     name: "Leticia Buckridge",
     rating: 3.0,

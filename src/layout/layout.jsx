@@ -28,7 +28,7 @@ const Layout = () => {
     "/saved-doctors",
     "/contact",
     "/create-university",
-    "/rate-supervisor",
+    "/rate-admin",
     "/leaderboard",
     "/helpFAQ",
     "/login",

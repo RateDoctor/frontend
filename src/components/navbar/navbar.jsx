@@ -20,7 +20,7 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
   }, []);
 
   const handleNavigateAddDoctor = () => {
-    if (role !== "supervisor") {
+    if (role !== "admin") {
       alert("Only admins can add a doctor.");
       return;
     }

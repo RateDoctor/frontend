@@ -47,7 +47,7 @@ const LeaderBoard = () => {
 
   const role = localStorage.getItem('userRole');
   useEffect(() => {
-      if (role !== 'supervisor') {
+      if (role !== 'admin') {
           navigate('/unauthorized'); // or navigate to home "/"
       }
   }, [role, navigate]);
@@ -188,7 +188,7 @@ const LeaderBoard = () => {
 
   const renderNoDoctorFound = () => (
     <p style={{ marginTop: "1rem" }}>
-      Supervisor not found.{" "}
+      Admin not found.{" "}
       <span
         style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
         onClick={() => navigate("/add-doctor")}
@@ -489,7 +489,7 @@ export default LeaderBoard;
 
 //   const renderNoDoctorFound = () => (
 //     <p style={{ marginTop: "1rem" }}>
-//       Supervisor not found.{" "}
+//       Admin not found.{" "}
 //       <span
 //         style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
 //         onClick={() => navigate("/add-doctor")}

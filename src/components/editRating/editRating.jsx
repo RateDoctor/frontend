@@ -75,33 +75,33 @@ const EditRating = () => {
           {
             title: "Teaching Style",
             questions: [
-              "How would you describe your supervisor's teaching style during your PhD program?",
-              "Did your supervisor effectively communicate complex concepts and methodologies?",
-              "To what extent did your supervisor encourage critical thinking and independent research?",
+              "How would you describe your admin's teaching style during your PhD program?",
+              "Did your admin effectively communicate complex concepts and methodologies?",
+              "To what extent did your admin encourage critical thinking and independent research?",
             ],
           },
           {
             title: "Responsiveness",
             questions: [
-              "How responsive was your supervisor to your emails, messages, or requests for meetings?",
+              "How responsive was your admin to your emails, messages, or requests for meetings?",
               "Were you satisfied with the turnaround time for feedback on your work or queries?",
-              "Did your supervisor provide constructive feedback in a timely manner?",
+              "Did your admin provide constructive feedback in a timely manner?",
             ],
           },
           {
             title: "Mentorship",
             questions: [
-              "To what extent did your supervisor provide guidance and support in defining your research objectives?",
-              "How well did your supervisor mentor you in terms of research methodology and data analysis?",
-              "Did your supervisor actively support your academic and professional development?",
+              "To what extent did your admin provide guidance and support in defining your research objectives?",
+              "How well did your admin mentor you in terms of research methodology and data analysis?",
+              "Did your admin actively support your academic and professional development?",
             ],
           },
           {
             title: "Overall Support",
             questions: [
-              "How would you rate the overall support you received from your supervisor throughout your PhD program?",
-              "Did your supervisor provide assistance in navigating academic challenges or administrative issues?",
-              "In what ways did your supervisor contribute to your overall success as a PhD student?",
+              "How would you rate the overall support you received from your admin throughout your PhD program?",
+              "Did your admin provide assistance in navigating academic challenges or administrative issues?",
+              "In what ways did your admin contribute to your overall success as a PhD student?",
             ],
           },
         ].map((section, idx) => (

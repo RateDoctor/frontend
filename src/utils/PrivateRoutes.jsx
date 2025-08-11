@@ -33,9 +33,9 @@ export default PrivateRoute;
 //     return <Navigate to="/login" state={{ from: location }} replace />;
 //   }
 
-//   const supervisorOnlyRoutes = ["/addDoctor", "/create-university"];
+//   const adminOnlyRoutes = ["/addDoctor", "/create-university"];
 
-//   if (supervisorOnlyRoutes.some(path => location.pathname.startsWith(path)) && role !== "supervisor") {
+//   if (adminrOnlyRoutes.some(path => location.pathname.startsWith(path)) && role !== "admin") {
 //     return <Navigate to="/" replace />;
 //   }
 

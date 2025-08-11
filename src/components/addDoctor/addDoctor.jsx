@@ -93,7 +93,7 @@ const renderStars = () => {
 
 
   useEffect(() => {
-      if (role !== 'supervisor') {
+      if (role !== 'admin') {
           navigate('/unauthorized'); // or navigate to home "/"
       }
   }, [role, navigate]);
@@ -175,7 +175,7 @@ const renderStars = () => {
 
       const newDoctor = res.data?.doctor;
       if (!newDoctor || !newDoctor._id) throw new Error("Doctor creation failed.");
-      navigate(`/rate-supervisor?doctorId=${newDoctor._id}`);
+      navigate(`/rate-admin?doctorId=${newDoctor._id}`);
     } catch (err) {
       alert(err.message);
     } finally {
