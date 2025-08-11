@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import './RequestAdminAccess.css';
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const RequestAdminAccess = () => {
@@ -49,8 +49,10 @@ const RequestAdminAccess = () => {
             required
           />
         </label>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>{success}</p>}
+
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
+
         <button type="submit" disabled={isLoading}>
           {isLoading ? "Submitting..." : "Submit Request"}
         </button>
