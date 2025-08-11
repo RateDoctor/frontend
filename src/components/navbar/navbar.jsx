@@ -23,13 +23,13 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleNavigateAddDoctor = () => {
-    if (role !== "admin") {
-      alert("Only admins can add a doctor.");
-      return;
-    }
-    navigate("/addDoctor");
-  };
+  // const handleNavigateAddDoctor = () => {
+  //   if (role !== "admin") {
+  //     alert("Only admins can add a doctor.");
+  //     return;
+  //   }
+  //   navigate("/addDoctor");
+  // };
 
 
   
@@ -53,7 +53,7 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
             <li onClick={() => navigate("/settings")}>Settings</li>
             <li onClick={() => navigate("/saved-doctors")}>Saved Doctors</li>
             <li onClick={() => navigate("/my-ratings")}>My Ratings</li>
-            <li onClick={handleNavigateAddDoctor}>Add Doctor</li>
+            <li onClick={() => navigate("/addDoctor")}>Add Doctor</li>
             <li onClick={() => navigate("/contact")}>Contact Us</li>
               {/*
               {role !== 'admin' && (
