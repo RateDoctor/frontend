@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import SupervisorCard from "../adminCard/supervisorcard.jsx";
+import AdminCard from "../adminCard/adminCard.jsx";
 import axios from "axios"; 
 import SearchBar from "../searchBar/searchBar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
@@ -431,7 +431,7 @@ const handleDoctorClick = (doctorId) => {
             <div className="card-grid">
               {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
                 applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
-                  <SupervisorCard
+                  <AdminCard
                     key={index}
                     doctorId={sup._id}
                     name={sup.name}

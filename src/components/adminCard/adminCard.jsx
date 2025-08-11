@@ -1,5 +1,5 @@
 import React from "react";
-import './admincard.css'
+import './adminCard.css'
 import { useNavigate } from "react-router-dom";
 import { getAvatar } from "../../utils/getAvatar";
 import StarRating from '../starRating/StarRating';  // remove this import
