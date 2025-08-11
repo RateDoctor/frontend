@@ -14,7 +14,7 @@ import CreateUniversity from './/components/createUniversity/createUniversity.js
 import HelpFAQ from './components/HelpFAQ/Helpfaq.jsx';
 import AdminDrProfile from './components/adminDrProfile/adminDrProfile.jsx';
 import UniversityProfile from './components/universityPage/universityPage.jsx';
-import RateAdmins from './components/rateAdmin/rateAdmin.jsx';
+import RateAdmins from './components/rateAdmin/RateAdmin.jsx';
 import LeaderBoard from './components/leaderboard/leaderboard.jsx';
 import Explore from './components/explore/explore.jsx';
 import Settings from "./pages/Settings/settings.jsx";
