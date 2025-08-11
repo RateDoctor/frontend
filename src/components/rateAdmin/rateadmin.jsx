@@ -5,7 +5,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useSearchParams } from "react-router-dom";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from '../myRatings/data.js';
-import "./ratesupervisor.css";
+import "./rateAdmin.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 
