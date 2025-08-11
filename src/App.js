@@ -14,7 +14,7 @@ import CreateUniversity from './/components/createUniversity/createUniversity.js
 import HelpFAQ from './components/HelpFAQ/Helpfaq.jsx';
 import AdminDrProfile from './components/adminDrProfile/adminDrProfile.jsx';
 import UniversityProfile from './components/universityPage/universityPage.jsx';
-// import RateAdmins from './components/rateAdmin/rateAdmin.jsx';
+import RateAdmins from './components/rateAdmin/rateAdmin.jsx';
 import LeaderBoard from './components/leaderboard/leaderboard.jsx';
 import Explore from './components/explore/explore.jsx';
 import Settings from "./pages/Settings/settings.jsx";
@@ -56,7 +56,7 @@ function App() {
             <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} /> 
             <Route path="/university/:universityId" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
-            {/* <Route path="/rate-admin" element={<RateAdmins />} />  */}
+            <Route path="/rate-admin" element={<RateAdmins />} /> 
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/change-email" element={<ChangeEmail />} /> 
             <Route path="/settings/change-password" element={<ChangePassword />} />
