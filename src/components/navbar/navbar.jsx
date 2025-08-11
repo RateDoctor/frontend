@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FiArrowLeft, FiMoreVertical } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../utils/AuthProvider";
+
 import "./navbar.css";
+
 
 const Navbar = ({ title = "Explore", onBack, userRole }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
   const navigate = useNavigate();
   const role = localStorage.getItem('userRole');
-
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -57,6 +60,7 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
               Request Admin Access
             </li>
           )}
+            {isAdmin && <li><navigate to="/admin-dashboard">Admin Dashboard</navigate></li>}
           </ul>
         )}
       </div>

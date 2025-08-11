@@ -126,35 +126,35 @@ useEffect(() => {
   );
 
 
-const fetchExploreData = async () => {
-  setLoading(true);
-  try {
-    // Fetch doctors
-    const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
-    });
-    const doctorList = doctorsRes.data?.doctors.map(doc => ({
-      ...doc,
-      field: doc.fieldOfStudy || doc.field || null,
-      topic: doc.topic || null,
-      image: doc.profileImage?.fileUrl || doc.profileImage || "",
-      rating: doc.averageRating || doc.rating || 0,
-    })) || [];
-    setAdmins(doctorList);
-    setListViewResults(doctorList);
+// const fetchExploreData = async () => {
+//   setLoading(true);
+//   try {
+//     // Fetch doctors
+//     const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, {
+//       headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+//     });
+//     const doctorList = doctorsRes.data?.doctors.map(doc => ({
+//       ...doc,
+//       field: doc.fieldOfStudy || doc.field || null,
+//       topic: doc.topic || null,
+//       image: doc.profileImage?.fileUrl || doc.profileImage || "",
+//       rating: doc.averageRating || doc.rating || 0,
+//     })) || [];
+//     setAdmins(doctorList);
+//     setListViewResults(doctorList);
 
-    // Fetch universities
-    const uniRes = await axios.get(`${BASE_URL}/api/universities`);
-    setUniversities(uniRes.data || []);
+//     // Fetch universities
+//     const uniRes = await axios.get(`${BASE_URL}/api/universities`);
+//     setUniversities(uniRes.data || []);
 
-  } catch (err) {
-    setAdmins([]);
-    setListViewResults([]);
-    setUniversities([]);
-  } finally {
-    setLoading(false);
-  }
-};
+//   } catch (err) {
+//     setAdmins([]);
+//     setListViewResults([]);
+//     setUniversities([]);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 
   // Fetch admins
@@ -198,6 +198,39 @@ const fetchExploreData = async () => {
   // }, []);
 
   // Scroll lock when dropdown open
+ 
+ const fetchExploreData = async () => {
+  setLoading(true);
+  try {
+    // Fetch doctors
+    const token = localStorage.getItem("authToken");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, { headers });
+    const doctorList = doctorsRes.data?.doctors.map(doc => ({
+      ...doc,
+      field: doc.fieldOfStudy || doc.field || null,
+      topic: doc.topic || null,
+      image: doc.profileImage?.fileUrl || doc.profileImage || "",
+      rating: doc.averageRating || doc.rating || 0,
+    })) || [];
+    setAdmins(doctorList);
+    setListViewResults(doctorList);
+
+    // Fetch universities
+    const uniRes = await axios.get(`${BASE_URL}/api/universities`);
+    setUniversities(uniRes.data || []);
+
+  } catch (err) {
+    setAdmins([]);
+    setListViewResults([]);
+    setUniversities([]);
+  } finally {
+    setLoading(false);
+  }
+};
+ 
+ 
   useEffect(() => {
     if (isUniversityOpen || isFieldOpen || isTopicOpen) {
       document.body.style.overflow = "hidden";
@@ -227,6 +260,12 @@ const handleDoctorClick = (doctorId) => {
  const userRole = localStorage.getItem("userRole");
    console.log("userRole is:", userRole);
     console.log("doctorId is:", doctorId);
+
+     if (!userRole) {
+    // Not logged in → redirect to login page or show message
+      navigate("/login");
+      return;
+    }
 
     if (userRole === "admin") {
         navigate(`/admin-dr-profile/${doctorId}`);
@@ -410,7 +449,15 @@ const handleDoctorClick = (doctorId) => {
               Admin not found.{" "}
               <span
                 style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-                onClick={() => navigate("/addDoctor")}
+                // onClick={() => navigate("/addDoctor")}
+                 onClick={() => {
+                  if (!localStorage.getItem("authToken")) {
+                    // Guest → force login
+                    navigate("/login");
+                  } else {
+                    navigate("/addDoctor");
+                  }
+                }}
               >
                 Add doctor
               </span>

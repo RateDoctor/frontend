@@ -26,7 +26,13 @@ import ContactUs  from "./pages/contactUs/contactUs.jsx";
 import MyRatings from './components/myRatings/myRatings.jsx';
 import EditRating from './components/editRating/editRating.jsx';
 import Unauthorized from "./pages/Unauthorized/Unauthorized.jsx";
+
+// DASHBOARD COMPONENTS
+
 import PrivateRoutes from "./utils/PrivateRoutes.jsx";
+import AdminRoute from "./utils/AdminRoute.jsx";
+import AdminDashboard from './components/AdminDashboard/AdminDashboard.jsx';
+
 import { AuthProvider } from "./utils/AuthProvider.jsx";
 
 function App() {
@@ -35,13 +41,17 @@ function App() {
   <AuthProvider>
       <Routes>
          <Route path="/" element={<Layout />}>
+             {/* Public */}
+             <Route index element={<Explore />} />
+             <Route path="/university/:universityId" element={<UniversityProfile />} /> 
 
              <Route path="/login" element={<SignIn />} />
              <Route path="/singup" element={<SingUp />} />
-         
+             <Route path="/unauthorized" element={<Unauthorized />} />
+
       
          <Route element={<PrivateRoutes />}>
-            <Route index element={<Explore />} />
+            
             <Route path="/checking" element={<Checking />} /> 
             {/* <Route path="/upload" element={<Upload />} />  */}
             <Route path="/welcome" element={<Welcome />} /> 
@@ -53,7 +63,6 @@ function App() {
             <Route path="/create-university" element={<CreateUniversity />} /> 
             <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} />
             <Route path="/request-admin-access" element={<RequestAdminAccess />} /> 
-            <Route path="/university/:universityId" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-admin" element={<RateAdmins />} /> 
             <Route path="/settings" element={<Settings />} />
@@ -64,7 +73,13 @@ function App() {
             <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
             <Route path="/my-ratings" element={<MyRatings />} />
             <Route path="/edit-rating/:doctorId" element={<EditRating />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
+
+              {/* Dashboard */}
+              <Route element={<AdminRoute />}>
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              {/* Add other admin-only routes here */}
+              </Route>
+
 
             {/* <Route path="/results" element={<SearchResults />} /> */}
           </Route>
