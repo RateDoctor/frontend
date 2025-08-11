@@ -11,30 +11,41 @@ const RequestAdminAccess = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!reason.trim()) {
-      setError("Please provide a reason.");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!reason.trim()) {
+    setError("Please provide a reason.");
+    return;
+  }
+
+  setIsLoading(true);
+  setError("");
+  setSuccess("");
+
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must be logged in to submit a request.");
+      setIsLoading(false);
       return;
     }
-    setIsLoading(true);
-    setError("");
-    try {
-      const token = localStorage.getItem("token"); // your JWT from login
-      await axios.post(
-        `${BASE_URL}/api/admin-access/request`,
-        { reason },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess("Request sent successfully. Waiting for admin approval.");
-      setReason("");
-      // Optionally redirect or disable form after success
-    } catch (err) {
-      setError(err.response?.data?.error || "Failed to send request.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
+    await axios.post(
+      `${BASE_URL}/api/admin-access/request`,
+      { reason },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    setSuccess("Request sent successfully. Waiting for admin approval.");
+    setReason("");
+  } catch (err) {
+    // Show backend error or fallback error message
+    setError(err.response?.data?.error || "Failed to send request.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="request-admin-access">
@@ -44,10 +55,14 @@ const RequestAdminAccess = () => {
           Reason for Admin Access:
           <textarea
             value={reason}
-            onChange={(e) => setReason(e.target.value)}
+            onChange={(e) => {
+                setReason(e.target.value);
+                setError("");
+                setSuccess("");
+            }}
             rows={5}
             required
-          />
+            />
         </label>
 
         {error && <p className="error">{error}</p>}
