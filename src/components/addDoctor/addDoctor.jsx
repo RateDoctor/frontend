@@ -92,11 +92,11 @@ const renderStars = () => {
 
 
 
-  useEffect(() => {
-      if (role !== 'admin') {
-          navigate('/unauthorized'); // or navigate to home "/"
-      }
-  }, [role, navigate]);
+  // useEffect(() => {
+  //     if (role !== 'admin') {
+  //         navigate('/unauthorized'); // or navigate to home "/"
+  //     }
+  // }, [role, navigate]);
   
 
 
