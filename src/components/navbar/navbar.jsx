@@ -55,11 +55,13 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
             <li onClick={() => navigate("/my-ratings")}>My Ratings</li>
             <li onClick={handleNavigateAddDoctor}>Add Doctor</li>
             <li onClick={() => navigate("/contact")}>Contact Us</li>
-            {role !== 'admin' && (
-            <li onClick={() => navigate("/request-admin-access")}>
-              Request Admin Access
-            </li>
-          )}
+              {/*
+              {role !== 'admin' && (
+                <li onClick={() => navigate("/request-admin-access")}>
+                  Request Admin Access
+                </li>
+              )}
+              */} 
             {isAdmin && <li><navigate to="/admin-dashboard">Admin Dashboard</navigate></li>}
           </ul>
         )}
