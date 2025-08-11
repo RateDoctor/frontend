@@ -161,7 +161,7 @@ export default function WelcomePage() {
 
 //       <p className="middle-paragraph  info-paragraph">
 //         Thank you for joining our community! 
-//         Feel free to explore and rate PhD supervisors
+//         Feel free to explore and rate PhD admins
 //         to contribute to a collaborative and informed academic environment.</p> 
 //       </div>
 //         <div className="circle-container">  

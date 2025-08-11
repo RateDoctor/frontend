@@ -4,7 +4,7 @@ import BookmarkButton from '../bookmark/BookmarkButton'; // Import your reusable
 // import { renderStars } from "../../utils/renderStars";
 import StarRating from '../starRating/StarRating';
 import { getAvatar } from "../../utils/getAvatar";  // ✅ Import the avatar utility
-import './supervisorDrProfile.css';
+import './adminDrProfile.css';
 
 const DoctorProfileBox = ({ doctorData }) => {
    const navigate = useNavigate(); 
@@ -39,7 +39,7 @@ const DoctorProfileBox = ({ doctorData }) => {
         </div>
 
         <div className="name-and-bookmark">
-          <h2 className="superVisor-doctor-name">{doctorData.name}</h2>
+          <h2 className="admin-doctor-name">{doctorData.name}</h2>
 
            <BookmarkButton doctor={{
             id: doctorData._id,

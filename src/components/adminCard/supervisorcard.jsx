@@ -1,11 +1,11 @@
 import React from "react";
-import './supervisorcard.css'
+import './admincard.css'
 import { useNavigate } from "react-router-dom";
 import { getAvatar } from "../../utils/getAvatar";
 import StarRating from '../starRating/StarRating';  // remove this import
 
 
-const SupervisorCard = ({ doctorId, name, rating, university, field, topics,gender, image}) => {
+const AdminCard = ({ doctorId, name, rating, university, field, topics,gender, image}) => {
 const navigate = useNavigate();
 
 
@@ -15,8 +15,8 @@ const navigate = useNavigate();
   // Handle card click
   const handleCardClick = () => {
     const userRole = localStorage.getItem("userRole");
-    if (userRole === "supervisor") {
-      navigate(`/supervisor-dr-profile/${doctorId}`);
+    if (userRole === "admin") {
+      navigate(`/admin-dr-profile/${doctorId}`);
     } else {
       navigate(`/my-ratings/${doctorId}`);
     }
@@ -42,7 +42,7 @@ const navigate = useNavigate();
 // };
 
    return (
-    <div className="supervisor-card" onClick={handleCardClick}>
+    <div className="admin-card" onClick={handleCardClick}>
       {/* <img src={image} alt={name} className="doctor-img" /> */}
       <img
         src={getAvatar(gender, image)}
@@ -86,4 +86,4 @@ const navigate = useNavigate();
   );
 };
 
-export default SupervisorCard;
+export default AdminCard;

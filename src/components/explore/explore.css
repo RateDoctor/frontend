@@ -118,7 +118,7 @@
 
 
 
-.supervisor-card {
+.admin-card {
   width: 100%;
   max-width: 185px;
   height: 165px;
@@ -299,7 +299,7 @@
 
 
 @media (max-width: 400px) {
-  .supervisor-card {
+  .admin-card {
     width: 100%;
     height: auto; 
   }
@@ -310,7 +310,7 @@
   font-size: 14px;
 }
 
-.supervisor-card {
+.admin-card {
     height: 30vh;
 }
 

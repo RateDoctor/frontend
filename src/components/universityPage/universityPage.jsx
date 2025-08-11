@@ -106,7 +106,7 @@ if (university.location) {
               {renderStars(Number(university.rating || 0))}
               <span className='overallRating'>Overall rating</span>
             </div>
-            <h2 className="superVisor-doctor-name">{university.name}</h2>
+            <h2 className="admin-doctor-name">{university.name}</h2>
             <p className="university-fields">{locationDisplay}</p>
             <h5 className='phone-university'>Phone: <span>{getDisplayPhone(university.phone)}</span></h5>
             <button className="uni-rate-btn">
@@ -160,12 +160,12 @@ export default UniversityProfile;
 
 // import React, { useState,useEffect,useRef } from "react";import { useNavigate } from "react-router-dom";
 // import SearchBar from "../searchBar/searchBar";
-// import { supervisors } from "../explore/data";
+// import { admins } from "../explore/data";
 // import DoctorList from "../DoctorList/DoctorList.jsx";
 // import { renderStars } from "../../utils/renderStars"; 
-// import imageDrSupervisor from "../../imgs/university.png";
+// import imageDrAdmin from "../../imgs/university.png";
 // import './universityPage.css'; 
-// import { doctorData } from '../supervisorDrProfile/data';
+// import { doctorData } from '../adminDrProfile/data';
 // import Navbar from "../navbar/navbar";
 
 // const getUnique = (arr, key) => [...new Set(arr.map(item => item[key]))];
@@ -219,7 +219,7 @@ export default UniversityProfile;
 
 
 //       useEffect(() => {
-//       setListViewResults(supervisors); // show all by default
+//       setListViewResults(admins); // show all by default
 //     }, []);
   
 //     useOutsideClick(universityRef, () => setIsUniversityOpen(false));
@@ -230,7 +230,7 @@ export default UniversityProfile;
   
 //    const handleSearch = (queryValue) => {
 //      setQuery(queryValue);
-//      const result = applyFilters(supervisors, queryValue, selectedUniversity, selectedField, selectedTopic);
+//      const result = applyFilters(admins, queryValue, selectedUniversity, selectedField, selectedTopic);
 //      setListViewResults(result);
 //    };
   
@@ -281,7 +281,7 @@ export default UniversityProfile;
 //       <div className="university-container">
 //            <div className="universityProfile-box">
 //           <div className="universityProfile-left">
-//           <img className='universityImgProfile' src={imageDrSupervisor} alt="Supervisor" />
+//           <img className='universityImgProfile' src={imageDrAdmin} alt="admin" />
 //           </div>
 
 //             <div className="drProfile-right">
@@ -290,7 +290,7 @@ export default UniversityProfile;
 //               <span className='overallRating'>Overall rating</span>
 //             </div>
 //             <div className="name-and-bookmark">
-//               <h2 className="superVisor-doctor-name">{doctorData.universityName}</h2>
+//               <h2 className="admin-doctor-name">{doctorData.universityName}</h2>
 //             </div>
 
 //             <p className="university-fields">Paris, France</p>

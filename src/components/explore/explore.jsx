@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import SupervisorCard from "../supervisorCard/supervisorcard.jsx";
+import SupervisorCard from "../adminCard/supervisorcard.jsx";
 import axios from "axios"; 
 import SearchBar from "../searchBar/searchBar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
@@ -33,7 +33,7 @@ function useOutsideClick(ref, callback) {
 }
 
 const Explore = () => {
-  const [supervisors, setSupervisors] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState(null);
@@ -42,7 +42,7 @@ const Explore = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [matchedUniversity, setMatchedUniversity] = useState(null);
   const [universities, setUniversities] = useState([]);
-  const [listViewResults, setListViewResults] = useState(supervisors);
+  const [listViewResults, setListViewResults] = useState(admins);
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
  
 
@@ -65,7 +65,7 @@ const Explore = () => {
 
   const navigate = useNavigate();
 
-  // Apply filters to supervisors
+  // Apply filters to admins
   const applyFilters = (data, queryStr, university, field, topic) => {
     let result = data;
 
@@ -109,19 +109,19 @@ useEffect(() => {
   const handleSearch = (queryValue, university = selectedUniversity, field = selectedField, topic = selectedTopic) => {
     setQuery(queryValue);
 
-    // Else filter supervisors list
-    const filteredResults = applyFilters(supervisors, queryValue, university, field, topic);
+    // Else filter admins list
+    const filteredResults = applyFilters(admins, queryValue, university, field, topic);
     setListViewResults(filteredResults);
   };
 
-  // Derive filtered fields and topics from current supervisors and filters
+  // Derive filtered fields and topics from current admins and filters
   const fields = getUnique(
-    supervisors.filter(s => !selectedUniversity || s.university?._id === selectedUniversity._id),
+    admins.filter(s => !selectedUniversity || s.university?._id === selectedUniversity._id),
     "field"
   );
 
   const topics = getUnique(
-    supervisors.filter(s => !selectedField || s.field?._id === selectedField._id),
+    admins.filter(s => !selectedField || s.field?._id === selectedField._id),
     "topic"
   );
 
@@ -140,7 +140,7 @@ const fetchExploreData = async () => {
       image: doc.profileImage?.fileUrl || doc.profileImage || "",
       rating: doc.averageRating || doc.rating || 0,
     })) || [];
-    setSupervisors(doctorList);
+    setAdmins(doctorList);
     setListViewResults(doctorList);
 
     // Fetch universities
@@ -148,7 +148,7 @@ const fetchExploreData = async () => {
     setUniversities(uniRes.data || []);
 
   } catch (err) {
-    setSupervisors([]);
+    setAdmins([]);
     setListViewResults([]);
     setUniversities([]);
   } finally {
@@ -157,7 +157,7 @@ const fetchExploreData = async () => {
 };
 
 
-  // Fetch supervisors
+  // Fetch admins
   // useEffect(() => {
   //   const fetchDoctors = async () => {
   //     try {
@@ -172,10 +172,10 @@ const fetchExploreData = async () => {
   //         rating: doc.averageRating || doc.rating || 0,
 
   //       })) || [];
-  //       setSupervisors(doctorList);
+  //       setAdmins(doctorList);
   //       setListViewResults(doctorList);
   //     } catch (err) {
-  //       setSupervisors([]);
+  //       setAdmins([]);
   //       setListViewResults([]);
   //     } finally {
   //       setLoading(false);
@@ -248,7 +248,7 @@ const handleDoctorClick = (doctorId) => {
           }}
           onFocus={() => {
             setIsSearchFocused(true);
-            setListViewResults(supervisors);
+            setListViewResults(admins);
           }}
           value={query}
         />
@@ -423,14 +423,14 @@ const handleDoctorClick = (doctorId) => {
       {!isSearchFocused && (
         <>
           <div className="header-text">
-            <h2>Rate Your PhD Experience:<br />Explore and Evaluate Supervisors</h2>
-            <p>Explore PhD Supervisors and share your academic experiences by rating your PhD supervisor</p>
+            <h2>Rate Your PhD Experience:<br />Explore and Evaluate Admins</h2>
+            <p>Explore PhD Admins and share your academic experiences by rating your PhD supervisor</p>
           </div>
 
           <div className="scrollable-section">
             <div className="card-grid">
-              {applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
-                applyFilters(supervisors, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
+              {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
+                applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
                   <SupervisorCard
                     key={index}
                     doctorId={sup._id}

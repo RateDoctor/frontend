@@ -21,7 +21,7 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
 
   const handleNavigateAddDoctor = () => {
     if (role !== "supervisor") {
-      alert("Only supervisors can add a doctor.");
+      alert("Only admins can add a doctor.");
       return;
     }
     navigate("/addDoctor");

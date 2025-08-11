@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import PerformanceSection from "../../components/myRatings/PerformanceSection.jsx";
-import DoctorRatingSummary from "../../components/DoctorRatingSummary/DoctorRatingSummary.jsx";
+import PerformanceSection from "../myRatings/PerformanceSection.jsx";
+import DoctorRatingSummary from "../DoctorRatingSummary/DoctorRatingSummary.jsx";
 import DoctorProfileBox from './doctorProfileBox.jsx';
 import useDoctorData from './useDoctorData.jsx';
-import './supervisorDrProfile.css';
+import './adminDrProfile.css';
 
 
-const SupervisorDrProfile = () => {
+const AdminDrProfile = () => {
   const navigate = useNavigate();
   const { doctorId } = useParams();  // Extract doctorId from the URL
 
@@ -101,4 +101,4 @@ const SupervisorDrProfile = () => {
   );
 };
 
-export default SupervisorDrProfile;
+export default AdminDrProfile;

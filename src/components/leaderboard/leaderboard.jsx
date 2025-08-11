@@ -54,7 +54,7 @@ const LeaderBoard = () => {
 
   // States
   const [loading, setLoading] = useState(true);
-  const [supervisors, setSupervisors] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [universities, setUniversities] = useState([]);
   const [query, setQuery] = useState("");
   const [selectedUniversity, setSelectedUniversity] = useState(null);
@@ -93,7 +93,7 @@ const LeaderBoard = () => {
   }
 };
 
-  // Fetch supervisors and universities on mount
+  // Fetch admins and universities on mount
   useEffect(() => {
     fetchLeaderBoardData();
   }, []);
@@ -101,7 +101,7 @@ const LeaderBoard = () => {
   const fetchLeaderBoardData = async () => {
     setLoading(true);
     try {
-      // Fetch doctors (supervisors)
+      // Fetch doctors (admins)
       const res = await axios.get(`${BASE_URL}/api/doctors`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
       });
@@ -116,7 +116,7 @@ const LeaderBoard = () => {
         rating: doc.averageRating || doc.rating || 0,
       })) || [];
 
-      setSupervisors(doctorList);
+      setAdmins(doctorList);
       setListViewResults(doctorList);
 
       // Fetch universities
@@ -124,7 +124,7 @@ const LeaderBoard = () => {
       setUniversities(uniRes.data || []);
     } catch (error) {
       console.error("Failed to fetch data:", error);
-      setSupervisors([]);
+      setAdmins([]);
       setListViewResults([]);
       setUniversities([]);
     } finally {
@@ -171,18 +171,18 @@ const LeaderBoard = () => {
   const handleSearch = (val, university = selectedUniversity, field = selectedField, topic = selectedTopic) => {
     setQuery(val);
 
-    const filteredResults = applyFilters(supervisors, val, university, field, topic);
+    const filteredResults = applyFilters(admins, val, university, field, topic);
     setListViewResults(filteredResults);
   };
 
   // Get filtered fields & topics based on current selection to populate dropdowns
   const fields = getUnique(
-    supervisors.filter(s => !selectedUniversity || (s.university?._id === selectedUniversity._id)),
+    admins.filter(s => !selectedUniversity || (s.university?._id === selectedUniversity._id)),
     "field"
   );
 
   const topics = getUnique(
-    supervisors.filter(s => !selectedField || (s.field?._id === selectedField._id)),
+    admins.filter(s => !selectedField || (s.field?._id === selectedField._id)),
     "topic"
   );
 
@@ -217,7 +217,7 @@ const LeaderBoard = () => {
       <div className="container-leaderboard">
         <div className="search-wrapper" style={{ marginBottom: "1rem" }}>
           <SearchBar
-            placeholder="Search supervisors..."
+            placeholder="Search admins..."
             value={query}
             onSearch={(val) => {
               handleSearch(val);
@@ -225,7 +225,7 @@ const LeaderBoard = () => {
             }}
             onFocus={() => {
               setIsSearchFocused(true);
-              setListViewResults(supervisors);
+              setListViewResults(admins);
             }}
           />
         </div>
@@ -361,7 +361,7 @@ const LeaderBoard = () => {
 
         {/* Doctor List */}
           {loading ? (
-          <p>Loading supervisors...</p>
+          <p>Loading admins...</p>
         ) : listViewResults.length > 0 ? (
           
           <DoctorList
@@ -406,7 +406,7 @@ export default LeaderBoard;
 // import React, { useState, useEffect, useRef } from "react";
 // import { useNavigate } from "react-router-dom";
 // import DoctorList from "../DoctorList/DoctorList.jsx";
-// import { supervisors } from "../explore/data.js";
+// import { admins } from "../explore/data.js";
 // import "./leaderboard.css";
 // import { FiArrowLeft } from "react-icons/fi";
 
@@ -450,13 +450,13 @@ export default LeaderBoard;
 //   useOutsideClick(topicRef, () => setIsTopicOpen(false));
 
 //     useEffect(() => {
-//         setListViewResults(supervisors); 
+//         setListViewResults(admins); 
 //       }, []);
     
 
 //   const handleSearch = (val) => {
 //     setQuery(val);
-//     const result = applyFilters(supervisors, val, selectedUniversity, selectedField, selectedTopic);
+//     const result = applyFilters(admins, val, selectedUniversity, selectedField, selectedTopic);
 //     setListViewResults(result);
 //   };
 
@@ -477,13 +477,13 @@ export default LeaderBoard;
 //     return result;
 //   };
 
-//   const universities = getUnique(supervisors, "university");
+//   const universities = getUnique(admins, "university");
 //   const fields = getUnique(
-//     supervisors.filter(s => selectedUniversity ? s.university === selectedUniversity : true),
+//     admins.filter(s => selectedUniversity ? s.university === selectedUniversity : true),
 //     "field"
 //   );
 //   const topics = getUnique(
-//     supervisors.filter(s => selectedField ? s.field === selectedField : true),
+//     admins.filter(s => selectedField ? s.field === selectedField : true),
 //     "topics"
 //   ).flat();
 
