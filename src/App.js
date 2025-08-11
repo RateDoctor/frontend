@@ -5,6 +5,7 @@ import SignIn from './components/singIn/singin.jsx';
 import SingUp from './components/singUp/singup.jsx';
 // import Upload from './components/UploadFile/UploadFile.jsx';
 // import Verify from './components/verify/verify.jsx'
+import RequestAdminAccess from './components/RequestAdminAccess/RequestAdminAccess.jsx';
 import Checking from './components/checking/checking.jsx';
 import Welcome from './components/welcome/welcome.jsx';
 import Logout from './components/logout/logout.jsx';
@@ -35,13 +36,10 @@ function App() {
       <Routes>
          <Route path="/" element={<Layout />}>
 
-         
              <Route path="/login" element={<SignIn />} />
              <Route path="/singup" element={<SingUp />} />
          
-           
-
-
+      
          <Route element={<PrivateRoutes />}>
             <Route index element={<Explore />} />
             <Route path="/checking" element={<Checking />} /> 
@@ -53,7 +51,8 @@ function App() {
             <Route path="/addDoctor" element={<AddDoctor />} /> 
             <Route path="/helpFAQ" element={<HelpFAQ />} /> 
             <Route path="/create-university" element={<CreateUniversity />} /> 
-            <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} /> 
+            <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} />
+            <Route path="/request-admin-access" element={<RequestAdminAccess />} /> 
             <Route path="/university/:universityId" element={<UniversityProfile />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-admin" element={<RateAdmins />} /> 
