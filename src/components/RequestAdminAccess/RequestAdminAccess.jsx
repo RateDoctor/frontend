@@ -24,11 +24,11 @@ const handleSubmit = async (e) => {
   setSuccess("");
 
   try {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("authToken");
     if (!token) {
-      setError("You must be logged in to submit a request.");
-      setIsLoading(false);
-      return;
+    setError("You must be logged in to submit a request.");
+    setIsLoading(false);
+    return;
     }
 
     await axios.post(
