@@ -44,13 +44,17 @@ const login = (userToken, userRole) => {
   const isAuthenticated = !!token;
   const isAdmin = role === "admin";
   const isStudent = role === "student";
-
+  const currentUser = token
+    ? { token, role } 
+    : null;
+    
   return (
   <AuthContext.Provider
       value={{
         isAuthenticated,
         token,
         role,
+        currentUser,
         isAdmin,
         isStudent,
         login,

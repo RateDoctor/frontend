@@ -1,0 +1,19 @@
+.dashboard-app {
+  display: flex;
+  height: 100vh;          /* full screen height */
+  width: 100%;
+  background-color: #f5f5f5; /* optional */
+}
+
+.dashboard-app > aside {
+  width: 250px;           /* fixed sidebar width */
+  flex-shrink: 0;
+  background-color: #1f1f1f; /* sidebar color */
+  color: white;
+}
+
+.dashboard-content {
+  flex-grow: 1;           /* take remaining width */
+  padding: 1rem;
+  overflow-y: auto;       /* scroll if content is long */
+}

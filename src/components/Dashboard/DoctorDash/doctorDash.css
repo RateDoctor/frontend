@@ -1,0 +1,152 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+button {
+    padding: 10px;
+    background-color: var(--button);
+    color: white;
+    border: 1px solid var(--button);
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: white;
+    color: var(--button);
+    border-color: var(--button);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="rating"],
+select {
+    display: flex;
+    padding: 10px;
+    border-radius: 5px;
+    border: 0.5px solid var(--button);
+    margin-right: 10px;
+}
+
+select {
+    background-color: white;
+    border: 1px solid #ddd;
+    color: var(--accent-colors);
+}
+
+.select-option {
+    background-color: white;
+    border: 1px solid var(--button);
+    color: var(--button);
+    width: 200px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+thead th:last-child,
+tbody td:last-child {
+    text-align: center;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.dash-main {
+    flex-grow: 2;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: 30px;
+    margin-left: 30px;
+    margin-right: 30px;
+    overflow: hidden;
+}
+
+.ant-btn-primary {
+    background-color: var(--button);
+    height: 40px;
+}
+
+.ant-btn-primary:hover {
+    background-color: white !important;
+    color: var(--button) !important;
+    border-color: var(--button) !important;
+}
+
+.ant-modal .ant-modal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100vh;
+    right: 0;
+    overflow-y: auto;
+    height: 60vh;
+    box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.1);
+    transition: ease-in-out 0.5s;
+}
+
+.ant-modal .ant-modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+}
+
+.add-button {
+    display: flex;
+    flex-direction: row;
+}
+
+.ant-btn-default {
+    color: var(--button);
+    background-color: white;
+    border-color: var(--button);
+    height: 37px;
+}
+
+.ant-btn-default:hover {
+    color: white !important;
+    background-color: var(--button) !important;
+    border-color: var(--button) !important;
+}
+
+.table-fixing {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 69vh;
+}
+
+.issuper-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.ant-pagination .ant-pagination-item a {
+    color: var(--button) !important;
+    border-color: var(--button);
+}

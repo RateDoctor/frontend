@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from './layout/layout.jsx';
+import Layout from './layouts/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SingUp from './components/singUp/singup.jsx';
 // import Upload from './components/UploadFile/UploadFile.jsx';
@@ -30,9 +30,13 @@ import Unauthorized from "./pages/Unauthorized/Unauthorized.jsx";
 // DASHBOARD COMPONENTS
 
 import PrivateRoutes from "./utils/PrivateRoutes.jsx";
-import AdminRoute from "./utils/AdminRoute.jsx";
-import AdminDashboard from './components/AdminDashboard/AdminDashboard.jsx';
+// import AdminRoute from "./utils/AdminRoute.jsx";
+import DashboardLayout from "./layouts/dashLayout/DashboardLayout.jsx";
 
+import UsersPage from "./pages/Dashboard/UsersPage.jsx";
+import AdminsPage from "./pages/Dashboard/AdminsPage.jsx";
+import University from "./pages/Dashboard/UniversityPage.jsx";
+import Doctor from "./pages/Dashboard/DoctorsPage.jsx";
 import { AuthProvider } from "./utils/AuthProvider.jsx";
 
 function App() {
@@ -75,10 +79,12 @@ function App() {
             <Route path="/edit-rating/:doctorId" element={<EditRating />} />
 
               {/* Dashboard */}
-              <Route element={<AdminRoute />}>
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
-              {/* Add other admin-only routes here */}
-              </Route>
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route path="/dashboard/doctors" element={<Doctor />} />
+              <Route path="/dashboard/universities" element={<University />} />
+              <Route path="/dashboard/admins" element={<AdminsPage />} />
+              <Route path="/dashboard/users" element={<UsersPage />} />
+            </Route>
 
 
             {/* <Route path="/results" element={<SearchResults />} /> */}

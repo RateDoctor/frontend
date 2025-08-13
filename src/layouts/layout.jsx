@@ -38,6 +38,7 @@ const Layout = () => {
     "/forgot-password",
     "/welcome/*",
     "/logout",
+    "/dashboard/*",
   ];
 
   /** Routes where Footer should not appear */
@@ -50,6 +51,7 @@ const Layout = () => {
     "/welcome/*",
     "/logout",
     "/my-ratings/*",
+    "/dashboard/*",
   ];
 
   /** Evaluate Navbar and Footer visibility */

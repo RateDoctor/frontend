@@ -1,0 +1,78 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 250px;
+    height: 92.9vh;
+    background-color: var(--accent-color);
+    padding: 20px;
+    box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-main {
+    height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.2rem;
+    aspect-ratio: 3/2;
+    object-fit: contain;
+    mix-blend-mode: color-burn;
+}
+
+.sidebar-end {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.sidebar-main ul li a {
+    color: var(--primary-color);
+}
+
+.sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar ul li {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    color: var(--primary-color);
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 15px;
+}
+
+.sidebar ul li a:hover {
+    color: black;
+    /* border-radius: 25px; */
+    transition: all 0.3s ease-in;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+    color: var(--button);
+}
+
+.ant-pagination .ant-pagination-item-active {
+    border-color: var(--button);
+}
+
+.ant-pagination .ant-pagination-item-active:hover a {
+    color: var(--button);
+}
+
+.ant-pagination .ant-pagination-item-active:hover {
+    border-color: var(--button);
+}

@@ -1,0 +1,11 @@
+.table-fixing {
+  max-height: 400px; /* adjust to your layout */
+  overflow-y: auto;
+}
+.pagination-wrapper {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 0.5rem 0;
+  text-align: center;
+}

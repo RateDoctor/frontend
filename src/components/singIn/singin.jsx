@@ -61,8 +61,8 @@ const handleSubmit = async (e) => {
     const { token, user } = response.data;
 
     
-    console.log("Login success:", response.data);
-  console.log("Logging in with role:", user.role);
+     console.log("Login success:", response.data);
+     console.log("Logging in with role:", user.role);
 
     
 
@@ -81,10 +81,13 @@ const handleSubmit = async (e) => {
     // Continue with your login context (if needed)
     login(token, user.role);
 
-    // Navigate user
      setTimeout(() => {
-      navigate("/");
-    }, 100);
+      if (user.role === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+    }, 3000); 
 
   } catch (err) {
     console.error("Login failed:", err.response?.data || err.message);
