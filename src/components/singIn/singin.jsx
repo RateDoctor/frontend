@@ -83,7 +83,7 @@ const handleSubmit = async (e) => {
 
      setTimeout(() => {
       if (user.role === "admin") {
-        navigate("/dashboard");
+        navigate("/dashboard/users");
       } else {
         navigate("/");
       }
