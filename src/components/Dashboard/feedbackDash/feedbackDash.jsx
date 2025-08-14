@@ -1,182 +1,246 @@
 import React, { useState, useEffect } from "react";
-import { Pagination, Modal, Button, Tag, Input, Select } from "antd";
+import { Table, Pagination, Modal, Button, Tag, Input, Select, Space, Spin } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Loader from "../load/load.jsx";
+import StarRating from "../../starRating/StarRating.jsx";
+import PerformanceSection from "../../myRatings/PerformanceSection.jsx";
 import "./feedbackDash.css";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 const { Option } = Select;
 
-function DoctorFeedbackDashboard() {
+const DoctorFeedbackDashboard = () => {
   const [feedbacks, setFeedbacks] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [filterText, setFilterText] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
 
-  useEffect(() => {
-    fetchFeedbacks();
-  }, []);
+  const token = localStorage.getItem("authToken");
 
+  // --- Fetch Feedbacks ---
   const fetchFeedbacks = async () => {
+    if (!token) return setLoading(false);
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/api/feedbacks`);
-      setFeedbacks(res.data.feedbacks || []);
+      const { data } = await axios.get(`${BASE_URL}/api/ratings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setFeedbacks(data || []);
+      setPagination((prev) => ({ ...prev, total: data.length }));
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching feedbacks:", err);
+      Swal.fire("Error", "Failed to load feedbacks", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    fetchFeedbacks();
+  }, []);
+
+  // --- Actions ---
+  const updateFeedbackStatus = async (id, status) => {
     try {
-      const confirm = await Swal.fire({
-        title: "Are you sure?",
-        text: "This comment will be removed",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-      });
-      if (confirm.isConfirmed) {
-        await axios.delete(`${BASE_URL}/api/feedbacks/${id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` },
-        });
-        Swal.fire("Deleted!", "Comment has been removed.", "success");
-        fetchFeedbacks();
-      }
+      await axios.put(
+        `${BASE_URL}/api/ratings/${id}`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setFeedbacks((prev) =>
+        prev.map((f) => (f._id === id ? { ...f, status } : f))
+      );
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "Failed to delete comment", "error");
+      Swal.fire("Error", `Failed to ${status}`, "error");
     }
   };
 
-  const filteredFeedbacks = feedbacks.filter(
-    (fb) =>
-      fb.doctorName?.toLowerCase().includes(filterText.toLowerCase()) ||
-      fb.userName?.toLowerCase().includes(filterText.toLowerCase())
-  ).filter((fb) => (filterStatus ? fb.status === filterStatus : true));
+  const handleDelete = async (id) => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This feedback will be removed",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+      await axios.delete(`${BASE_URL}/api/ratings/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+      Swal.fire("Deleted!", "Feedback has been removed.", "success");
+      setPagination((prev) => ({ ...prev, total: prev.total - 1 }));
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to delete feedback", "error");
+    }
+  };
+
+  // --- Filter & Table Data ---
+  const filteredFeedbacks = feedbacks.filter((f) => {
+    const textMatch =
+      f.doctorId?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      f.userId?.name?.toLowerCase().includes(filterText.toLowerCase());
+    const statusMatch = filterStatus ? f.status === filterStatus : true;
+    return textMatch && statusMatch;
+  });
+
+  const handleTableChange = (pag) => {
+    setPagination(pag);
+  };
+
+  const columns = [
+    {
+      title: "Student",
+      dataIndex: ["userId", "name"],
+      key: "student",
+      render: (_, record) =>
+       record.userId?.name || record.userId?.email || "Unknown",
+    },
+    {
+      title: "Doctor",
+      dataIndex: ["doctorId", "name"],
+      key: "doctor",
+      render: (_, record) =>
+      record.doctorId?.name || record.doctorId?.email || "Unknown",
+    },
+    {
+      title: "Rating",
+      dataIndex: "averageRating",
+      key: "rating",
+      render: (_, record) => <StarRating rating={record.averageRating || 0} />,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <Tag color={record.status === "flagged" ? "red" : "green"}>
+          {record.status || "pending"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "date",
+      render: (_, record) => new Date(record.createdAt).toLocaleDateString(),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Space>
+          <Button onClick={() => { setSelectedFeedback(record); setModalOpen(true); }}>
+            View
+          </Button>
+          <Button danger onClick={() => handleDelete(record._id)}>Delete</Button>
+          <Button type="primary" onClick={() => updateFeedbackStatus(record._id, "approved")}>Approve</Button>
+          <Button danger onClick={() => updateFeedbackStatus(record._id, "flagged")}>Flag</Button>
+        </Space>
+      ),
+    },
+  ];
+
+  if (loading) return <Spin tip="Loading feedbacks..." style={{ marginTop: 50 }} />;
 
   return (
-    <>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="dash-main">
-          <h2>Doctor Feedback</h2>
+  <div className="dash-main" style={{ display: "flex", flexDirection: "column", height: "80vh" }}>
+    <h2>Doctor Feedback Dashboard</h2>
 
-          <div className="filters">
-            <Input
-              placeholder="Search by doctor or student"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              style={{ width: 250, marginRight: 10 }}
-            />
-            <Select
-              placeholder="Filter by status"
-              value={filterStatus}
-              onChange={(val) => setFilterStatus(val)}
-              style={{ width: 180 }}
-              allowClear
-            >
-              <Option value="approved">Approved</Option>
-              <Option value="flagged">Flagged</Option>
-            </Select>
-          </div>
+    <div className="filters" style={{ marginBottom: 16 }}>
+      <Input
+        placeholder="Search doctor or student"
+        value={filterText}
+        onChange={(e) => {
+          setFilterText(e.target.value);
+          setPagination((prev) => ({ ...prev, current: 1 }));
+        }}
+        style={{ width: 250, marginRight: 10 }}
+      />
+      <Select
+        placeholder="Filter by status"
+        value={filterStatus}
+        onChange={(val) => {
+          setFilterStatus(val);
+          setPagination((prev) => ({ ...prev, current: 1 }));
+        }}
+        style={{ width: 180 }}
+        allowClear
+      >
+        <Option value="approved">Approved</Option>
+        <Option value="flagged">Flagged</Option>
+      </Select>
+    </div>
 
-          <div className="table-fixing">
-            {filteredFeedbacks.length === 0 ? (
-              <p>No feedback found.</p>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Doctor</th>
-                    <th>Rating</th>
-                    <th>Comment</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFeedbacks.map((fb) => (
-                    <tr key={fb._id}>
-                      <td>{fb.userName}</td>
-                      <td>{fb.doctorName}</td>
-                      <td>{fb.rating} ⭐</td>
-                      <td>
-                        {fb.comment.length > 30
-                          ? fb.comment.substring(0, 30) + "..."
-                          : fb.comment}
-                      </td>
-                      <td>
-                        <Tag color={fb.status === "flagged" ? "red" : "green"}>
-                          {fb.status}
-                        </Tag>
-                      </td>
-                      <td>{new Date(fb.date).toLocaleDateString()}</td>
-                      <td>
-                        <Button
-                          onClick={() => {
-                            setSelectedFeedback(fb);
-                            setOpenModal(true);
-                          }}
-                        >
-                          View
-                        </Button>
-                        <Button
-                          danger
-                          onClick={() => handleDelete(fb._id)}
-                          style={{ marginLeft: 8 }}
-                        >
-                          Delete
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-            <Pagination
-              onChange={setCurrentPage}
-              current={currentPage}
-              total={filteredFeedbacks.length}
-              pageSize={10}
-            />
-          </div>
+    {/* Table wrapper */}
+    <div style={{ flexGrow: 1, overflowY: "auto" }}>
+      <Table
+        rowKey="_id"
+        columns={columns}
+        dataSource={filteredFeedbacks.slice(
+          (pagination.current - 1) * pagination.pageSize,
+          pagination.current * pagination.pageSize
+        )}
+        pagination={false}
+        locale={{ emptyText: "No feedback found." }}
+        scroll={{ x: "max-content" }}
+      />
+    </div>
 
-          {/* Modal to view details */}
-          <Modal
-            title="Feedback Details"
-            open={openModal}
-            onCancel={() => setOpenModal(false)}
-            footer={[
-              <Button key="close" onClick={() => setOpenModal(false)}>
-                Close
-              </Button>,
-            ]}
-          >
-            {selectedFeedback && (
-              <div>
-                <p><strong>Student:</strong> {selectedFeedback.userName}</p>
-                <p><strong>Doctor:</strong> {selectedFeedback.doctorName}</p>
-                <p><strong>Rating:</strong> {selectedFeedback.rating} ⭐</p>
-                <p><strong>Comment:</strong> {selectedFeedback.comment}</p>
-                <p><strong>Status:</strong> {selectedFeedback.status}</p>
-                <p><strong>Date:</strong> {new Date(selectedFeedback.date).toLocaleString()}</p>
-              </div>
-            )}
-          </Modal>
-        </div>
+    {/* Pagination */}
+    <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+      <Pagination
+        current={pagination.current}
+        pageSize={pagination.pageSize}
+        total={filteredFeedbacks.length}
+        showSizeChanger
+        pageSizeOptions={["5", "10", "20", "50"]}
+        onChange={(page, pageSize) => setPagination({ ...pagination, current: page, pageSize })}
+      />
+    </div>
+
+    {/* Modal stays inside the same parent */}
+    <Modal
+      title="Feedback Details"
+      open={modalOpen}
+      onCancel={() => setModalOpen(false)}
+      footer={[<Button key="close" onClick={() => setModalOpen(false)}>Close</Button>]}
+      width={700}
+    >
+      {selectedFeedback && (
+        <>
+          <p><strong>Student:</strong> {selectedFeedback.userId?.name || "Unknown"}</p>
+          <p><strong>Doctor:</strong> {selectedFeedback.doctorId?.name || "Unknown"}</p>
+          <p><strong>Comment:</strong> {selectedFeedback.additionalFeedback || "No comment"}</p>
+          <p>
+            <strong>Status:</strong>{" "}
+            <Tag color={selectedFeedback.status === "flagged" ? "red" : "green"}>
+              {selectedFeedback.status || "pending"}
+            </Tag>
+          </p>
+          <p><strong>Date:</strong> {new Date(selectedFeedback.createdAt).toLocaleString()}</p>
+          <PerformanceSection
+            ratings={{
+              communication: selectedFeedback.communication,
+              support: selectedFeedback.support,
+              guidance: selectedFeedback.guidance,
+              availability: selectedFeedback.availability,
+            }}
+            hideTitle={false}
+          />
+        </>
       )}
-    </>
-  );
-}
+    </Modal>
+  </div>
+);
+
+};
 
 export default DoctorFeedbackDashboard;
