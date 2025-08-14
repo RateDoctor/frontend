@@ -216,7 +216,7 @@ const DoctorFeedbackDashboard = () => {
     >
       {selectedFeedback && (
         <>
-          <p><strong>Student:</strong> {selectedFeedback.userId?.name || "Unknown"}</p>
+          <p><strong>Student:</strong> {selectedFeedback.userId?.email || "Unknown"}</p>
           <p><strong>Doctor:</strong> {selectedFeedback.doctorId?.name || "Unknown"}</p>
           <p><strong>Comment:</strong> {selectedFeedback.additionalFeedback || "No comment"}</p>
           <p>
