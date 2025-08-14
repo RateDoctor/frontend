@@ -36,7 +36,8 @@ import DashboardLayout from "./layouts/dashLayout/DashboardLayout.jsx";
 import UsersPage from "./pages/Dashboard/UsersPage.jsx";
 import AdminsPage from "./pages/Dashboard/AdminsPage.jsx";
 import University from "./pages/Dashboard/UniversityPage.jsx";
-import Doctor from "./pages/Dashboard/DoctorsPage.jsx";
+import Feedback from "./pages/Dashboard/DoctorFeedbackPage.jsx";
+import Doctor from "./pages/Dashboard/DoctorsPage.jsx";  
 import { AuthProvider } from "./utils/AuthProvider.jsx";
 
 function App() {
@@ -82,6 +83,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route path="/dashboard/doctors" element={<Doctor />} />
               <Route path="/dashboard/universities" element={<University />} />
+              <Route path="/dashboard/feedbacks" element={<Feedback />} />
               <Route path="/dashboard/admins" element={<AdminsPage />} />
               <Route path="/dashboard/users" element={<UsersPage />} />
             </Route>

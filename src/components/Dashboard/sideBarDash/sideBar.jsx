@@ -1,12 +1,13 @@
 import React from "react";
 import "./sideBar.css";
 import { useNavigate } from "react-router-dom";
-import { Link, NavLink } from "react-router-dom";
-import { BiCategory } from "react-icons/bi";
+import { NavLink } from "react-router-dom";
 import { RiAdminFill } from "react-icons/ri";
 import {  MdOutlineLogout } from "react-icons/md";
 import { FaUserCog , FaUniversity} from "react-icons/fa";
 import { GiTeacher } from "react-icons/gi";
+import { VscFeedback } from "react-icons/vsc";
+
 import { useAuth } from "../../../utils/AuthProvider.jsx";
 
 function Sidebar() {
@@ -29,10 +30,17 @@ function Sidebar() {
             icon: <FaUniversity />,
         },
      
+        
         {
             path: "/dashboard/doctors",
             name: "Doctors",
             icon: <GiTeacher />,
+        },
+
+         {
+            path: "/dashboard/feedbacks",
+            name: "Feedbacks",
+            icon: <VscFeedback />,
         },
         {
             path: "/dashboard/users",
