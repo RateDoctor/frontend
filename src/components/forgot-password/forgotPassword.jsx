@@ -1,40 +1,72 @@
-import "./forgotPassword.css";  
-import { FaArrowRight } from "react-icons/fa6";
+import React, { useState } from "react";
+import axios from "axios";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa6";
+import "./forgotPassword.css";
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
+const ForgotPassword = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-const Forgot = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/users/forgot-password`, { email });
+      setMessage(response.data.message || "Reset link sent. Check your inbox.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to send reset link.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="register-form">
-        <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
-
+      <MdOutlineKeyboardArrowLeft
+        className="wrapper-arrow-left"
+        onClick={() => navigate("/login")}
+      />
       <div className="big-circle"></div>
       <div className="top-circle"></div>
       <div className="down-circle"></div>
 
+      <div className="form-wrapper">
+        <h2 className="title-headLogin">Forgot Password</h2>
+        <form className="register-inputsLogin forgot-register-input" onSubmit={handleSubmit}>
+          <p className="forgot-text">
+            Enter your email to receive a password reset link.
+          </p>
 
-    <div className="form-wrapper">
+          <div className={`input-group ${email ? "filled" : ""}`}>
+            <input
+              className="login-input"
+              type="email"
+              placeholder="Your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-      <h2 className="title-headLogin">Forgot Password</h2>
-  
-        <form className="register-inputsLogin  forgot-register-input">
-
-        <p className="forgot-text">We've just sent you an email containing a link to reset your password.</p>
-        <p className="forgot-text">Please check your inbox (and spam/junk folder, just in case) and follow the instructions provided.</p>
-        <p className="forgot-text forgot-hyperlink"> Haven't received the email?
-                      <a href="#"  className="link-lickble">Click here to resend.</a></p> 
-
-
+          {message && <div className="success">{message}</div>}
+          {error && <div className="error">{error}</div>}
 
           <div className="register-buttons">
-            <div className="button-register-box   button-forgot">
-                <button
-                  className="buttonSubmit-login"
-                  type="submit">
-                  <FaArrowRight className="arrowRight" /> 
-                </button>
-            </div>    
+            <div className="button-register-box button-forgot">
+              <button className="buttonSubmit-login" type="submit" disabled={loading}>
+                  {loading ? "Sending..." : <FaArrowRight className="arrowRight" />}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -42,4 +74,4 @@ const Forgot = () => {
   );
 };
 
-export default Forgot;
+export default ForgotPassword;

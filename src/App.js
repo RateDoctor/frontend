@@ -10,6 +10,7 @@ import Checking from './components/checking/checking.jsx';
 import Welcome from './components/welcome/welcome.jsx';
 import Logout from './components/logout/logout.jsx';
 import ForgotPassword from './components/forgot-password/forgotPassword.jsx';
+import ResetPassword from './components/ResetPassword/ResetPassword.jsx'
 import AddDoctor from './components/addDoctor/addDoctor.jsx';
 import CreateUniversity from './/components/createUniversity/createUniversity.jsx';
 import HelpFAQ from './components/HelpFAQ/Helpfaq.jsx';
@@ -26,7 +27,7 @@ import ContactUs  from "./pages/contactUs/contactUs.jsx";
 import MyRatings from './components/myRatings/myRatings.jsx';
 import EditRating from './components/editRating/editRating.jsx';
 import Unauthorized from "./pages/Unauthorized/Unauthorized.jsx";
-
+import TermsFr from "./pages/terms/terms.js";
 // DASHBOARD COMPONENTS
 
 import PrivateRoutes from "./utils/PrivateRoutes.jsx";
@@ -52,7 +53,11 @@ function App() {
 
              <Route path="/login" element={<SignIn />} />
              <Route path="/singup" element={<SingUp />} />
+             <Route path="/forgot-password" element={<ForgotPassword />} />
+             <Route path="/reset-password/:token" element={<ResetPassword />} />
              <Route path="/unauthorized" element={<Unauthorized />} />
+             <Route path="/terms" element={<TermsFr />} />
+              
 
       
          <Route element={<PrivateRoutes />}>

@@ -32,6 +32,11 @@ const Login = () => {
   setErrors((prev) => ({ ...prev, [name]: "" }));
 };
 
+const goToForgotPassword = (e) => {
+  e.preventDefault();
+  navigate("/forgot-password");
+};
+
 
 const handleTogglePassword = () => setVisible(!visible);
 
@@ -105,6 +110,8 @@ const handleSubmit = async (e) => {
       <div className="top-circle"></div>
       <div className="down-circle"></div>
 
+     
+
     <div className="form-wrapper">
 
       <h2 className="title-headLogin">Welcome Back!</h2>
@@ -176,7 +183,9 @@ const handleSubmit = async (e) => {
             </h1>
 
              
-             <h3 className="forget-password" onClick={goToChangePassword}>Forgot Password</h3>
+              <h3 className="forget-password" onClick={goToForgotPassword}>
+                Forgot Password
+              </h3>
              </div>
 
 

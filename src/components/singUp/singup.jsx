@@ -5,25 +5,32 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import "./singup.css";
-const BASE_URL = process.env.REACT_APP_API_URL;
 
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    agreedToTerms: false,
+    termsVersion: "1.0"
+  });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [submitError, setSubmitError] = useState("");
- 
 
-
-   const goToLogin = () => {
+  const goToLogin = () => {
     navigate("/login");
   };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -34,42 +41,42 @@ const Signup = () => {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
 
     if (!form.email || !emailRegex.test(form.email))
-      newErrors.email = "Enter a valid email";
+      newErrors.email = "Enter a valid email address.";
 
     if (!form.password || !passwordRegex.test(form.password))
       newErrors.password =
-        "Password must be at least 6 chars, include uppercase, lowercase, number, and special character";
+        "Password must be at least 6 characters long, include uppercase, lowercase, number, and special character.";
+
+    if (!form.agreedToTerms)
+    newErrors.agreedToTerms = "You must agree to the Terms & Conditions.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validate()) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
 
-  setIsLoading(true);
-  try {
-    const response = await axios.post(`${BASE_URL}/api/users/register`, form);
-    const { userId, verificationToken } = response.data;
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${BASE_URL}/api/users/register`, form);
+      const { userId, verificationToken } = response.data;
 
+      localStorage.setItem("verificationToken", verificationToken);
+      localStorage.setItem("userId", userId);
 
-    localStorage.setItem("verificationToken", verificationToken);
-    localStorage.setItem("userId", userId)
-    // Navigate to checking page with userId + token
-    navigate("/checking", { state: { userId, token: verificationToken } });
-  } catch (err) {
-    setSubmitError(err?.response?.data?.error || "Registration failed");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+      navigate("/checking", { state: { userId, token: verificationToken } });
+    } catch (err) {
+      setSubmitError(err?.response?.data?.error || "Registration failed.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="signup-wrapper">
-     
-      <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
+      <MdOutlineKeyboardArrowLeft className="wrapper-arrow-left" />
 
       <div className="signup-form">
         <p className="title-head-signup">Create Account</p>
@@ -94,9 +101,7 @@ const handleSubmit = async (e) => {
           <p className="label-singup form-password">
             Choose a secure password for your account
           </p>
-          <div
-            className={`singup-input-group ${form.password ? "filled" : ""}`}
-          >
+          <div className={`singup-input-group ${form.password ? "filled" : ""}`}>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -119,33 +124,54 @@ const handleSubmit = async (e) => {
                 onClick={() => setShowPassword(true)}
               />
             )}
-
             <label className="singup-input-label">Password</label>
             {errors.password && <div className="error">{errors.password}</div>}
             <p className="remember-password-char">
-              Your password should be at least 6 characters long and include a
-              mix of letters, numbers, and special characters.
+              Your password should be at least 6 characters and include uppercase, lowercase, number, and special character.
             </p>
+          </div>
+
+          {/* Terms & Conditions */}
+          <div className="terms-container">
+            <label>
+              <input
+                  type="checkbox"
+                  name="agreedToTerms"
+                  checked={form.agreedToTerms}
+                  onChange={handleChange}
+              />
+              I agree to the{" "}
+              <a href="/terms" target="_blank" rel="noopener noreferrer">
+                Terms & Conditions
+              </a>
+            </label>
+            {errors.agreedToTerms && (
+              <div className="error">{errors.agreedToTerms}</div>
+            )}
           </div>
 
           {/* Submission Error */}
           {submitError && <div className="error">{submitError}</div>}
 
           <div className="register-loginSingUp-box">
-            <h1 className="signupForm-label" onClick={goToLogin}>Sign in</h1>
+            <h1 className="signupForm-label" onClick={goToLogin}>
+              Sign in
+            </h1>
           </div>
 
-
-
-           <div className="circle-container">
-              <div className="circle-right"></div>
-              <div className="singup-arrowButton">
-                <h1 className="signup" >Sign Up</h1>
-                <button className="circle-button" type="submit" disabled={isLoading}>
-                  <FaArrowRight className="arrowRight" />
-                </button>
-              </div>
+          <div className="circle-container">
+            <div className="circle-right"></div>
+            <div className="singup-arrowButton">
+              <h1 className="signup">Sign Up</h1>
+              <button
+                className="circle-button"
+                type="submit"
+                disabled={isLoading}
+              >
+                <FaArrowRight className="arrowRight" />
+              </button>
             </div>
+          </div>
         </form>
       </div>
     </div>
