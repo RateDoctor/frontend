@@ -61,10 +61,21 @@
   margin-bottom: 0.5rem;
 }
 
+.checkbox{
+  margin-right: 12px;
+  margin-left: 4px;
+}
+
+
+
+
+
 /* Responsive */
 @media (max-width: 768px) {
   .terms-container {
-    padding: 1.5rem;
+    padding: 0.2rem;
+    margin: 22px auto;
+    margin-bottom: 2rem;
   }
 
   .terms-title {
@@ -75,3 +86,10 @@
     font-size: 1.4rem;
   }
 }
+ @media (min-width: 360px) and (max-width: 391px) {
+.terms-container { 
+    padding: 0;
+    margin: 0px auto;
+    margin-bottom: 14px;
+    }
+} 

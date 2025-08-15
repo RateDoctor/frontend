@@ -323,12 +323,15 @@ left: 6rem;
   width: 20px;
 }
 
+
+
 /* Error message */
 .error {
   color: var(--error-color);
   font-size: 0.8125rem;
-  margin-top: 0.25rem;
+  margin-top: -0.25rem;
 }
+
 
 /* Submit button */
 .register-buttons-signup {
