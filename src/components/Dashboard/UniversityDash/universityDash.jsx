@@ -1,44 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Pagination, Modal, Button, Input, Spin } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "./universityDash.css";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
+const PAGE_SIZE = 10;
 
-function UniversityDashboard() {
+// إنشاء Axios instance مع الـ token
+const api = axios.create();
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("authToken");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+export default function UniversityDashboard() {
   const [universities, setUniversities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [editingUni, setEditingUni] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState("");
+  const [formData, setFormData] = useState({ name: "", location: "", phone: "" });
+  const userRole = localStorage.getItem("userRole");
 
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    phone: "",
-  });
-
-  const capitalizeFirstLetter = (str) => (str ? str.charAt(0).toUpperCase() + str.slice(1) : "");
+  // Capitalize for display
+  const capitalize = (str) => str?.charAt(0).toUpperCase() + str?.slice(1) || "";
 
   // Fetch universities
   const fetchUniversities = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/api/universities`);
+      const res = await api.get(`${BASE_URL}/api/universities`);
       setUniversities(Array.isArray(res.data) ? res.data : res.data.universities || []);
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error(err);
       Swal.fire("Error", "Failed to fetch universities", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchUniversities();
-  }, []);
+  useEffect(() => { fetchUniversities(); }, []);
 
   const resetForm = () => {
     setFormData({ name: "", location: "", phone: "" });
@@ -46,43 +50,35 @@ function UniversityDashboard() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.name.trim()) {
-      Swal.fire("Validation", "Name is required!", "warning");
-      return;
-    }
-
+    if (!formData.name.trim()) return Swal.fire("Validation", "Name is required!", "warning");
     try {
-      const token = localStorage.getItem("authToken");
+      setLoading(true);
       const payload = {
-        name: capitalizeFirstLetter(formData.name.trim()),
+        name: formData.name.trim(),
         location: formData.location?.trim() || "",
         phone: formData.phone?.trim() || "",
       };
-
       const response = editingUni
-        ? await axios.put(`${BASE_URL}/api/universities/${editingUni._id}`, payload, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-        : await axios.post(`${BASE_URL}/api/universities`, payload, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+        ? await api.put(`${BASE_URL}/api/universities/${editingUni._id}`, payload)
+        : await api.post(`${BASE_URL}/api/universities`, payload);
 
       setUniversities((prev) =>
-        editingUni
-          ? prev.map((u) => (u._id === editingUni._id ? response.data : u))
-          : [...prev, response.data]
+        editingUni ? prev.map((u) => (u._id === editingUni._id ? response.data : u)) : [response.data, ...prev]
       );
-
       Swal.fire("Success", editingUni ? "University updated!" : "University added!", "success");
       setOpenModal(false);
       resetForm();
     } catch (err) {
-      console.error("Submit error:", err.response?.data || err);
-      Swal.fire("Error", editingUni ? "Failed to update university" : "Failed to add university", "error");
-    }
+      console.error(err);
+      Swal.fire("Error", err.response?.data?.error || "Something went wrong", "error");
+    } finally { setLoading(false); }
   };
 
-  const handleDelete = async (uniId) => {
+const handleDelete = async (uniId) => {
+  if (!uniId) {
+    return Swal.fire("Error", "Invalid university ID", "error");
+  }
+
   const confirm = await Swal.fire({
     title: "Are you sure?",
     text: "This will permanently delete the university!",
@@ -92,43 +88,60 @@ function UniversityDashboard() {
     cancelButtonText: "Cancel",
   });
 
-  if (confirm.isConfirmed) {
-    try {
-      const token = localStorage.getItem("authToken");
-      await axios.delete(`${BASE_URL}/api/universities/${uniId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  if (!confirm.isConfirmed) return;
 
-      setUniversities((prev) => prev.filter((u) => u._id !== uniId));
-      Swal.fire("Deleted!", "University has been deleted.", "success");
-    } catch (err) {
-      console.error("Delete error:", err.response?.data || err);
-      Swal.fire("Error", err.response?.data?.message || "Failed to delete university", "error");
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return Swal.fire("Error", "Not authorized", "error");
     }
+
+    const response = await axios.delete(`${BASE_URL}/api/universities/${uniId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // إزالة الجامعة من الواجهة مباشرة
+    setUniversities((prev) => prev.filter((u) => u._id !== uniId));
+
+    Swal.fire("Deleted!", "University has been deleted.", "success");
+  } catch (err) {
+    console.error("Delete error:", err.response?.data || err);
+    const msg = err.response?.data?.error || err.response?.data?.message || "Failed to delete university";
+    Swal.fire("Error", msg, "error");
   }
 };
 
 
   const handleEditClick = (uni) => {
     setEditingUni(uni);
-    setFormData({
-      name: uni.name || "",
-      location: uni.location || "",
-      phone: uni.phone || "",
-    });
+    setFormData({ name: uni.name || "", location: uni.location || "", phone: uni.phone || "" });
     setOpenModal(true);
   };
 
-  const filteredUniversities = universities.filter((u) =>
-    u.name?.toLowerCase().includes(filter.toLowerCase())
+  const filteredUniversities = useMemo(
+    () => universities.filter((u) => u.name?.toLowerCase().includes(filter.toLowerCase())),
+    [universities, filter]
   );
+
+  const paginatedUniversities = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredUniversities.slice(start, start + PAGE_SIZE);
+  }, [filteredUniversities, currentPage]);
 
   return (
     <div className="dash-main">
       <h2>Universities List</h2>
 
       <div className="add-button">
-        <Button type="primary" onClick={() => setOpenModal(true)}>Add University</Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            if (userRole !== "admin") return Swal.fire("Error", "Only admin can add universities", "error");
+            setOpenModal(true);
+          }}
+        >
+          Add University
+        </Button>
         <Input
           placeholder="Search by university name"
           value={filter}
@@ -156,21 +169,14 @@ function UniversityDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {filteredUniversities.map((uni) => (
+                {paginatedUniversities.map((uni) => (
                   <tr key={uni._id}>
-                    <td>{uni.name}</td>
+                    <td>{capitalize(uni.name)}</td>
                     <td>{uni.location || "-"}</td>
                     <td>{uni.phone || "-"}</td>
                     <td>
                       <Button onClick={() => handleEditClick(uni)}>Edit</Button>
-                      <Button
-                        danger
-                        style={{ marginLeft: 5 }}
-                        onClick={() => handleDelete(uni._id)}
-                      >
-                        Delete
-                      </Button>
-
+                      <Button danger style={{ marginLeft: 5 }} onClick={() => handleDelete(uni._id)}>Delete</Button>
                     </td>
                   </tr>
                 ))}
@@ -181,6 +187,8 @@ function UniversityDashboard() {
             onChange={setCurrentPage}
             current={currentPage}
             total={filteredUniversities.length}
+            pageSize={PAGE_SIZE}
+            style={{ marginTop: 20, textAlign: "right" }}
           />
         </div>
       )}
@@ -192,43 +200,31 @@ function UniversityDashboard() {
         width={600}
         footer={[
           <Button key="cancel" onClick={() => { setOpenModal(false); resetForm(); }}>Cancel</Button>,
-          <Button key="save" type="primary" onClick={handleSubmit}>
+          <Button key="save" type="primary" onClick={handleSubmit} disabled={loading}>
             {editingUni ? "Update" : "Save"}
           </Button>,
         ]}
       >
         <div className="form-left">
           <label>Name *</label>
-          <Input
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: capitalizeFirstLetter(e.target.value) })}
-          />
+          <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
           <label>Location</label>
-          <Input
-            value={formData.location}
-            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-          />
+          <Input value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} />
           <label>Phone</label>
-          <Input
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          />
+          <Input value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
         </div>
       </Modal>
     </div>
   );
 }
 
-export default UniversityDashboard;
-
 
 
 
 // import React, { useState, useEffect } from "react";
-// import { Pagination, Modal, Button } from "antd";
+// import { Pagination, Modal, Button, Input, Spin } from "antd";
 // import axios from "axios";
 // import Swal from "sweetalert2";
-// import Loader from "../load/load.jsx";
 // import "./universityDash.css";
 
 // const BASE_URL = process.env.REACT_APP_API_URL;
@@ -237,89 +233,104 @@ export default UniversityDashboard;
 //   const [universities, setUniversities] = useState([]);
 //   const [loading, setLoading] = useState(false);
 //   const [openModal, setOpenModal] = useState(false);
-//   const [filter, setFilter] = useState("");
 //   const [currentPage, setCurrentPage] = useState(1);
-//   const [editingUni, setEditingUni] = useState(null); // track edit
+//   const [editingUni, setEditingUni] = useState(null);
+//   const [filter, setFilter] = useState("");
 
 //   const [formData, setFormData] = useState({
 //     name: "",
 //     location: "",
 //     phone: "",
-//     logo: null,
-//     phdDoctors: [],
-//     affiliations: [{ name: "", joined: "" }],
 //   });
-//   const [previewLogo, setPreviewLogo] = useState("");
 
-//   useEffect(() => {
-//     fetchUniversities();
-//   }, []);
+//   const capitalizeFirstLetter = (str) => (str ? str.charAt(0).toUpperCase() + str.slice(1) : "");
 
+//   // Fetch universities
 //   const fetchUniversities = async () => {
 //     try {
 //       setLoading(true);
 //       const res = await axios.get(`${BASE_URL}/api/universities`);
-//       setUniversities(res.data.universities || res.data || []);
+//       setUniversities(Array.isArray(res.data) ? res.data : res.data.universities || []);
 //     } catch (err) {
-//       console.error(err);
+//       console.error("Fetch error:", err);
+//       Swal.fire("Error", "Failed to fetch universities", "error");
 //     } finally {
 //       setLoading(false);
 //     }
 //   };
 
-//   const handleFileChange = (e) => {
-//     if (e.target.files.length > 0) {
-//       setFormData({ ...formData, logo: e.target.files[0] });
-//       setPreviewLogo(URL.createObjectURL(e.target.files[0]));
-//     }
-//   };
+//   useEffect(() => {
+//     fetchUniversities();
+//   }, []);
 
 //   const resetForm = () => {
-//     setFormData({
-//       name: "",
-//       location: "",
-//       phone: "",
-//       logo: null,
-//       phdDoctors: [],
-//       affiliations: [{ name: "", joined: "" }],
-//     });
-//     setPreviewLogo("");
+//     setFormData({ name: "", location: "", phone: "" });
 //     setEditingUni(null);
 //   };
 
 //   const handleSubmit = async () => {
+//     if (!formData.name.trim()) {
+//       Swal.fire("Validation", "Name is required!", "warning");
+//       return;
+//     }
+
 //     try {
 //       const token = localStorage.getItem("authToken");
-//       const payload = new FormData();
-//       payload.append("name", formData.name);
-//       payload.append("location", formData.location);
-//       payload.append("phone", formData.phone);
-//       if (formData.logo) payload.append("logo", formData.logo);
-//       payload.append("phdDoctors", JSON.stringify(formData.phdDoctors));
-//       payload.append("affiliations", JSON.stringify(formData.affiliations));
+//       const payload = {
+//         name: capitalizeFirstLetter(formData.name.trim()),
+//         location: formData.location?.trim() || "",
+//         phone: formData.phone?.trim() || "",
+//       };
 
-//       if (editingUni) {
-//         // EDIT
-//         await axios.put(`${BASE_URL}/api/universities/${editingUni._id}`, payload, {
-//           headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
-//         });
-//         Swal.fire("Success", "University updated successfully!", "success");
-//       } else {
-//         // ADD
-//         await axios.post(`${BASE_URL}/api/universities`, payload, {
-//           headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
-//         });
-//         Swal.fire("Success", "University added successfully!", "success");
-//       }
+//       const response = editingUni
+//         ? await axios.put(`${BASE_URL}/api/universities/${editingUni._id}`, payload, {
+//             headers: { Authorization: `Bearer ${token}` },
+//           })
+//         : await axios.post(`${BASE_URL}/api/universities`, payload, {
+//             headers: { Authorization: `Bearer ${token}` },
+//           });
 
-//       fetchUniversities();
+//       setUniversities((prev) =>
+//         editingUni
+//           ? prev.map((u) => (u._id === editingUni._id ? response.data : u))
+//           : [...prev, response.data]
+//       );
+
+//       Swal.fire("Success", editingUni ? "University updated!" : "University added!", "success");
 //       setOpenModal(false);
 //       resetForm();
 //     } catch (err) {
-//       console.error(err);
+//       console.error("Submit error:", err.response?.data || err);
 //       Swal.fire("Error", editingUni ? "Failed to update university" : "Failed to add university", "error");
 //     }
 //   };
+
+//   const handleDelete = async (uniId) => {
+//   const confirm = await Swal.fire({
+//     title: "Are you sure?",
+//     text: "This will permanently delete the university!",
+//     icon: "warning",
+//     showCancelButton: true,
+//     confirmButtonText: "Yes, delete it!",
+//     cancelButtonText: "Cancel",
+//   });
+
+//   if (confirm.isConfirmed) {
+//     try {
+//       const token = localStorage.getItem("authToken");
+//       await axios.delete(`${BASE_URL}/api/universities/${uniId}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+
+//       setUniversities((prev) => prev.filter((u) => u._id !== uniId));
+//       Swal.fire("Deleted!", "University has been deleted.", "success");
+//     } catch (err) {
+//       console.error("Delete error:", err.response?.data || err);
+//       Swal.fire("Error", err.response?.data?.message || "Failed to delete university", "error");
+//     }
+//   }
+// };
+
 
 //   const handleEditClick = (uni) => {
 //     setEditingUni(uni);
@@ -327,175 +338,111 @@ export default UniversityDashboard;
 //       name: uni.name || "",
 //       location: uni.location || "",
 //       phone: uni.phone || "",
-//       logo: null,
-//       phdDoctors: uni.phdDoctors || [],
-//       affiliations: uni.affiliations || [{ name: "", joined: "" }],
 //     });
-//     setPreviewLogo(uni.logo ? `${BASE_URL}/${uni.logo}` : "");
 //     setOpenModal(true);
 //   };
 
-//   const filteredUniversities = universities.filter((uni) =>
-//     uni.name?.toLowerCase().includes(filter.toLowerCase())
+//   const filteredUniversities = universities.filter((u) =>
+//     u.name?.toLowerCase().includes(filter.toLowerCase())
 //   );
 
 //   return (
-//     <>
+//     <div className="dash-main">
+//       <h2>Universities List</h2>
+
+//       <div className="add-button">
+//         <Button type="primary" onClick={() => setOpenModal(true)}>Add University</Button>
+//         <Input
+//           placeholder="Search by university name"
+//           value={filter}
+//           onChange={(e) => setFilter(e.target.value)}
+//           style={{ marginLeft: 10, width: 250 }}
+//         />
+//       </div>
+
 //       {loading ? (
-//         <Loader />
+//         <div style={{ textAlign: "center", marginTop: 50 }}>
+//           <Spin size="large" />
+//         </div>
 //       ) : (
-//         <div className="dash-main">
-//           <h2>Universities List</h2>
+//         <div className="table-fixing">
+//           {filteredUniversities.length === 0 ? (
+//             <p>No universities found.</p>
+//           ) : (
+//             <table>
+//               <thead>
+//                 <tr>
+//                   <th>Name</th>
+//                   <th>Location</th>
+//                   <th>Phone</th>
+//                   <th>Action</th>
+//                 </tr>
+//               </thead>
+//               <tbody>
+//                 {filteredUniversities.map((uni) => (
+//                   <tr key={uni._id}>
+//                     <td>{uni.name}</td>
+//                     <td>{uni.location || "-"}</td>
+//                     <td>{uni.phone || "-"}</td>
+//                     <td>
+//                       <Button onClick={() => handleEditClick(uni)}>Edit</Button>
+//                       <Button
+//                         danger
+//                         style={{ marginLeft: 5 }}
+//                         onClick={() => handleDelete(uni._id)}
+//                       >
+//                         Delete
+//                       </Button>
 
-//           <div className="add-button">
-//             <Button type="primary" onClick={() => setOpenModal(true)}>
-//               Add University
-//             </Button>
-//             <input
-//               type="text"
-//               placeholder="Search by university name"
-//               value={filter}
-//               onChange={(e) => setFilter(e.target.value)}
-//               style={{ marginLeft: 10 }}
-//             />
-//           </div>
-
-//           <div className="table-fixing">
-//             {filteredUniversities.length === 0 ? (
-//               <p>No universities found.</p>
-//             ) : (
-//               <table>
-//                 <thead>
-//                   <tr>
-//                     <th>Name</th>
-//                     <th>Location</th>
-//                     <th>Phone</th>
-//                     <th>Logo</th>
-//                     <th>Action</th>
+//                     </td>
 //                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   {filteredUniversities.map((uni) => (
-//                     <tr key={uni._id}>
-//                       <td>{uni.name}</td>
-//                       <td>{uni.location || "-"}</td>
-//                       <td>{uni.phone || "-"}</td>
-//                       <td>
-//                         {uni.logo && (
-//                           <img
-//                             src={`${BASE_URL}/${uni.logo}`}
-//                             alt="logo"
-//                             style={{ width: "100px", height: "100px" }}
-//                           />
-//                         )}
-//                       </td>
-//                       <td>
-//                         <Button onClick={() => handleEditClick(uni)}>Edit</Button>
-//                         <Button
-//                           danger
-//                           onClick={() => Swal.fire("TODO", "Delete action", "info")}
-//                         >
-//                           Delete
-//                         </Button>
-//                       </td>
-//                     </tr>
-//                   ))}
-//                 </tbody>
-//               </table>
-//             )}
-//             <Pagination
-//               onChange={setCurrentPage}
-//               current={currentPage}
-//               total={filteredUniversities.length}
-//             />
-//           </div>
-
-//           {/* Modal */}
-//           <Modal
-//             title={editingUni ? "Edit University" : "Add University"}
-//             open={openModal}
-//             onCancel={() => {
-//               setOpenModal(false);
-//               resetForm();
-//             }}
-//             width={800}
-//             footer={[
-//               <Button key="cancel" onClick={() => { setOpenModal(false); resetForm(); }}>Cancel</Button>,
-//               <Button key="save" type="primary" onClick={handleSubmit}>
-//                 {editingUni ? "Update" : "Save"}
-//               </Button>,
-//             ]}
-//           >
-//             <div className="form-left">
-//               <label>Name *</label>
-//               <input
-//                 value={formData.name}
-//                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-//               />
-
-//               <label>Location *</label>
-//               <input
-//                 value={formData.location}
-//                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-//               />
-
-//               <label>Phone</label>
-//               <input
-//                 value={formData.phone}
-//                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-//               />
-
-//               <label>Logo</label>
-//               <input type="file" onChange={handleFileChange} />
-//               {previewLogo && <img src={previewLogo} width="100px" alt="preview logo" />}
-
-//               <label>Affiliations</label>
-//               {formData.affiliations.map((aff, idx) => (
-//                 <div key={idx} className="affiliation-item">
-//                   <input
-//                     placeholder="Affiliation name"
-//                     value={aff.name}
-//                     onChange={(e) => {
-//                       const updated = [...formData.affiliations];
-//                       updated[idx].name = e.target.value;
-//                       setFormData({ ...formData, affiliations: updated });
-//                     }}
-//                   />
-//                   <input
-//                     type="date"
-//                     value={aff.joined}
-//                     onChange={(e) => {
-//                       const updated = [...formData.affiliations];
-//                       updated[idx].joined = e.target.value;
-//                       setFormData({ ...formData, affiliations: updated });
-//                     }}
-//                   />
-//                   <button
-//                     onClick={() => {
-//                       const updated = formData.affiliations.filter((_, i) => i !== idx);
-//                       setFormData({ ...formData, affiliations: updated });
-//                     }}
-//                   >
-//                     Remove
-//                   </button>
-//                 </div>
-//               ))}
-//               <button
-//                 onClick={() =>
-//                   setFormData({
-//                     ...formData,
-//                     affiliations: [...formData.affiliations, { name: "", joined: "" }],
-//                   })
-//                 }
-//               >
-//                 Add Affiliation
-//               </button>
-//             </div>
-//           </Modal>
+//                 ))}
+//               </tbody>
+//             </table>
+//           )}
+//           <Pagination
+//             onChange={setCurrentPage}
+//             current={currentPage}
+//             total={filteredUniversities.length}
+//           />
 //         </div>
 //       )}
-//     </>
+
+//       <Modal
+//         title={editingUni ? "Edit University" : "Add University"}
+//         open={openModal}
+//         onCancel={() => { setOpenModal(false); resetForm(); }}
+//         width={600}
+//         footer={[
+//           <Button key="cancel" onClick={() => { setOpenModal(false); resetForm(); }}>Cancel</Button>,
+//           <Button key="save" type="primary" onClick={handleSubmit}>
+//             {editingUni ? "Update" : "Save"}
+//           </Button>,
+//         ]}
+//       >
+//         <div className="form-left">
+//           <label>Name *</label>
+//           <Input
+//             value={formData.name}
+//             onChange={(e) => setFormData({ ...formData, name: capitalizeFirstLetter(e.target.value) })}
+//           />
+//           <label>Location</label>
+//           <Input
+//             value={formData.location}
+//             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+//           />
+//           <label>Phone</label>
+//           <Input
+//             value={formData.phone}
+//             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+//           />
+//         </div>
+//       </Modal>
+//     </div>
 //   );
 // }
 
 // export default UniversityDashboard;
+
+
+
