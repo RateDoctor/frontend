@@ -100,7 +100,6 @@ const handleDelete = async (uniId) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    // إزالة الجامعة من الواجهة مباشرة
     setUniversities((prev) => prev.filter((u) => u._id !== uniId));
 
     Swal.fire("Deleted!", "University has been deleted.", "success");

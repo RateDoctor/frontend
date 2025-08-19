@@ -3,8 +3,8 @@ import { Pagination, Modal, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Loader from "../load/load.jsx";
-import Backgrounds from "../../addDoctor/Backgrounds.jsx"; // Component for fieldOfStudy
-import Teaching from "../../addDoctor/Teaching.jsx";       // Component for topics
+import Backgrounds from "../../addDoctor/Backgrounds.jsx"; 
+import Teaching from "../../addDoctor/Teaching.jsx";       
 import "./doctorDash.css";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -15,25 +15,30 @@ function DoctorTable() {
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctorId, setEditDoctorId] = useState(null);
-
-  const [formData, setFormData] = useState({
-    doctorName: "",
-    affiliations: [{ name: "", joined: "" }],
-    backgrounds: [""],  // maps to Field of Study
-    teaching: [""],     // maps to Topics
-    supervision: [""],
-    experience: [""],
-    fieldOfStudyId: "",
-    topicIds: [],
-    profileFile: null,
-  });
-
+  const [formData, setFormData] = useState(getEmptyForm());
   const [previewImage, setPreviewImage] = useState("");
   const [universities, setUniversities] = useState([]);
   const [fields, setFields] = useState([]);
   const [topics, setTopics] = useState([]);
   const [filter, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  function getEmptyForm() {
+    return {
+      doctorName: "",
+      affiliations: [{ name: "", joined: "" }],
+      backgrounds: [""],
+      teaching: [""],
+      supervision: [""],
+      experience: [""],
+      fieldOfStudyId: "",
+      universityId: "",
+      topicIds: [],
+      profileFile: null,
+    };
+  }
+
+  const safeArray = (value) => Array.isArray(value) ? value : value ? [value] : [];
 
   useEffect(() => {
     fetchDoctors();
@@ -61,9 +66,9 @@ function DoctorTable() {
         axios.get(`${BASE_URL}/api/fields`, { headers }),
         axios.get(`${BASE_URL}/api/topics`, { headers }),
       ]);
-      setUniversities(uniRes.data);
-      setFields(fieldRes.data);
-      setTopics(topicRes.data);
+      setUniversities(uniRes.data || []);
+      setFields(fieldRes.data || []);
+      setTopics(topicRes.data || []);
     } catch (err) {
       console.error(err);
     }
@@ -71,88 +76,145 @@ function DoctorTable() {
 
   const handleFileChange = (e) => {
     if (e.target.files.length > 0) {
-      setFormData({ ...formData, profileFile: e.target.files[0] });
+      setFormData(prev => ({ ...prev, profileFile: e.target.files[0] }));
       setPreviewImage(URL.createObjectURL(e.target.files[0]));
     }
   };
 
   const handleEditClick = (doctor) => {
-    setIsEditing(true);
+    if (!doctor) return;
     setEditDoctorId(doctor._id);
+    setIsEditing(true);
     setFormData({
       doctorName: doctor.name || "",
-      affiliations: doctor.affiliations || [{ name: "", joined: "" }],
-      backgrounds: doctor.background || [""],
-      teaching: doctor.teaching || [""],
-      supervision: doctor.supervision || [""],
-      experience: doctor.experience || [""],
+      affiliations: safeArray(doctor.affiliations).map(a => ({ name: a.name || "", joined: a.joined || "" })),
+      backgrounds: safeArray(doctor.background),
+      teaching: safeArray(doctor.teaching),
+      supervision: safeArray(doctor.supervision),
+      experience: safeArray(doctor.experience),
       fieldOfStudyId: doctor.fieldOfStudy?._id || "",
-      topicIds: doctor.topic?.map(t => t._id) || [],
+      universityId: doctor.university?._id || "",
+      topicIds: safeArray(doctor.topic).map(t => t._id || t),
       profileFile: null,
     });
     setPreviewImage(doctor.profileImage || "");
     setOpen(true);
   };
 
+  const handleAddClick = () => {
+    setEditDoctorId(null);
+    setIsEditing(false);
+    setFormData(getEmptyForm());
+    setPreviewImage("");
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    setIsEditing(false);
+    setEditDoctorId(null);
+    setFormData(getEmptyForm());
+    setPreviewImage("");
+  };
+
+  const updateArrayField = (field, idx, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: safeArray(prev[field]).map((item, i) => i === idx ? value : item)
+    }));
+  };
+
+  const removeArrayItem = (field, idx) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: safeArray(prev[field]).filter((_, i) => i !== idx)
+    }));
+  };
+
+  const addArrayItem = (field, newItem) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: safeArray(prev[field]).concat(newItem)
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const payload = {
-        name: formData.doctorName,
-        affiliations: formData.affiliations,
-        background: formData.backgrounds,
-        teaching: formData.teaching,
-        supervision: formData.supervision,
-        experience: formData.experience,
-        fieldOfStudy: formData.fieldOfStudyId,
-        topicIds: formData.topicIds,
-      };
+      if (!formData.doctorName?.trim()) {
+        Swal.fire("Error", "Doctor name is required", "error");
+        return;
+      }
 
-      let res;
+      let payload;
+      let config = { headers: { Authorization: `Bearer ${token}` } };
+
+      const topicIds = safeArray(formData.topicIds).map(t => t.toString());
+
+      if (formData.profileFile) {
+        payload = new FormData();
+        payload.append("name", formData.doctorName.trim());
+        payload.append("fieldOfStudyId", formData.fieldOfStudyId || "");
+        payload.append("universityId", formData.universityId || "");
+        payload.append("profileFile", formData.profileFile);
+        payload.append("topic", JSON.stringify(topicIds));
+        payload.append("affiliations", JSON.stringify(safeArray(formData.affiliations)));
+        payload.append("background", JSON.stringify(safeArray(formData.backgrounds)));
+        payload.append("teaching", JSON.stringify(safeArray(formData.teaching)));
+        payload.append("supervision", JSON.stringify(safeArray(formData.supervision)));
+        payload.append("experience", JSON.stringify(safeArray(formData.experience)));
+        config.headers["Content-Type"] = "multipart/form-data";
+      } else {
+        payload = {
+          name: formData.doctorName.trim(),
+          fieldOfStudyId: formData.fieldOfStudyId || "",
+          universityId: formData.universityId || null,
+          topic: topicIds,
+          affiliations: safeArray(formData.affiliations),
+          background: safeArray(formData.backgrounds),
+          teaching: safeArray(formData.teaching),
+          supervision: safeArray(formData.supervision),
+          experience: safeArray(formData.experience),
+        };
+        config.headers["Content-Type"] = "application/json";
+      }
+
       if (isEditing && editDoctorId) {
-        res = await axios.put(`${BASE_URL}/api/doctors/${editDoctorId}`, payload, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.put(`${BASE_URL}/api/doctors/${editDoctorId}`, payload, config);
+        console.log("Update response:", res.data);
         Swal.fire("Success", "Doctor updated successfully!", "success");
       } else {
-        res = await axios.post(`${BASE_URL}/api/doctors`, payload, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.post(`${BASE_URL}/api/doctors`, payload, config);
+        console.log("Add response:", res.data);
         Swal.fire("Success", "Doctor added successfully!", "success");
       }
 
       fetchDoctors();
-      resetForm();
-      setOpen(false);
-      setIsEditing(false);
-      setEditDoctorId(null);
+      handleCancel();
+
     } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Failed to submit doctor", "error");
+      console.error("Submit error:", err.response?.data || err.message);
+      Swal.fire("Error", err.response?.data?.message || "Failed to submit doctor", "error");
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      doctorName: "",
-      affiliations: [{ name: "", joined: "" }],
-      backgrounds: [""],
-      teaching: [""],
-      supervision: [""],
-      experience: [""],
-      fieldOfStudyId: "",
-      topicIds: [],
-      profileFile: null,
-    });
-    setPreviewImage("");
-  };
-
-  const filteredDoctors = doctors.filter(d => d.name.toLowerCase().includes(filter.toLowerCase()));
+  const filteredDoctors = doctors.filter(d => d.name?.toLowerCase().includes(filter.toLowerCase()));
 
   return (
     <>
       {loading ? <Loader /> : (
         <div className="dash-main">
           <h2>Doctors List</h2>
+
           <div className="add-button">
-            <Button type="primary" onClick={() => { setOpen(true); setIsEditing(false); }}>Add Doctor</Button>
-            <input type="text" placeholder="Search by doctor name" value={filter} onChange={e => setFilter(e.target.value)} style={{ marginLeft: 10 }} />
+            <Button type="primary" onClick={handleAddClick}>Add Doctor</Button>
+            <input
+              type="text"
+              placeholder="Search by doctor name"
+              value={filter}
+              onChange={e => setFilter(e.target.value)}
+              style={{ marginLeft: 10 }}
+            />
           </div>
 
           <div className="table-fixing">
@@ -162,12 +224,10 @@ function DoctorTable() {
                   <tr>
                     <th>Name</th>
                     <th>University</th>
-                    {/* <th>Field</th> */}
-                    <th>Backgrounds</th> 
-                    <th>Teaching</th> 
+                    <th>Backgrounds</th>
+                    <th>Teaching</th>
                     <th>Profile</th>
                     <th>Action</th>
-                    
                   </tr>
                 </thead>
                 <tbody>
@@ -175,10 +235,12 @@ function DoctorTable() {
                     <tr key={doctor._id}>
                       <td>{doctor.name}</td>
                       <td>{doctor.university?.name || "-"}</td>
-                      {/* <td>{doctor.fieldOfStudy?.name || "-"}</td> */}
-                      <td>{doctor.background?.join(", ") || "-"}</td>
-                      <td>{doctor.teaching?.join(", ") || "-"}</td> 
-                      <td>{doctor.profileImage && <img src={`${BASE_URL}/${doctor.profileImage}`} alt="doctor" style={{ width: "100px", height: "100px" }} />}</td>
+                      <td>{safeArray(doctor.background).join(", ") || "-"}</td>
+                      <td>{safeArray(doctor.teaching).join(", ") || "-"}</td>
+                      <td>
+                        {doctor.profileImage && 
+                          <img src={`${BASE_URL}/${doctor.profileImage}`} alt="doctor" style={{ width: "100px", height: "100px" }} />}
+                      </td>
                       <td>
                         <Button onClick={() => handleEditClick(doctor)}>Edit</Button>
                         <Button danger onClick={() => Swal.fire("TODO", "Delete action", "info")}>Delete</Button>
@@ -195,64 +257,60 @@ function DoctorTable() {
           <Modal
             title={isEditing ? "Edit Doctor" : "Add Doctor"}
             open={open}
-            onCancel={() => { setOpen(false); resetForm(); setIsEditing(false); setEditDoctorId(null); }}
+            onCancel={handleCancel}
             width={800}
             footer={[
-              <Button key="cancel" onClick={() => { setOpen(false); resetForm(); setIsEditing(false); setEditDoctorId(null); }}>Cancel</Button>,
+              <Button key="cancel" onClick={handleCancel}>Cancel</Button>,
               <Button key="save" type="primary" onClick={handleSubmit}>{isEditing ? "Update" : "Save"}</Button>,
             ]}
           >
             <div className="form-left">
               <label>Doctor Name *</label>
-              <input value={formData.doctorName} onChange={e => setFormData(prev => ({ ...prev, doctorName: e.target.value }))} />
+              <input value={formData.doctorName || ""} onChange={e => setFormData(prev => ({ ...prev, doctorName: e.target.value }))} />
+
+              <label>University</label>
+              <select value={formData.universityId || ""} onChange={e => setFormData(prev => ({ ...prev, universityId: e.target.value }))}>
+                <option value="">Select University</option>
+                {universities.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
+              </select>
 
               <label>Profile Image</label>
               <input type="file" onChange={handleFileChange} />
               {previewImage && <img src={previewImage} width="100px" alt="preview" />}
 
-              {/* Affiliations */}
               <label>Affiliations</label>
-              {formData.affiliations.map((aff, idx) => (
+              {safeArray(formData.affiliations).map((aff, idx) => (
                 <div key={idx} className="affiliation-item">
-                  <input placeholder="Affiliation name" value={aff.name} onChange={e => {
-                    const updated = [...formData.affiliations];
-                    updated[idx].name = e.target.value;
-                    setFormData(prev => ({ ...prev, affiliations: updated }));
-                  }} />
-                  <input type="date" value={aff.joined} onChange={e => {
-                    const updated = [...formData.affiliations];
-                    updated[idx].joined = e.target.value;
-                    setFormData(prev => ({ ...prev, affiliations: updated }));
-                  }} />
-                  <button onClick={() => setFormData(prev => ({ ...prev, affiliations: prev.affiliations.filter((_, i) => i !== idx) }))}>Remove</button>
+                  <input
+                    placeholder="Affiliation name"
+                    value={aff.name || ""}
+                    onChange={e => updateArrayField("affiliations", idx, { ...aff, name: e.target.value })}
+                  />
+                  <input
+                    type="date"
+                    value={aff.joined || ""}
+                    onChange={e => updateArrayField("affiliations", idx, { ...aff, joined: e.target.value })}
+                  />
+                  <button type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
                 </div>
               ))}
-              <button onClick={() => setFormData(prev => ({ ...prev, affiliations: [...prev.affiliations, { name: "", joined: "" }] }))}>Add Affiliation</button>
+              <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>Add Affiliation</button>
 
-              {/* Backgrounds (Field of Study) */}
               <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
-
-              {/* Teaching (Topics) */}
               <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} />
 
-              {/* Supervision & Experience */}
               {["supervision", "experience"].map(field => (
                 <div key={field}>
                   <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-                  {formData[field].map((item, idx) => (
+                  {safeArray(formData[field]).map((item, idx) => (
                     <div key={idx} className="array-item">
-                      <input value={item} onChange={e => {
-                        const updated = [...formData[field]];
-                        updated[idx] = e.target.value;
-                        setFormData(prev => ({ ...prev, [field]: updated }));
-                      }} />
-                      <button onClick={() => setFormData(prev => ({ ...prev, [field]: prev[field].filter((_, i) => i !== idx) }))}>Remove</button>
+                      <input value={item || ""} onChange={e => updateArrayField(field, idx, e.target.value)} />
+                      <button type="button" onClick={() => removeArrayItem(field, idx)}>Remove</button>
                     </div>
                   ))}
-                  <button onClick={() => setFormData(prev => ({ ...prev, [field]: [...prev[field], ""] }))}>Add {field.slice(0, -1)}</button>
+                  <button type="button" onClick={() => addArrayItem(field, "")}>Add {field.slice(0, -1)}</button>
                 </div>
               ))}
-
             </div>
           </Modal>
         </div>
