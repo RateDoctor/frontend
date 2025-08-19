@@ -22,25 +22,7 @@ const navigate = useNavigate();
     }
   };
 
-// const StarRating = ({ rating }) => {
-//   if (typeof rating !== "number" || isNaN(rating)) {
-//     return <span>No rating available</span>;
-//   }
-
-//   const fullStars = Math.floor(rating);
-//   const halfStar = rating % 1 >= 0.5;
-//   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-//   return (
-//     <span className="star-display" aria-label={`Rating: ${rating.toFixed(1)} out of 5`}>
-//       {[...Array(fullStars)].map((_, i) => <FontAwesomeIcon icon={faStar} key={`full-${i}`} />)}
-//       {halfStar && <FontAwesomeIcon icon={faStarHalfAlt} />}
-//       {[...Array(emptyStars)].map((_, i) => <FontAwesomeIcon icon={faStarOutline} key={`empty-${i}`} />)}
-//       <span className="five-star">({rating.toFixed(1)}/5)</span>
-//     </span>
-//   );
-// };
-
+ const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
    return (
     <div className="admin-card" onClick={handleCardClick}>
       {/* <img src={image} alt={name} className="doctor-img" /> */}
@@ -73,10 +55,12 @@ const navigate = useNavigate();
           <p className="field">{typeof field === 'object' ? field?.name : field || "No field"}</p>
           <p className="topics">
             {Array.isArray(topics) && topics.length > 0
-              ? topics.map(t => {
-                  const topic = typeof t === "string" ? t : t.name;
-                  return topic.charAt(0).toUpperCase() + topic.slice(0,4);
-                }).join(", ")
+              ? topics
+                  .map(t => {
+                    const topicName = typeof t === "string" ? t : t.name || "";
+                    return capitalize(topicName);
+                  })
+                  .join(", ")
               : <span>No topic</span>
             }
           </p>
