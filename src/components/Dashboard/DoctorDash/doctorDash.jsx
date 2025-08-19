@@ -81,6 +81,32 @@ function DoctorTable() {
     }
   };
 
+
+  const handleDelete = async (doctorId) => {
+  const confirm = await Swal.fire({
+    title: 'Are you sure?',
+    text: "This action cannot be undone!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, delete it!',
+  });
+
+  if (confirm.isConfirmed) {
+    try {
+      const token = localStorage.getItem("authToken");
+      await axios.delete(`${BASE_URL}/api/doctors/${doctorId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      Swal.fire("Deleted!", "Doctor has been deleted.", "success");
+      fetchDoctors(); // refresh the list
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", err.response?.data?.message || "Failed to delete doctor", "error");
+    }
+  }
+};
+
+
   const handleEditClick = (doctor) => {
     if (!doctor) return;
     setEditDoctorId(doctor._id);
@@ -94,7 +120,9 @@ function DoctorTable() {
       experience: safeArray(doctor.experience),
       fieldOfStudyId: doctor.fieldOfStudy?._id || "",
       universityId: doctor.university?._id || "",
-      topicIds: safeArray(doctor.topic).map(t => t._id || t),
+      topicIds: safeArray(doctor.topic)
+        .map(t => (t && t._id ? t._id : t))
+        .filter(Boolean),
       profileFile: null,
     });
     setPreviewImage(doctor.profileImage || "");
@@ -149,7 +177,10 @@ function DoctorTable() {
       let payload;
       let config = { headers: { Authorization: `Bearer ${token}` } };
 
-      const topicIds = safeArray(formData.topicIds).map(t => t.toString());
+      const topicIds = safeArray(formData.topicIds)
+      .filter(t => t != null && t !== "")  
+      .map(t => t.toString());
+
 
       if (formData.profileFile) {
         payload = new FormData();
@@ -243,7 +274,7 @@ function DoctorTable() {
                       </td>
                       <td>
                         <Button onClick={() => handleEditClick(doctor)}>Edit</Button>
-                        <Button danger onClick={() => Swal.fire("TODO", "Delete action", "info")}>Delete</Button>
+                        <Button danger onClick={() => handleDelete(doctor._id)}>Delete</Button>
                       </td>
                     </tr>
                   ))}

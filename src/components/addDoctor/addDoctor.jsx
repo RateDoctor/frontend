@@ -62,71 +62,11 @@ const AddDoctorForm = () => {
     fetchData();
   }, []);
 
-  // const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
-  // const ensureEntityId = async (list, setList, endpoint, name, payload = {}) => {
-  //   const match = list.find(item => item.name.toLowerCase() === name.toLowerCase());
-  //   if (match) return match._id;
-
-  //   try {
-  //     const token = localStorage.getItem("authToken");
-  //     const res = await axios.post(`${BASE_URL}/api/${endpoint}`,
-  //       { name: capitalizeFirstLetter(name), ...payload },
-  //       { headers: { Authorization: `Bearer ${token}` } }
-  //     );
-  //     setList(prev => [...prev, res.data]);
-  //     return res.data._id;
-  //   } catch (err) {
-  //     console.error(`Error creating ${endpoint}:`, err.response?.data || err.message);
-  //     throw new Error(`Failed to create ${endpoint}`);
-  //   }
-  // };
-
-  // const handleSubmit = async () => {
-  //   setIsSubmitting(true);
-  //   try {
-  //     const primaryUni = formData.affiliations[0]?.name?.trim();
-  //     const universityId = await ensureEntityId(universities, setUniversities, 'universities', primaryUni);
-
-  //     const primaryField = formData.backgrounds[0]?.trim();
-  //     const fieldOfStudyId = await ensureEntityId(fields, setFields, 'fields', primaryField ,{ university: universityId });
-
-  //     const topicIds = await Promise.all(
-  //       formData.teaching.map(t => ensureEntityId(topics, setTopics, 'topics', t.trim(), { fieldId: fieldOfStudyId }))
-  //     );
-
-  //     const payload = {
-  //       name: formData.doctorName,
-  //       universityId,
-  //       fieldOfStudyId,
-  //       affiliations: formData.affiliations,
-  //       background: formData.backgrounds,
-  //       teaching: formData.teaching,
-  //       topicIds,
-  //       supervision: formData.supervision,
-  //       experience: formData.experience,
-  //       researchInterests: [],
-  //       initialRating: rating,
-  //     };
-
-  //     const token = localStorage.getItem("authToken");
-  //     const res = await axios.post(`${BASE_URL}/api/doctors`, payload, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
-
-  //     const newDoctor = res.data?.doctor;
-  //     if (!newDoctor || !newDoctor._id) throw new Error("Doctor creation failed.");
-  //     navigate(`/rate-admin?doctorId=${newDoctor._id}`);
-  //   } catch (err) {
-  //     alert(err.message);
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
-
+const capitalizeFirstWord = (str) => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
   
-
 const handleSubmit = async () => {
   setIsSubmitting(true);
   try {
@@ -138,6 +78,9 @@ const handleSubmit = async () => {
     if (!doctorName) throw new Error("Doctor name is required.");
     if (!primaryUni) throw new Error("University is required.");
     if (!primaryField) throw new Error("Field of study is required.");
+
+    
+
 
     // ✅ 2) Ensure university exists
     const universityId = await ensureEntityId(
@@ -168,20 +111,50 @@ const handleSubmit = async () => {
     );
 
     // ✅ 5) Build clean payload
-    const payload = {
-      name: doctorName,
-      universityId,
-      fieldOfStudyId,
-      affiliations: formData.affiliations.filter(a => a.name?.trim()), // skip empties
-      background: formData.backgrounds.filter(b => b.trim()),
-      teaching: formData.teaching.filter(t => t.trim()),
-      topicIds,
-      supervision: formData.supervision.filter(s => s.trim()),
-      experience: formData.experience.filter(e => e.trim()),
-      researchInterests: [],
-      initialRating: rating,
-    };
+    // const payload = {
+    //   name: doctorName,
+    //   universityId,
+    //   fieldOfStudyId,
+    //   affiliations: formData.affiliations.filter(a => a.name?.trim()), // skip empties
+    //   background: formData.backgrounds.filter(b => b.trim()),
+    //   teaching: formData.teaching.filter(t => t.trim()),
+    //   topicIds,
+    //   supervision: formData.supervision.filter(s => s.trim()),
+    //   experience: formData.experience.filter(e => e.trim()),
+    //   researchInterests: [],
+    //   initialRating: rating,
+    // };
 
+    console.log("universityId:", universityId);
+    console.log("fieldOfStudyId:", fieldOfStudyId);
+    console.log("topicIds:", topicIds);
+
+    const payload = {
+    name: capitalizeFirstWord(doctorName),
+    universityId,
+    fieldOfStudyId,
+    affiliations: formData.affiliations
+      .filter(a => a.name?.trim())
+      .map(a => ({
+        name: capitalizeFirstWord(a.name.trim()),
+        joined: a.joined
+      })),
+    background: formData.backgrounds
+      .filter(b => b.trim())
+      .map(b => capitalizeFirstWord(b.trim())),
+    teaching: formData.teaching
+      .filter(t => t.trim())
+      .map(t => capitalizeFirstWord(t.trim())),
+    topicIds,
+    supervision: formData.supervision
+      .filter(s => s.trim())
+      .map(s => capitalizeFirstWord(s.trim())),
+    experience: formData.experience
+      .filter(e => e.trim())
+      .map(e => capitalizeFirstWord(e.trim())),
+    researchInterests: [],
+    initialRating: rating,
+  };
     // ✅ 6) Send request
     const token = localStorage.getItem("authToken");
     const res = await axios.post(`${BASE_URL}/api/doctors`, payload, {
