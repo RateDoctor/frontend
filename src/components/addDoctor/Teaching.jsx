@@ -8,8 +8,15 @@ const Teaching = ({ formData, setFormData, topics, setTopics }) => {
   const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
   const saveTopic = async (value, index) => {
-    const name = capitalize(value.trim());
-    if (!name || !formData.fieldOfStudyId) return;
+  const name = capitalize(value.trim());
+  if (!name) return; 
+  if (!formData.fieldOfStudyId) 
+  { 
+    alert("Please select a Field of Study before adding topics.");
+    return;
+  }
+
+      
 
     const existing = topics.find(
       t => t.name.toLowerCase() === name.toLowerCase() && t.field === formData.fieldOfStudyId
@@ -22,7 +29,7 @@ const Teaching = ({ formData, setFormData, topics, setTopics }) => {
         const token = localStorage.getItem("authToken");
         const res = await axios.post(
           `${BASE_URL}/api/topics`,
-          { name, fieldId: formData.fieldOfStudyId },
+          { name, fieldOfStudyId: formData.fieldOfStudyId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         topicId = res.data._id;
@@ -53,7 +60,8 @@ const Teaching = ({ formData, setFormData, topics, setTopics }) => {
     setFormData(prev => ({ ...prev, teaching: updated }));
   };
 
-  const handleBlur = (value, index) => saveTopic(value, index); // save on blur
+  // const handleBlur = (value, index) => saveTopic(value, index); // save on blur
+   const handleBlur = () => {}; 
 
   const handleAddTopic = () => {
     setFormData(prev => ({
