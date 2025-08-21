@@ -121,7 +121,7 @@ const handleSubmit = async () => {
       questionnaire
     };
 
-    await axios.post(`${BASE_URL}/api/ratings`, payload, {
+    await axios.post(`${BASE_URL}/api/ratings/detailed`, payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -158,12 +158,18 @@ const handleSubmit = async () => {
           </div>
         </div>
 
-        <PerformanceSection
+        {/* <PerformanceSection
            doctorName={doctorData.name}
             ratings={ratings}
             onRatingChange={(category, value) =>
               setRatings((prev) => ({ ...prev, [category]: value }))
             }
+        /> */}
+
+        <PerformanceSection
+          doctorName={doctorData.name}
+          ratings={ratings}
+          onRatingChange={handleRatingChange}
         />
 
         <div className="feedback-section">
