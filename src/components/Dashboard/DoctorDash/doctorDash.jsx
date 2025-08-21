@@ -328,7 +328,7 @@ function DoctorTable() {
               <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>Add Affiliation</button>
 
               <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
-              <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} />
+              <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fieldOfStudyId={formData.fieldOfStudyId} />
 
               {["supervision", "experience"].map(field => (
                 <div key={field}>
