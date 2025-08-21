@@ -11,9 +11,11 @@
   display: flex;
   flex-direction: column;
   height: 100vh; 
-  overflow: hidden;
+  overflow: visible;
 }
-
+.doctor-results {
+  padding-bottom: 100px; /* to avoid footer */
+}
 
 /* Search Bar */
 .search-bar {
@@ -51,6 +53,8 @@
   margin: 1rem 1.4rem;
   gap: 1rem;
   font-weight: bold;
+  padding-bottom: 5rem;
+  margin-bottom: 2rem;
 }
 
 .doctor-list li {
@@ -194,6 +198,36 @@
   font-size: 30px;
 }
 
+.search-overlay {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;       /* use full viewport */
+}
+
+.filter-row,
+.search-wrapper {
+  flex: 0 0 auto;      /* take only their height */
+}
+
+.search-overlay {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.search-wrapper,
+.filter-row {
+  flex: 0 0 auto;       /* fixed height */
+}
+
+.doctor-results {
+  flex: 1 1 auto;       /* fill remaining space */
+  overflow-y: auto;     /* enable scrolling */
+  min-height: 0;        /* fixes flexbox scroll issue */
+  padding-bottom: 120px; /* avoid footer overlap */
+}
+
+
 /* Filters */
 .filter-row {
   display: flex;
@@ -210,7 +244,7 @@
 
 .custom-dropdown {
     position: fixed;
-    top: 14%;
+    top: 10%;
     left: 50%;
     transform: translateX(-56%);
     width: min(100%, 380px);
@@ -225,10 +259,10 @@
 
 
 .doctor-results {
- flex: 1;
-  overflow-y: auto;
-  max-height: 75vh;
-  padding: 0.5rem;
+  flex: 1;                     /* fill remaining space */
+  overflow-y: auto;            /* enable scroll */
+  padding: 0.5rem 1rem;
+  min-height: 0;  
 }
 
 .select-header {
