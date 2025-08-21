@@ -7,6 +7,7 @@ import man from "../../imgs/man-ezgif.com-gif-maker.svg";
 import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
+// import StarsRating from "../starRating/StarRating.jsx"
 import { sections } from "./data";
 import "./myRatings.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -70,25 +71,74 @@ useEffect(() => {
       const ratingsData = response.data;
 
       // Hydrate and normalize doctor data in one step
+      // const hydratedAndNormalizedRatings = await Promise.all(
+      //   ratingsData.map(async (rating) => {
+      //     let doctor = rating.doctorId;
+
+      //     // if (typeof doctor === "string" || !doctor?.name) {
+      //     //   try {
+      //     //     const res = await axios.get(
+      //     //       `${BASE_URL}/api/doctors/${doctor}`,
+      //     //       { headers: { Authorization: `Bearer ${token}` } }
+      //     //     );
+      //     //     doctor = res.data.doctor;
+      //     //   } catch (err) {
+      //     //     console.warn("Failed to fetch doctor:", doctor, err);
+      //     //     doctor = { name: "Unknown Doctor", _id: doctor };
+      //     //   }
+      //     // }
+
+      //     //  setRatings(
+      //     //     hydratedAndNormalizedRatings.filter((r) => r.doctorId?._id)
+      //     //   );
+      //     if (!doctor) {
+      //         console.warn("Missing doctorId for rating:", rating._id);
+      //         doctor = { name: "Unknown Doctor", _id: null };
+
+      //       } else if (typeof doctor === "string" || !doctor?.name) {
+      //         try {
+      //           const res = await axios.get(`${BASE_URL}/api/doctors/${doctor}`, {
+      //             headers: { Authorization: `Bearer ${token}` },
+      //           });
+      //           doctor = res.data.doctor;
+      //         } catch (err) {
+      //           console.warn("Failed to fetch doctor:", doctor, err);
+      //           doctor = { name: "Unknown Doctor", _id: doctor };
+      //         }
+      //       }
+
+
+      //     // Ensure valid doctor name fallback
+      //     if (!doctor.name || typeof doctor.name !== "string" || doctor.name.trim() === "") {
+      //       doctor.name = "Unnamed Doctor";
+      //     }
+
+      //     return { ...rating, doctorId: doctor };
+      //   })
+      // );
+
+      // setRatings(hydratedAndNormalizedRatings);
+
       const hydratedAndNormalizedRatings = await Promise.all(
         ratingsData.map(async (rating) => {
           let doctor = rating.doctorId;
 
-          if (typeof doctor === "string" || !doctor?.name) {
+          if (!doctor) {
+            // fallback for missing doctor
+            doctor = { name: "Unknown Doctor", _id: rating.doctorId || null };
+          } else if (typeof doctor === "string" || !doctor?.name) {
             try {
-              const res = await axios.get(
-                `${BASE_URL}/api/doctors/${doctor}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-              );
+              const res = await axios.get(`${BASE_URL}/api/doctors/${doctor}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
               doctor = res.data.doctor;
             } catch (err) {
-              console.warn("Failed to fetch doctor:", doctor, err);
               doctor = { name: "Unknown Doctor", _id: doctor };
             }
           }
 
-          // Ensure valid doctor name fallback
-          if (!doctor.name || typeof doctor.name !== "string" || doctor.name.trim() === "") {
+          // Ensure valid name
+          if (!doctor.name || doctor.name.trim() === "") {
             doctor.name = "Unnamed Doctor";
           }
 
@@ -97,6 +147,7 @@ useEffect(() => {
       );
 
       setRatings(hydratedAndNormalizedRatings);
+
 
       if (!doctorId) {
         setSelectedRating(null);
@@ -448,6 +499,8 @@ if (loading) {
         </button>
         
       </div>
+
+      {/* <StarsRating/> */}
       
       <PerformanceSection
         doctorName={selectedRating?.doctorId?.name}

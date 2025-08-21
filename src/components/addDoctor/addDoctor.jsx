@@ -7,7 +7,7 @@ import Backgrounds from "./Backgrounds";
 import Teaching from "./Teaching";
 import Supervision from "./Supervision";
 import Experience from "./Experience";
-import StarsRating from "./StarsRating";
+// import StarsRating from "./StarsRating";
 import { ensureEntityId } from "../../utils/ensureEntityId";
 import { FiArrowLeft } from "react-icons/fi";
 import './addDoctor.css';
@@ -34,7 +34,7 @@ const AddDoctorForm = () => {
   const [universities, setUniversities] = useState([]);
   const [fields, setFields] = useState([]);
   const [topics, setTopics] = useState([]);
-  const [rating, setRating] = useState(0);
+  // const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const role = localStorage.getItem('userRole');
@@ -153,7 +153,8 @@ const handleSubmit = async () => {
       .filter(e => e.trim())
       .map(e => capitalizeFirstWord(e.trim())),
     researchInterests: [],
-    initialRating: rating,
+    // initialRating: rating,
+    // stars: rating,
   };
     // ✅ 6) Send request
     const token = localStorage.getItem("authToken");
@@ -190,7 +191,7 @@ const handleSubmit = async () => {
         <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} />
         <Supervision formData={formData} setFormData={setFormData} />
         <Experience formData={formData} setFormData={setFormData} />
-        <StarsRating rating={rating} setRating={setRating} />
+        {/* <StarsRating rating={rating} setRating={setRating} /> */}
 
         <div className='flex'>
           <button className="rate-button" type="button">Rate Doctor</button>
