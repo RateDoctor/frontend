@@ -1,7 +1,20 @@
+.admin-card {
+  display: flex;
+  width: 100%;       /* or fixed px width if you want */
+  max-width: 300px;  /* ensures card doesn't grow */
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  gap: 12px;
+  cursor: pointer;
+}
+
+
 .rating {
   font-size: 16px;
   color: #0074E4; /* Gold for stars */
-  margin: 4px 0;
+  margin: 8px 0;
 }
 
 .info{
@@ -40,3 +53,5 @@
   min-width: 20px;                /* prevents number jump if single-digit */
   text-align: right;               /* neat alignment */
 }
+
+

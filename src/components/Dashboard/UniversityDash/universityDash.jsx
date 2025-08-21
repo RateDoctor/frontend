@@ -7,7 +7,6 @@ import "./universityDash.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 10;
 
-// إنشاء Axios instance مع الـ token
 const api = axios.create();
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("authToken");

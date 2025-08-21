@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Pagination, Modal, Button } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Loader from "../load/load.jsx";
+import Loader from "../../../layouts/load/load.jsx";
 import Backgrounds from "../../addDoctor/Backgrounds.jsx"; 
 import Teaching from "../../addDoctor/Teaching.jsx";       
 import "./doctorDash.css";

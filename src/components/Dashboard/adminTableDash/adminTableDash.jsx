@@ -2,7 +2,7 @@ import { useOutletContext } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Pagination, Button, Modal, message, Input } from "antd";
 import axios from "axios";
-import Loader from "../load/load.jsx";
+import Loader from "../../../layouts/load/load.jsx";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 

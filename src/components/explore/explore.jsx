@@ -5,6 +5,7 @@ import AdminCard from "../adminCard/adminCard.jsx";
 import axios from "axios"; 
 import SearchBar from "../searchBar/searchBar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
+import Loader from "../../layouts/load/load.jsx";
 import "../explore/explore.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -125,14 +126,15 @@ useEffect(() => {
     "topic"
   );
 
-
-// const fetchExploreData = async () => {
+ 
+//  const fetchExploreData = async () => {
 //   setLoading(true);
 //   try {
 //     // Fetch doctors
-//     const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, {
-//       headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
-//     });
+//     const token = localStorage.getItem("authToken");
+//     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+//     const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, { headers });
 //     const doctorList = doctorsRes.data?.doctors.map(doc => ({
 //       ...doc,
 //       field: doc.fieldOfStudy || doc.field || null,
@@ -155,81 +157,40 @@ useEffect(() => {
 //     setLoading(false);
 //   }
 // };
-
-
-  // Fetch admins
-  // useEffect(() => {
-  //   const fetchDoctors = async () => {
-  //     try {
-  //       const res = await axios.get(`${BASE_URL}/api/doctors`, {
-  //         headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
-  //       });
-  //       const doctorList = res.data?.doctors.map(doc => ({
-  //         ...doc,
-  //         field: doc.fieldOfStudy || doc.field || null,
-  //         topic: doc.topic || null,
-  //         image: doc.profileImage?.fileUrl || doc.profileImage || "",
-  //         rating: doc.averageRating || doc.rating || 0,
-
-  //       })) || [];
-  //       setAdmins(doctorList);
-  //       setListViewResults(doctorList);
-  //     } catch (err) {
-  //       setAdmins([]);
-  //       setListViewResults([]);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchDoctors();
-  // }, []);
-
-  // // Fetch universities
-  // useEffect(() => {
-  //   const fetchUniversities = async () => {
-  //     try {
-  //       const res = await axios.get(`${BASE_URL}/api/universities`);
-  //       setUniversities(res.data || []);
-  //     } catch (err) {
-  //       setUniversities([]);
-  //     }
-  //   };
-  //   fetchUniversities();
-  // }, []);
-
-  // Scroll lock when dropdown open
  
- const fetchExploreData = async () => {
+
+const fetchExploreData = async () => {
   setLoading(true);
   try {
-    // Fetch doctors
     const token = localStorage.getItem("authToken");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    const doctorsRes = await axios.get(`${BASE_URL}/api/doctors`, { headers });
+    const [doctorsRes, uniRes] = await Promise.all([
+      axios.get(`${BASE_URL}/api/doctors`, { headers }),
+      axios.get(`${BASE_URL}/api/universities`)
+    ]);
+
     const doctorList = doctorsRes.data?.doctors.map(doc => ({
       ...doc,
       field: doc.fieldOfStudy || doc.field || null,
       topic: doc.topic || null,
       image: doc.profileImage?.fileUrl || doc.profileImage || "",
-      rating: doc.averageRating || doc.rating || 0,
+      rating: doc.averageRating || doc.rating || 0, // include rating from API
     })) || [];
+
     setAdmins(doctorList);
     setListViewResults(doctorList);
-
-    // Fetch universities
-    const uniRes = await axios.get(`${BASE_URL}/api/universities`);
     setUniversities(uniRes.data || []);
-
   } catch (err) {
     setAdmins([]);
     setListViewResults([]);
     setUniversities([]);
+    console.error(err);
   } finally {
     setLoading(false);
   }
 };
- 
+
  
   useEffect(() => {
     if (isUniversityOpen || isFieldOpen || isTopicOpen) {
@@ -474,7 +435,7 @@ const handleDoctorClick = (doctorId) => {
             <p>Explore PhD Admins and share your academic experiences by rating your PhD admin</p>
           </div>
 
-          <div className="scrollable-section">
+          {/* <div className="scrollable-section">
             <div className="card-grid">
               {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
                 applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
@@ -502,7 +463,43 @@ const handleDoctorClick = (doctorId) => {
                 </p>
               )}
             </div>
-          </div>
+          </div> */}
+
+         <div className="scrollable-section">
+          {loading ? (
+            <Loader type={1} />  // type prop can be customized if you want multiple styles
+          ) : (
+            <div className="card-grid">
+              {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
+                applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
+                  <AdminCard
+                    key={sup._id || index}
+                    doctorId={sup._id}
+                    name={sup.name}
+                    rating={sup.rating}
+                    university={sup.university}
+                    field={sup.fieldOfStudy || sup.field}
+                    topics={sup.teaching}
+                    image={sup.image}
+                    onClick={() => handleDoctorClick(sup._id)}
+                  />
+                ))
+              ) : (
+                <p style={{ marginTop: "1rem", textAlign: "center" }}>
+                  Admin not found.{" "}
+                  <span
+                    style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+                    onClick={() => navigate("/addDoctor")}
+                  >
+                    Add doctor
+                  </span>
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+
         </>
       )}
     </div>
