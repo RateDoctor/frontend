@@ -18,3 +18,21 @@
   font-size: 13px;
 }
 
+.rating {
+  display: inline-flex;           /* compact horizontal layout */
+  align-items: center;            /* vertically center stars & number */
+  gap: 4px;                        /* small space between stars & number */
+}
+
+.star-display {
+  font-family: Arial, sans-serif;
+  color: #0074E4;                 /* primary star color */
+  font-size: 14px;                /* slightly smaller to fit card */
+}
+
+.rating-number {
+  font-size: 12px;                /* smaller than stars */
+  color: #555;                    /* darker/lighter contrast */
+  min-width: 20px;                /* prevents number jump if single-digit */
+  text-align: right;               /* neat alignment */
+}

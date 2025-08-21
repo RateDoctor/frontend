@@ -1,74 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faStarHalfAlt, faStar as faStarOutline } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
 
-const StarRating = ({ initialRating = 0, doctorId, token, onRatingSaved }) => {
-  const [rating, setRating] = useState(initialRating);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [saving, setSaving] = useState(false);
+import axios from "axios";
+
+const EditableStarRating = ({ rating: parentRating = 0, doctorId, token, onRatingSaved }) => {
+  const [rating, setRating] = useState(parentRating);
+  const [hover, setHover] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Keep internal rating in sync with parent prop
+  useEffect(() => {
+    setRating(parentRating);
+  }, [parentRating]);
 
   const handleClick = async (value) => {
-    setRating(value);
-    setSaving(true);
+    setRating(value); // Optimistic UI update
+    setIsSaving(true);
+
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/ratings/star`,
         { doctorId, stars: value },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      onRatingSaved?.(res.data.stars); // update parent if needed
+
+      setRating(res.data.stars);
+      onRatingSaved?.(res.data.stars);
     } catch (err) {
-      console.error('Failed to save stars:', err);
-      alert('Failed to save rating');
+      console.error("Failed to save star rating:", err);
+      alert("Could not save rating. Try again.");
+      setRating(parentRating); // revert on failure
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
-  const displayRating = hoverRating || rating;
-  const fullStars = Math.floor(displayRating);
-  const halfStar = displayRating % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
   return (
-    <div className="star-rating">
-      {[...Array(fullStars)].map((_, i) => (
+    <div style={{  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  flexShrink: 0,  }}>
+      {[1, 2, 3, 4, 5].map((star) => (
         <FontAwesomeIcon
-          icon={faStar}
-          key={`full-${i}`}
-          onMouseEnter={() => setHoverRating(i + 1)}
-          onMouseLeave={() => setHoverRating(0)}
-          onClick={() => handleClick(i + 1)}
-          className="star clickable"
+          key={star}
+          icon={star <= (hover || rating) ? faStar : faStarHalfAlt}
+          onMouseEnter={() => setHover(star)}
+          onMouseLeave={() => setHover(0)}
+          onClick={() => handleClick(star)}
+          style={{ cursor: "pointer", color: "#0074E4", fontSize: 14 }}
         />
       ))}
-      {halfStar && (
-        <FontAwesomeIcon
-          icon={faStarHalfAlt}
-          onMouseEnter={() => setHoverRating(fullStars + 0.5)}
-          onMouseLeave={() => setHoverRating(0)}
-          onClick={() => handleClick(fullStars + 0.5)}
-          className="star clickable"
-        />
-      )}
-      {[...Array(emptyStars)].map((_, i) => (
-        <FontAwesomeIcon
-          icon={faStarOutline}
-          key={`empty-${i}`}
-          onMouseEnter={() => setHoverRating(fullStars + (halfStar ? 1 : 0) + i + 1)}
-          onMouseLeave={() => setHoverRating(0)}
-          onClick={() => handleClick(fullStars + (halfStar ? 1 : 0) + i + 1)}
-          className="star clickable"
-        />
-      ))}
-      <span className="five-star">({rating.toFixed(1)}/5)</span>
-      {saving && <span className="saving-text">Saving...</span>}
+      {isSaving && <span style={{ marginLeft: -4, fontSize: 12 }}>Saving...</span>}
+      <span style={{ marginLeft: 4,
+                    fontSize: 12,
+                    color: "#0074E4",        // new color for the rating number
+                    minWidth: 25,             // prevents card width jump
+                    textAlign: "right" }}>{rating.toFixed(1)}</span>
     </div>
   );
 };
 
-export default StarRating;
+export default EditableStarRating;
+
+
+
+
 
 
 // import React from 'react';
