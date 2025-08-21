@@ -42,7 +42,7 @@ select {
     display: flex;
     padding: 10px;
     border-radius: 5px;
-    border: 0.5px solid var(--button);
+    /* border: 0.5px solid var(--button); */
     margin-right: 10px;
 }
 

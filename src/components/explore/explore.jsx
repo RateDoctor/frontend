@@ -88,9 +88,16 @@ const Explore = () => {
       result = result.filter(sup => sup.field && sup.field._id === field._id);
     }
 
+    // if (topic && topic._id) {
+    //   result = result.filter(sup => sup.topic && sup.topic._id === topic._id);
+    // }
     if (topic && topic._id) {
-      result = result.filter(sup => sup.topic && sup.topic._id === topic._id);
+      result = result.filter(sup => 
+        Array.isArray(sup.teaching) &&
+        sup.teaching.some(t => t._id === topic._id)
+      );
     }
+
 
     return result;
   };
@@ -121,10 +128,21 @@ useEffect(() => {
     "field"
   );
 
-  const topics = getUnique(
-    admins.filter(s => !selectedField || s.field?._id === selectedField._id),
-    "topic"
-  );
+  // const topics = getUnique(
+  //   admins.filter(s => !selectedField || s.field?._id === selectedField._id),
+  //   "topic"
+  // );
+
+  const topics = Array.from(
+  new Map(
+    admins
+      .filter(s => !selectedField || (s.field && s.field._id === selectedField._id))
+      .flatMap(s => s.teaching || [])
+      .filter(Boolean)
+      .map(t => [t._id, t])
+  ).values()
+);
+
 
  
 //  const fetchExploreData = async () => {
@@ -170,13 +188,31 @@ const fetchExploreData = async () => {
       axios.get(`${BASE_URL}/api/universities`)
     ]);
 
+    // const doctorList = doctorsRes.data?.doctors.map(doc => ({
+    //   ...doc,
+    //   field: doc.fieldOfStudy || doc.field || null,
+    //   topic: doc.topic || null,
+    //   image: doc.profileImage?.fileUrl || doc.profileImage || "",
+    //   rating: doc.averageRating || doc.rating || 0, // include rating from API
+    // })) || [];
+
+
     const doctorList = doctorsRes.data?.doctors.map(doc => ({
-      ...doc,
-      field: doc.fieldOfStudy || doc.field || null,
-      topic: doc.topic || null,
-      image: doc.profileImage?.fileUrl || doc.profileImage || "",
-      rating: doc.averageRating || doc.rating || 0, // include rating from API
-    })) || [];
+  ...doc,
+  field: doc.fieldOfStudy || doc.field || null,
+  teaching: Array.isArray(doc.teaching) 
+    ? doc.teaching.map(t => typeof t === "string" ? { _id: t, name: t } : t)
+    : doc.teaching 
+      ? [{ _id: doc.teaching._id || doc.teaching, name: doc.teaching.name || doc.teaching }]
+      : [],
+  image: doc.profileImage?.fileUrl || doc.profileImage || "",
+  rating: doc.averageRating || doc.rating || 0,
+  // also keep topic for backward compatibility if needed
+  topic: Array.isArray(doc.topic) 
+    ? doc.topic.map(t => typeof t === "string" ? { _id: t, name: t } : t) 
+    : doc.topic ? [{ _id: doc.topic._id || doc.topic, name: doc.topic.name || doc.topic }] : []
+})) || [];
+
 
     setAdmins(doctorList);
     setListViewResults(doctorList);
@@ -267,6 +303,8 @@ const handleDoctorClick = (doctorId) => {
               {matchedUniversity.name} → Go to University Page
             </div>
           )}
+
+          <div className="filter-row">
 
           {/* University Dropdown */}
           <div className={`custom-select ${isUniversityOpen ? "open" : ""}`} ref={universityRef}>
@@ -395,7 +433,10 @@ const handleDoctorClick = (doctorId) => {
             </div>
           )}
 
+          </div>
+
           {/* Doctor List Results */}
+       <div className="doctor-results">
           {listViewResults.length > 0 ? (
             <DoctorList
               doctors={listViewResults}
@@ -424,6 +465,7 @@ const handleDoctorClick = (doctorId) => {
               </span>
             </p>
           )}
+          </div>
         </div>
       )}
 
