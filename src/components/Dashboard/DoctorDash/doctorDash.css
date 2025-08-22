@@ -28,7 +28,7 @@ button {
 }
 
 button:hover {
-    background-color: white;
+    /* background-color: white; */
     color: var(--button);
     border-color: var(--button);
 }
