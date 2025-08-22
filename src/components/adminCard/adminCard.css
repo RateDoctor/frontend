@@ -57,10 +57,12 @@
 
 
 .rating-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
 .user-rating, .average-rating {

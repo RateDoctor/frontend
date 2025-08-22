@@ -1,8 +1,7 @@
 .average-rating-container {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  gap: 2px;
 }
 
 .stars {
@@ -11,7 +10,7 @@
 }
 
 .star {
-  font-size: 18px;
+  font-size: 14px;
   transition: transform 0.2s;
 }
 

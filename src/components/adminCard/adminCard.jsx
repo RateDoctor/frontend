@@ -33,8 +33,7 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
   }, [doctorId, token]);
 
   const handleCardClick = () => {
-    const userRole = localStorage.getItem("userRole");
-    navigate(userRole === "admin" ? `/admin-dr-profile/${doctorId}` : `/my-ratings/${doctorId}`);
+    navigate(`/admin-dr-profile/${doctorId}`);
   };
 
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);

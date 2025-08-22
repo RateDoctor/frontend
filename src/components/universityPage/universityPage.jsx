@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import uni from "../../imgs/uni.png";
 import SearchBar from "../searchBar/searchBar";
 import axios from "axios";
-import { renderStars } from "../../utils/renderStars";
+import UniversityStarRating from "../starRating/UniversityStarRating";
 import "./universityPage.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -102,8 +102,15 @@ if (university.location) {
             />
           </div>
           <div className="drProfile-right">
-            <div className="rating-stars">
-              {renderStars(Number(university.rating || 0))}
+           <div className="rating-stars">
+              <UniversityStarRating
+                universityId={universityId}
+                token={localStorage.getItem("authToken")}
+                editable={true} // allow user to rate
+                onRatingSaved={(newRating) => {
+                  setUniversity((prev) => ({ ...prev, rating: newRating }));
+                }}
+              />
               <span className='overallRating'>Overall rating</span>
             </div>
             <h2 className="admin-doctor-name">{university.name}</h2>
@@ -127,11 +134,11 @@ if (university.location) {
         />
       </div>
 
-      <div className="grouped-doctor-list">
+      <div className="grouped-gdoctor-list">
         {Object.entries(groupedDoctors).map(([letter, docs]) => (
           <div key={letter} className="doctor-group">
             <h3 className="group-letter">{letter}</h3>
-            <div className="doctor-list">
+            <div className="gdoctor-list">
               {docs.map((doc) => (
                 <div
                   key={doc._id}
