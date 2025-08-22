@@ -132,9 +132,10 @@ const Signup = () => {
           </div>
 
           {/* Terms & Conditions */}
-          <div className="terms-container">
+          <div className="terms-singUp-box">
             <label>
               <input
+              id="checkbox-terms"
                   type="checkbox"
                   name="agreedToTerms"
                   checked={form.agreedToTerms}

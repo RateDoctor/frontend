@@ -410,9 +410,14 @@ left: 6rem;
 }
 
 
+.terms-singUp-box{
+  margin-top: 6px;
+}
 
-
-
+#checkbox-terms{
+  margin: 0 8px;
+  text-wrap: wrap;
+}
 
 
 /* singup.css */
@@ -436,4 +441,11 @@ left: 6rem;
   color: #0077ff; */
 
   text-indent: -999px;
+}
+
+
+@media (min-width: 360px) and (max-width: 375px) {
+  .signup-inputs {
+    width: 250px;
+  }
 }
