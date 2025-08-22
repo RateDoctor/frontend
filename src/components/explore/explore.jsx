@@ -264,11 +264,11 @@ const handleDoctorClick = (doctorId) => {
       return;
     }
 
-    // if (userRole === "admin") {
-    //     navigate(`/admin-dr-profile/${doctorId}`);
-    // } else {
-    //     navigate(`/my-ratings/${doctorId}`);
-    // }
+    if (userRole === "admin") {
+        navigate(`/admin-dr-profile/${doctorId}`);
+    } else {
+        navigate(`/my-ratings/${doctorId}`);
+    }
 };
 
 
@@ -476,6 +476,36 @@ const handleDoctorClick = (doctorId) => {
             <h2>Rate Your PhD Experience:<br />Explore and Evaluate Admins</h2>
             <p>Explore PhD Admins and share your academic experiences by rating your PhD admin</p>
           </div>
+
+          {/* <div className="scrollable-section">
+            <div className="card-grid">
+              {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
+                applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
+                  <AdminCard
+                    key={index}
+                    doctorId={sup._id}
+                    name={sup.name}
+                    rating={sup.rating}
+                    university={sup.university}
+                    field={sup.fieldOfStudy || sup.field}
+                    topics={sup.teaching}
+                    image={sup.image}
+                    onClick={() => handleDoctorClick(sup._id)}
+                  />
+                ))
+              ) : (
+                <p style={{ marginTop: "1rem" }}>
+                  Admin not found.{" "}
+                  <span
+                    style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+                    onClick={() => navigate("/addDoctor")}
+                  >
+                    Add doctor
+                  </span>
+                </p>
+              )}
+            </div>
+          </div> */}
 
          <div className="scrollable-section">
           {loading ? (

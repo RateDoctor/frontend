@@ -1,4 +1,7 @@
-
+.header-text {
+  position: relative; /* or just remove position if set */
+  top: auto;
+}
 /* New scrollable wrapper */
 .scrollable-section {
   flex: 1; 
@@ -133,7 +136,7 @@
 .doctor-img {
   border-radius: 50%;
   object-fit: cover;
-  /* margin-bottom: 0.6rem; */
+  margin-bottom: 0.6rem;
 }
 
 .overlay {
@@ -161,7 +164,6 @@
   line-height: 1.2;
   font-size: 12px;
   color: var(--button);
-  margin-bottom: 4px;
 }
 
 .info p.topics{
