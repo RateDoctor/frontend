@@ -161,6 +161,7 @@
   line-height: 1.2;
   font-size: 12px;
   color: var(--button);
+  margin-bottom: 4px;
 }
 
 .info p.topics{
