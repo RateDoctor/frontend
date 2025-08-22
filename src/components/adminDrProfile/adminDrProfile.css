@@ -183,8 +183,13 @@
   margin-top: 20px;
 }
 
+.feedback-id{
+  color: #000000;
+  font-weight: 700;
+}
+
 .feedback-paragraph{
-  color: var(--button);
+  color: #6C757D;
   font-size: 14px;
   margin-top: 12px;
   font-weight: 700;
