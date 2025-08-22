@@ -4,6 +4,7 @@ import axios from "axios";
 import "./singin.css";  
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaArrowRight } from "react-icons/fa6";
+import Loader from "../../layouts/load/load";
 import { useAuth } from "../../utils/AuthProvider";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -16,6 +17,9 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [visible, setVisible] = useState(false);
   const { login } = useAuth();
+
+
+  {isLoading && <Loader />}
 
   const goToSignup = () => {
     navigate("/singup");
@@ -43,6 +47,7 @@ const handleTogglePassword = () => setVisible(!visible);
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+  setIsLoading(true);
 
   console.log("Login form values:", {
     id: form.userId,
@@ -100,6 +105,8 @@ const handleSubmit = async (e) => {
   } catch (err) {
     console.error("Login failed:", err.response?.data || err.message);
     setLoginError(err.response?.data?.message || "Login failed.");
+  } finally {
+    setIsLoading(false); // ✅ stop loader
   }
 };
 
@@ -131,7 +138,9 @@ const handleSubmit = async (e) => {
             name="identifier"
             value={form.identifier}
             onChange={handleChange}
-            required />
+            required 
+            disabled={isLoading}
+            />
 
             <label htmlFor="identifier" className="input-label singin-input-label">
               {/* id number */}
@@ -176,7 +185,7 @@ const handleSubmit = async (e) => {
                    className="buttonSubmit-login"
                     type="submit"
                     disabled={isLoading}>
-                  <FaArrowRight className="arrowRight" /> 
+                    {isLoading ? "Signing in..." : <FaArrowRight className="arrowRight" />}
                 </button>
             </div>    
           </div>
