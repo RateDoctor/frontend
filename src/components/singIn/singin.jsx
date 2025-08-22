@@ -124,7 +124,7 @@ const handleSubmit = async (e) => {
           onSubmit={handleSubmit}
         >
         <p className="enter-id-password">Please enter your unique ID number and password.</p>
-          <div  className={`input-group ${form.userId ? "filled" : ""}`}>
+          <div  className={`input-group ${form.identifier ? "filled" : ""}`}>
             <input
             className="login-input"
             type="text"
