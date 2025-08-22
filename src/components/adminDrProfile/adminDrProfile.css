@@ -184,7 +184,7 @@
 }
 
 .feedback-paragraph{
-  color: #6C757D;
+  color: var(--button);
   font-size: 12px;
   margin-top: 12px;
 }
