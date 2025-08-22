@@ -65,6 +65,10 @@
     align-items: center;
 }
 
+.average-label{
+  font-size: 9px;
+ color: #6C757D;
+}
 .user-rating, .average-rating {
   display: flex;
   align-items: center;

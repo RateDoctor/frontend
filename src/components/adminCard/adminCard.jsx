@@ -58,7 +58,7 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
           </div>
 
           <div className="average-rating">
-            <AverageStarRating rating={averageRating} />
+            <AverageStarRating rating={averageRating} /> <span className="average-label">average</span>
           </div>
         </div>
 
