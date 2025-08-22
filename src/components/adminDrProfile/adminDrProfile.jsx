@@ -1,11 +1,10 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import DoctorRatingSummary from "../DoctorRatingSummary/DoctorRatingSummary.jsx";
 import DoctorProfileBox from './doctorProfileBox.jsx';
 import useDoctorData from './useDoctorData.jsx';
+import Loader from "../../layouts/load/load.jsx"; // ✅ Import your Loader
 import './adminDrProfile.css';
-
 
 const AdminDrProfile = () => {
   const navigate = useNavigate();
@@ -13,29 +12,27 @@ const AdminDrProfile = () => {
 
   const { doctorData, loading, error } = useDoctorData(doctorId);
 
-  // If data is loading or error occurs, show loading/error state
+  // Show Loader while fetching
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader type={1} />;  // you can adjust type if your Loader has variants
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="error-message">{error}</div>;
   }
 
-  // Ensure doctorData and its properties exist before rendering
+  // Ensure doctorData exists
   if (!doctorData) {
     return <div>No doctor data available</div>;
   }
 
   return (
     <div className="container-superdrprofile">
-      
-
       <div className="profile-superdrprofile">
         <DoctorProfileBox doctorData={doctorData} />
 
         {/* Affiliations Section */}
-        {doctorData.affiliations && doctorData.affiliations.length > 0 && (
+        {doctorData.affiliations?.length > 0 && (
           <section className="section-superdrprofile">
             <h3>Affiliations</h3>
             <ul>
@@ -47,7 +44,7 @@ const AdminDrProfile = () => {
         )}
 
         {/* Background Section */}
-        {doctorData.background && doctorData.background.length > 0 && (
+        {doctorData.background?.length > 0 && (
           <section className="section-superdrprofile">
             <h3>Background</h3>
             <ul>
@@ -59,7 +56,7 @@ const AdminDrProfile = () => {
         )}
 
         {/* Teaching Section */}
-        {doctorData.teaching && doctorData.teaching.length > 0 && (
+        {doctorData.teaching?.length > 0 && (
           <section className="section-superdrprofile">
             <h3>Teaching</h3>
             <ul>
@@ -71,7 +68,7 @@ const AdminDrProfile = () => {
         )}
 
         {/* Supervision Section */}
-        {doctorData.supervision && doctorData.supervision.length > 0 && (
+        {doctorData.supervision?.length > 0 && (
           <section className="section-superdrprofile">
             <h3>Supervision</h3>
             <ul>
@@ -83,7 +80,7 @@ const AdminDrProfile = () => {
         )}
 
         {/* Experience Section */}
-        {doctorData.experience && doctorData.experience.length > 0 && (
+        {doctorData.experience?.length > 0 && (
           <section className="section-superdrprofile">
             <h3>Experience</h3>
             <ul>
@@ -94,7 +91,7 @@ const AdminDrProfile = () => {
           </section>
         )}
 
-      <DoctorRatingSummary doctorId={doctorId} />
+        <DoctorRatingSummary doctorId={doctorId} />
 
       </div>
     </div>
