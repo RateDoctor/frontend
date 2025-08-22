@@ -133,7 +133,7 @@
 .doctor-img {
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 0.6rem;
+  /* margin-bottom: 0.6rem; */
 }
 
 .overlay {
