@@ -6,6 +6,7 @@ import "./footer.css";
 const Footer = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const userRole = localStorage.getItem("role");
 
   const isLeaderboard = location.pathname.includes("leaderboard");
   const isHelp = location.pathname.includes("helpFAQ") || location.pathname.includes("faq");
@@ -17,10 +18,13 @@ const Footer = () => {
         className={`iconFooter ${isExplore ? "active" : ""}`}
         onClick={() => navigate("/")}
       />
-      {/* <TbChartBar
+
+      {userRole === "admin" && (
+      <TbChartBar
         className={`iconFooter ${isLeaderboard ? "active" : ""}`}
         onClick={() => navigate("/leaderboard")}
-      /> */}
+      />
+       )}
       <FiInfo
         className={`iconFooter ${isHelp ? "active" : ""}`}
         onClick={() => navigate("/helpFAQ")}
