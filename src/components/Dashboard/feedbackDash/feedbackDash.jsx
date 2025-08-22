@@ -19,41 +19,83 @@ const DoctorFeedbackDashboard = () => {
   const [filterStatus, setFilterStatus] = useState("");
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
   const [doctorStars, setDoctorStars] = useState({});
+  const [doctorAvgStars, setDoctorAvgStars] = useState({});
   const token = localStorage.getItem("authToken");
 
+
+
+
+
   // --- Fetch Feedbacks ---
-  const fetchFeedbacks = async () => {
-    if (!token) return setLoading(false);
+  // const fetchFeedbacks = async () => {
+  //   if (!token) return setLoading(false);
+  //   try {
+  //     setLoading(true);
+  //     const { data } = await axios.get(`${BASE_URL}/api/ratings`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+
+  //     setFeedbacks(data || []);
+  //     setPagination((prev) => ({ ...prev, total: data.length }));
+
+  //     // Populate doctorStars directly from feedbacks
+  //     const starsObj = {};
+  //     data.forEach((fb) => {
+  //       const docId = fb.doctorId?._id || fb.doctorId?.id;
+  //       if (!docId) return;
+  //       starsObj[docId] = fb.stars ?? 0;
+  //     });
+  //     setDoctorStars(starsObj);
+  //   } catch (err) {
+  //     console.error("Error fetching feedbacks:", err);
+  //     Swal.fire("Error", "Failed to load feedbacks", "error");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
+
+
+  // useEffect(() => {
+  //   fetchFeedbacks();
+  // }, []);
+
+  // --- Update Feedback Status ---
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const { data } = await axios.get(`${BASE_URL}/api/ratings`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const [feedbackRes, avgRes] = await Promise.all([
+        axios.get(`${BASE_URL}/api/ratings`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${BASE_URL}/api/ratings/average-ratings`, { headers: { Authorization: `Bearer ${token}` } })
+      ]);
 
-      setFeedbacks(data || []);
-      setPagination((prev) => ({ ...prev, total: data.length }));
+      const feedbacksData = feedbackRes.data || [];
+      setFeedbacks(feedbacksData);
+      setPagination(prev => ({ ...prev, total: feedbacksData.length }));
 
-      // Populate doctorStars directly from feedbacks
-      const starsObj = {};
-      data.forEach((fb) => {
-        const docId = fb.doctorId?._id || fb.doctorId?.id;
-        if (!docId) return;
-        starsObj[docId] = fb.stars ?? 0;
+      // Map doctorId to { avgStars, count }
+      const avgMap = new Map();
+      avgRes.data.forEach(item => {
+        avgMap.set(item._id, { avgStars: item.avgStars, count: item.count });
       });
-      setDoctorStars(starsObj);
+      setDoctorAvgStars(avgMap);
     } catch (err) {
-      console.error("Error fetching feedbacks:", err);
-      Swal.fire("Error", "Failed to load feedbacks", "error");
+      console.error("Error fetching feedbacks or averages:", err);
+      Swal.fire("Error", "Failed to load data", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchFeedbacks();
-  }, []);
+  fetchData();
+}, []);
 
-  // --- Update Feedback Status ---
+
   const updateFeedbackStatus = async (id, status) => {
     try {
       await axios.put(
@@ -125,14 +167,21 @@ const DoctorFeedbackDashboard = () => {
       render: (_, record) => record.doctorId?.name || record.doctorId?.email || "Unknown",
     },
     {
-      title: "Rating",
-      key: "rating",
-      render: (_, record) => {
-        const docId = record.doctorId?._id || record.doctorId?.id;
-        const stars = doctorStars[docId] ?? 0;
-        return <StarRating rating={stars} editable={false} />;
+        title: "Average Rating",
+        key: "avgRating",
+        render: (_, record) => {
+          const docId = record.doctorId?._id;
+          const avgData = doctorAvgStars.get(docId) || { avgStars: 0, count: 0 };
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <StarRating rating={avgData.avgStars} editable={false} size={16} />
+              <span style={{ fontSize: 12, color: "#555" }}>
+                {avgData.avgStars.toFixed(1)} ({avgData.count})
+              </span>
+            </div>
+          );
+        }
       },
-    },
     {
       title: "Status",
       dataIndex: "status",

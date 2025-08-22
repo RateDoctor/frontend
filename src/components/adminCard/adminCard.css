@@ -55,3 +55,23 @@
 }
 
 
+
+.rating-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.user-rating, .average-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+  min-width: 80px;
+}
