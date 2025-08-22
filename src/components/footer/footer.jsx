@@ -17,10 +17,10 @@ const Footer = () => {
         className={`iconFooter ${isExplore ? "active" : ""}`}
         onClick={() => navigate("/")}
       />
-      <TbChartBar
+      {/* <TbChartBar
         className={`iconFooter ${isLeaderboard ? "active" : ""}`}
         onClick={() => navigate("/leaderboard")}
-      />
+      /> */}
       <FiInfo
         className={`iconFooter ${isHelp ? "active" : ""}`}
         onClick={() => navigate("/helpFAQ")}
