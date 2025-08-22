@@ -53,6 +53,7 @@ const AdminCard = ({ doctorId, name, rating: initialRating, university, field, t
               rating={rating}
               doctorId={doctorId}
               token={token}
+              editable={true}
               onRatingSaved={(newRating) => setRating(newRating)}
             />
           </div>

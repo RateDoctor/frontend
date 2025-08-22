@@ -8,7 +8,8 @@ import { useAuth } from "../../utils/AuthProvider";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Login = () => {
-  const [form, setForm] = useState({ userId: "", password: "" });
+  // const [form, setForm] = useState({ userId: "", password: "" });
+  const [form, setForm] = useState({ identifier: "", password: "" });
   const [loginError, setLoginError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -49,8 +50,10 @@ const handleSubmit = async (e) => {
   });
 
   try {
-    const response = await axios.post('https://rate-doctor-a589a6f15d3a.herokuapp.com/api/users/login', {
-        id: form.userId.trim(),
+    const response = await axios.post(`${BASE_URL}/api/users/login`,
+       {
+        // id: form.userId.trim(),
+        loginField: form.identifier.trim(),
         password: form.password.trim(),
       },
          {
@@ -125,13 +128,14 @@ const handleSubmit = async (e) => {
             <input
             className="login-input"
             type="text"
-            name="userId"
-            value={form.userId}
+            name="identifier"
+            value={form.identifier}
             onChange={handleChange}
             required />
 
-            <label htmlFor="id" className="input-label singin-input-label">
-              id number
+            <label htmlFor="identifier" className="input-label singin-input-label">
+              {/* id number */}
+              Account Key
             </label>
             {loginError && <div className="error">{loginError}</div>}
           </div>
