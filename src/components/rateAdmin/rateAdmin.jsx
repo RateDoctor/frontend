@@ -172,7 +172,7 @@ const handleSubmit = async () => {
           onRatingChange={handleRatingChange}
         />
 
-        <div className="feedback-section">
+        {/* <div className="feedback-section">
           <div className="rate-feedback-header">
             <h4 className="rate-header-title">Additional Feedback</h4>
           </div>
@@ -183,7 +183,7 @@ const handleSubmit = async () => {
           <div className="modal-overlay">
             <button
               className="floating-done-button"
-              onClick={() => setFeedbackEditable(false)}
+              onClick={() => setFeedbackEditable(true)}
             >
               Done
             </button>
@@ -195,7 +195,37 @@ const handleSubmit = async () => {
               />
             </div>
           </div>
-        )}
+        )} */}
+
+        <div className="feedback-section">
+  <div className="rate-feedback-header">
+    <h4 className="rate-header-title">Additional Feedback</h4>
+    <button 
+      className="edit-feedback-btn"
+      onClick={() => setFeedbackEditable(true)}
+    >
+      Edit
+    </button>
+  </div>
+
+  {feedbackEditable ? (
+    <textarea
+      className="inline-feedback-textarea"
+      value={feedback}
+      onChange={(e) => setFeedback(e.target.value)}
+      onBlur={() => setFeedbackEditable(false)}  // ✅ Exit edit mode when user clicks outside
+      autoFocus
+    />
+  ) : (
+    <p 
+      className="rate-paragraph-box"
+      onClick={() => setFeedbackEditable(true)}  // ✅ Clicking text enables editing
+    >
+      {feedback || "Click here to add your feedback..."}
+    </p>
+  )}
+</div>
+
 
         <div className="questionnaire-rate-section">
           <h4 className="title-questionnaire">Questionnaire</h4>
