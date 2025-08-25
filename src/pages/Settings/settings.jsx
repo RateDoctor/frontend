@@ -16,6 +16,7 @@ const Settings = () => {
     // Small delay for UX (optional)
     setTimeout(() => {
       logout(); // Clear token + role in context + localStorage
+      localStorage.removeItem("currentUser"); 
       setIsLoggingOut(false);
       navigate("/login"); // Navigate to login screen
     }, 1000);

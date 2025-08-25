@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./sideBar.css";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -7,20 +7,28 @@ import {  MdOutlineLogout } from "react-icons/md";
 import { FaUserCog , FaUniversity} from "react-icons/fa";
 import { GiTeacher } from "react-icons/gi";
 import { VscFeedback } from "react-icons/vsc";
-
+import Loader from "../../../layouts/load/load.jsx";
 import { useAuth } from "../../../utils/AuthProvider.jsx";
 
 function Sidebar() {
     const navigate = useNavigate();
     const { logout } = useAuth();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    
 
+    
 
 
      const handleLogout = () => {
-        logout();                    
+        setIsLoggingOut(true);
+
+        setTimeout(() => {
+        logout(); // Clear token + role in context + localStorage
         localStorage.removeItem("currentUser"); 
-        navigate("/login", { replace: true });  
-    };
+        setIsLoggingOut(false);
+        navigate("/login"); // Navigate to login screen
+    }, 1000);
+  };
 
 
     const link = [
@@ -66,6 +74,11 @@ function Sidebar() {
     };
     return (
         <>
+                {isLoggingOut && (
+                <div className="loader-overlay">
+                <Loader />
+                </div>
+            )}
             <div className="sidebar">
                 <div className="sidebar-main">
                     {link.map((e) => {
