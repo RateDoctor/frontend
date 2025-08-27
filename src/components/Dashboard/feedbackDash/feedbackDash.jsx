@@ -1,5 +1,17 @@
+// // DoctorFeedbackDashboard.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { Table, Pagination, Modal, Button, Tag, Input, Select, Spin, Dropdown, Menu } from "antd";
+import {
+  Table,
+  Pagination,
+  Modal,
+  Button,
+  Tag,
+  Input,
+  Select,
+  Spin,
+  Dropdown,
+  Menu,
+} from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -22,43 +34,46 @@ const DoctorFeedbackDashboard = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   const token = localStorage.getItem("authToken");
-  const alertShownRef = useRef(false); // guard for repeated Swal
+  const alertShownRef = useRef(false);
+  // localStorage.setItem("user", JSON.stringify(userData));
 
-  // --- get current user (from localStorage if available, else try /api/auth/me) ---
+
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const stored = localStorage.getItem("user");
-        if (stored) {
-          setCurrentUser(JSON.parse(stored));
-          return;
-        }
-        if (!token) return;
-        // try fetch profile (optional, if your backend exposes such endpoint)
-        const { data } = await axios.get(`${BASE_URL}/api/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCurrentUser(data);
-      } catch (err) {
-        // ignore - simply no current user info available
-        console.warn("Could not load current user info:", err?.message || err);
-      }
-    };
-    loadUser();
-  }, [token]);
+  console.log("Current user state updated:", currentUser);
+}, [currentUser]);
 
-  // --- Fetch feedbacks + average ratings ---
+useEffect(() => {
+  const loadUser = async () => {
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        const user = JSON.parse(stored);
+        console.log("Loaded role from localStorage:", user.role);
+        setCurrentUser(user); // <-- set state correctly
+        return; // optional, stops further fetch
+      }
+      if (!token) return;
+      const { data } = await axios.get(`${BASE_URL}/api/admins/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Fetched current user from API:", data);
+      setCurrentUser(data);
+    } catch (err) {
+      console.warn("Could not load current user info:", err?.message || err);
+    }
+  };
+  loadUser();
+}, [token]);
+
+  // Fetch feedbacks and average ratings
   useEffect(() => {
     const fetchData = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
+      if (!token) return setLoading(false);
       setLoading(true);
       try {
         const [feedbackRes, avgRes] = await Promise.all([
           axios.get(`${BASE_URL}/api/ratings`, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(`${BASE_URL}/api/ratings/average-ratings`, { headers: { Authorization: `Bearer ${token}` } })
+          axios.get(`${BASE_URL}/api/ratings/average-ratings`, { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         const feedbacksData = Array.isArray(feedbackRes.data) ? feedbackRes.data : [];
@@ -68,7 +83,6 @@ const DoctorFeedbackDashboard = () => {
         const avgMap = new Map();
         if (Array.isArray(avgRes.data)) {
           avgRes.data.forEach(item => {
-            // item._id might be an ObjectId-like or string; use as-is
             avgMap.set(String(item._id), { avgStars: item.avgStars || 0, count: item.count || 0 });
           });
         }
@@ -80,28 +94,26 @@ const DoctorFeedbackDashboard = () => {
         setLoading(false);
       }
     };
-
     fetchData();
-    // you might want to poll periodically or refresh on actions
   }, [token]);
 
-  // --- notify admin about flagged comments (only for admin)
+  // Notify admin about flagged comments
   const flaggedCount = feedbacks.filter(f => !!f.containsBadWords).length;
   useEffect(() => {
     if (!currentUser) return;
-    if (currentUser?.role === 'admin' && flaggedCount > 0 && !alertShownRef.current) {
+    if (currentUser.role === "admin" && flaggedCount > 0 && !alertShownRef.current) {
       alertShownRef.current = true;
       Swal.fire({
-        icon: 'warning',
-        title: 'تنبيه',
-        html: `هناك ${flaggedCount} تعليق${flaggedCount > 1 ? 'ات' : ''} تحتوي كلمات غير لائقة. راجعها.`,
-        timer: 5000
+        icon: "warning",
+        title: "warning",
+        html: `there ${flaggedCount} comment${flaggedCount > 1 ? "at" : ""} Contains inappropriate words. Please review.`,
+        timer: 5000,
       });
     }
-    // reset alertShownRef if flaggedCount becomes zero so future flags can show again:
     if (flaggedCount === 0) alertShownRef.current = false;
   }, [flaggedCount, currentUser]);
 
+  // Update feedback status
   const updateFeedbackStatus = async (id, status) => {
     try {
       await axios.put(
@@ -109,7 +121,7 @@ const DoctorFeedbackDashboard = () => {
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setFeedbacks((prev) => prev.map((f) => (f._id === id ? { ...f, status } : f)));
+      setFeedbacks(prev => prev.map(f => (f._id === id ? { ...f, status } : f)));
       Swal.fire("Success", `Status set to ${status}`, "success");
     } catch (err) {
       console.error(err);
@@ -117,7 +129,8 @@ const DoctorFeedbackDashboard = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  // Delete feedback
+  const handleDelete = async id => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
       text: "This feedback will be removed",
@@ -131,50 +144,36 @@ const DoctorFeedbackDashboard = () => {
       await axios.delete(`${BASE_URL}/api/ratings/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+      setFeedbacks(prev => prev.filter(f => f._id !== id));
       Swal.fire("Deleted!", "Feedback has been removed.", "success");
-      setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+      setPagination(prev => ({ ...prev, total: Math.max(0, prev.total - 1) }));
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to delete feedback", "error");
     }
   };
 
-  // --- Filter Feedbacks (safe checks) ---
-  const filteredFeedbacks = feedbacks.filter((f) => {
+  // Filter feedbacks
+  const filteredFeedbacks = feedbacks.filter(f => {
     const text = (filterText || "").trim().toLowerCase();
-    if (!text) {
-      // filter by status only
-      return filterStatus ? f.status === filterStatus : true;
-    }
-
-    const doctorName = (f.doctorId?.name || "").toLowerCase();
-    const doctorEmail = (f.doctorId?.email || "").toLowerCase();
-    const userName = (f.userId?.name || "").toLowerCase();
-    const userEmail = (f.userId?.email || "").toLowerCase();
-
     const textMatch =
-      doctorName.includes(text) ||
-      doctorEmail.includes(text) ||
-      userName.includes(text) ||
-      userEmail.includes(text);
-
+      f.doctorId?.name?.toLowerCase().includes(text) ||
+      f.doctorId?.email?.toLowerCase().includes(text) ||
+      f.userId?.name?.toLowerCase().includes(text) ||
+      f.userId?.email?.toLowerCase().includes(text);
     const statusMatch = filterStatus ? f.status === filterStatus : true;
     return textMatch && statusMatch;
   });
 
-  const handleTableChange = (pag) => setPagination(pag);
-
+  // Table columns
   const columns = [
     {
       title: "Student",
-      dataIndex: ["userId", "name"],
       key: "student",
       render: (_, record) => record.userId?.name || record.userId?.email || "Unknown",
     },
     {
       title: "Doctor",
-      dataIndex: ["doctorId", "name"],
       key: "doctor",
       render: (_, record) => record.doctorId?.name || record.doctorId?.email || "Unknown",
     },
@@ -188,24 +187,47 @@ const DoctorFeedbackDashboard = () => {
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <StarRating rating={avgData.avgStars} editable={false} size={16} />
             <span style={{ fontSize: 12, color: "#555" }}>
-              {Number(avgData.avgStars || 0).toFixed(1)} ({avgData.count})
+              {Number(avgData.avgStars).toFixed(1)} ({avgData.count})
             </span>
           </div>
         );
-      }
+      },
     },
     {
       title: "Status",
-      dataIndex: "status",
       key: "status",
       render: (_, record) => {
-        const color = record.status === "flagged" ? "red" : (record.status === "approved" ? "green" : "orange");
+        const color =
+          record.status === "flagged" ? "red" : record.status === "approved" ? "green" : "orange";
         return <Tag color={color}>{record.status || "pending"}</Tag>;
-      }
+      },
     },
     {
+  title: "Raw Comment",
+  key: "raw",
+  render: (_, record) => {
+    const text = record.rawFeedback || "-";
+    return (
+      <div
+        style={{
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+          color: currentUser?.role === "admin" && record.containsBadWords ? "red" : "inherit",
+          backgroundColor: currentUser?.role === "admin" && record.containsBadWords ? "#fff3f3" : "transparent",
+          padding: 4,
+          borderRadius: 4,
+          maxWidth: 300,
+        }}
+        title={currentUser?.role === "admin" ? text : "—"}
+      >
+        {currentUser?.role === "admin" ? text : "—"}
+      </div>
+    );
+  },
+},
+
+    {
       title: "Date",
-      dataIndex: "createdAt",
       key: "date",
       render: (_, record) => new Date(record.createdAt).toLocaleDateString(),
     },
@@ -215,48 +237,46 @@ const DoctorFeedbackDashboard = () => {
       render: (_, record) => {
         const menu = (
           <Menu>
-            <Menu.Item key="view" onClick={() => { setSelectedFeedback(record); setModalOpen(true); }}>
+            <Menu.Item key={`view-${record._id}`} onClick={() => { setSelectedFeedback(record); setModalOpen(true); }}>
               View
             </Menu.Item>
-            <Menu.Item key="approve" onClick={() => updateFeedbackStatus(record._id, "approved")}>
+            <Menu.Item key={`approve-${record._id}`} onClick={() => updateFeedbackStatus(record._id, "approved")}>
               Approve
             </Menu.Item>
-            <Menu.Item key="flag" onClick={() => updateFeedbackStatus(record._id, "flagged")}>
+            <Menu.Item key={`flag-${record._id}`} onClick={() => updateFeedbackStatus(record._id, "flagged")}>
               Flag
             </Menu.Item>
-            <Menu.Item key="delete" danger onClick={() => handleDelete(record._id)}>
+            <Menu.Item key={`delete-${record._id}`} danger onClick={() => handleDelete(record._id)}>
               Delete
             </Menu.Item>
           </Menu>
         );
-
-        return (
-          <Dropdown overlay={menu} trigger={['click']}>
-            <Button icon={<EllipsisOutlined />} />
-          </Dropdown>
-        );
+        return <Dropdown overlay={menu} trigger={["click"]}><Button icon={<EllipsisOutlined />} /></Dropdown>;
       },
     },
   ];
 
-  if (loading) return <Spin tip="Loading feedbacks..." style={{ marginTop: 50 }} />;
+if (loading || !currentUser) {
+  return <Spin tip="Loading feedbacks..." style={{ marginTop: 50 }} />;
+}
+
 
   return (
     <div className="dash-main" style={{ display: "flex", flexDirection: "column", height: "80vh" }}>
       <h2>Doctor Feedback Dashboard</h2>
 
       {/* Filters */}
-      <div className="filters" style={{ marginBottom: 16 }}>
+      <div className="filters" style={{ marginBottom: 16, display: "flex", gap: 10 }}>
         <Input
           placeholder="Search doctor or student"
           value={filterText}
-          onChange={(e) => { setFilterText(e.target.value); setPagination((prev) => ({ ...prev, current: 1 })); }}
-          style={{ width: 300, marginRight: 10 }}
+          onChange={e => { setFilterText(e.target.value); setPagination(prev => ({ ...prev, current: 1 })); }}
+          style={{ width: 300 }}
         />
         <Select
           placeholder="Filter by status"
           value={filterStatus}
-          onChange={(val) => setFilterStatus(val)}
+          onChange={val => setFilterStatus(val)}
           allowClear
           style={{ width: 160 }}
         >
@@ -266,20 +286,21 @@ const DoctorFeedbackDashboard = () => {
         </Select>
       </div>
 
-      {/* Table */}
-      <div style={{ overflowY: "auto", minHeight: "210px" }}>
-        <Table
-          rowKey="_id"
-          columns={columns}
-          dataSource={filteredFeedbacks.slice(
-            (pagination.current - 1) * pagination.pageSize,
-            pagination.current * pagination.pageSize
-          )}
-          pagination={false}
-          locale={{ emptyText: "No feedback found." }}
-          scroll={{ x: "max-content" }}
-        />
-      </div>
+      {/* Feedback Table */}
+     {currentUser && (
+  <Table
+    rowKey="_id"
+    columns={columns}
+    dataSource={filteredFeedbacks.slice(
+      (pagination.current - 1) * pagination.pageSize,
+      pagination.current * pagination.pageSize
+    )}
+    pagination={false}
+    locale={{ emptyText: "No feedback found." }}
+    scroll={{ x: "max-content" }}
+  />
+)}
+
 
       {/* Pagination */}
       <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
@@ -293,7 +314,7 @@ const DoctorFeedbackDashboard = () => {
         />
       </div>
 
-      {/* Modal */}
+      {/* Feedback Modal */}
       <Modal
         title="Feedback Details"
         open={modalOpen}
@@ -305,26 +326,35 @@ const DoctorFeedbackDashboard = () => {
           <>
             <p><strong>Student:</strong> {selectedFeedback.userId?.email || selectedFeedback.userId?.name || "Unknown"}</p>
             <p><strong>Doctor:</strong> {selectedFeedback.doctorId?.name || selectedFeedback.doctorId?.email || "Unknown"}</p>
+            <p><strong>Comment:</strong> {selectedFeedback.additionalFeedback || "No comment"}</p>
 
-            <p><strong>Comment (clean):</strong> {selectedFeedback.additionalFeedback || "No comment"}</p>
-
-            { currentUser?.role === 'admin' && (
+            {currentUser?.role === "admin" && (
               <div style={{ marginTop: 8 }}>
                 <strong>Raw Comment (admin only):</strong>
-                <div style={{ whiteSpace: 'pre-wrap', background:'#fff3f3', padding:8, borderRadius:4 }}>
-                  {selectedFeedback.rawFeedback || '—'}
+                <div
+                  style={{
+                    whiteSpace: "pre-wrap",
+                    background: "#fff3f3",
+                    padding: 8,
+                    borderRadius: 4,
+                    color: selectedFeedback.containsBadWords ? "red" : "inherit",
+                  }}
+                >
+                  {selectedFeedback.rawFeedback || "—"}
                 </div>
               </div>
             )}
 
+
             <p>
               <strong>Status:</strong>{" "}
-              <Tag color={selectedFeedback.status === "flagged" ? "red" : (selectedFeedback.status === "approved" ? "green" : "orange")}>
+              <Tag color={selectedFeedback.status === "flagged" ? "red" : selectedFeedback.status === "approved" ? "green" : "orange"}>
                 {selectedFeedback.status || "pending"}
               </Tag>
             </p>
 
             <p><strong>Date:</strong> {new Date(selectedFeedback.createdAt).toLocaleString()}</p>
+
             <PerformanceSection
               ratings={{
                 communication: selectedFeedback.communication,
@@ -342,6 +372,346 @@ const DoctorFeedbackDashboard = () => {
 };
 
 export default DoctorFeedbackDashboard;
+
+
+// // DoctorFeedbackDashboard.jsx
+// import React, { useState, useEffect, useRef } from "react";
+// import { Table, Pagination, Modal, Button, Tag, Input, Select, Spin, Dropdown, Menu } from "antd";
+// import { EllipsisOutlined } from "@ant-design/icons";
+// import axios from "axios";
+// import Swal from "sweetalert2";
+// import StarRating from "../../starRating/StarRating.jsx";
+// import PerformanceSection from "../../myRatings/PerformanceSection.jsx";
+// import "./feedbackDash.css";
+
+// const BASE_URL = process.env.REACT_APP_API_URL;
+// const { Option } = Select;
+
+// const DoctorFeedbackDashboard = () => {
+//   const [feedbacks, setFeedbacks] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [selectedFeedback, setSelectedFeedback] = useState(null);
+//   const [modalOpen, setModalOpen] = useState(false);
+//   const [filterText, setFilterText] = useState("");
+//   const [filterStatus, setFilterStatus] = useState("");
+//   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 });
+//   const [doctorAvgStars, setDoctorAvgStars] = useState(new Map());
+//   const [currentUser, setCurrentUser] = useState(null);
+
+//   const token = localStorage.getItem("authToken");
+//   const alertShownRef = useRef(false);
+
+//   // Load current user
+//   useEffect(() => {
+//     const loadUser = async () => {
+//       try {
+//         const stored = localStorage.getItem("user");
+//         if (stored) return setCurrentUser(JSON.parse(stored));
+//         if (!token) return;
+//         const { data } = await axios.get(`${BASE_URL}/api/auth/me`, {
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         setCurrentUser(data);
+//       } catch (err) {
+//         console.warn("Could not load current user info:", err?.message || err);
+//       }
+//     };
+//     loadUser();
+//   }, [token]);
+
+//   // Fetch feedbacks and average ratings
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       if (!token) return setLoading(false);
+//       setLoading(true);
+//       try {
+//         const [feedbackRes, avgRes] = await Promise.all([
+//           axios.get(`${BASE_URL}/api/ratings`, { headers: { Authorization: `Bearer ${token}` } }),
+//           axios.get(`${BASE_URL}/api/ratings/average-ratings`, { headers: { Authorization: `Bearer ${token}` } })
+//         ]);
+
+//         const feedbacksData = Array.isArray(feedbackRes.data) ? feedbackRes.data : [];
+//         setFeedbacks(feedbacksData);
+//         setPagination(prev => ({ ...prev, total: feedbacksData.length }));
+
+//         const avgMap = new Map();
+//         if (Array.isArray(avgRes.data)) {
+//           avgRes.data.forEach(item => {
+//             avgMap.set(String(item._id), { avgStars: item.avgStars || 0, count: item.count || 0 });
+//           });
+//         }
+//         setDoctorAvgStars(avgMap);
+//       } catch (err) {
+//         console.error("Error fetching feedbacks or averages:", err);
+//         Swal.fire("Error", "Failed to load data", "error");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchData();
+//   }, [token]);
+
+//   // Notify admin about flagged comments
+//   const flaggedCount = feedbacks.filter(f => !!f.containsBadWords).length;
+//   useEffect(() => {
+//     if (!currentUser) return;
+//     if (currentUser?.role === 'admin' && flaggedCount > 0 && !alertShownRef.current) {
+//       alertShownRef.current = true;
+//       Swal.fire({
+//         icon: 'warning',
+//         title: 'تنبيه',
+//         html: `هناك ${flaggedCount} تعليق${flaggedCount > 1 ? 'ات' : ''} تحتوي كلمات غير لائقة. راجعها.`,
+//         timer: 5000
+//       });
+//     }
+//     if (flaggedCount === 0) alertShownRef.current = false;
+//   }, [flaggedCount, currentUser]);
+
+//   const updateFeedbackStatus = async (id, status) => {
+//     try {
+//       await axios.put(
+//         `${BASE_URL}/api/ratings/${id}/status`,
+//         { status },
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//       setFeedbacks((prev) => prev.map((f) => (f._id === id ? { ...f, status } : f)));
+//       Swal.fire("Success", `Status set to ${status}`, "success");
+//     } catch (err) {
+//       console.error(err);
+//       Swal.fire("Error", `Failed to ${status}`, "error");
+//     }
+//   };
+
+//   const handleDelete = async (id) => {
+//     const confirm = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "This feedback will be removed",
+//       icon: "warning",
+//       showCancelButton: true,
+//       confirmButtonText: "Yes, delete it!",
+//     });
+//     if (!confirm.isConfirmed) return;
+
+//     try {
+//       await axios.delete(`${BASE_URL}/api/ratings/${id}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+//       Swal.fire("Deleted!", "Feedback has been removed.", "success");
+//       setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+//     } catch (err) {
+//       console.error(err);
+//       Swal.fire("Error", "Failed to delete feedback", "error");
+//     }
+//   };
+
+//   // Filter feedbacks
+// const filteredFeedbacks = feedbacks.filter((f) => {
+//   const text = (filterText || "").trim().toLowerCase();
+//   const textMatch =
+//     f.doctorId?.name?.toLowerCase().includes(text) ||
+//     f.doctorId?.email?.toLowerCase().includes(text) ||
+//     f.userId?.name?.toLowerCase().includes(text) ||
+//     f.userId?.email?.toLowerCase().includes(text);
+//   const statusMatch = filterStatus ? f.status === filterStatus : true;
+//   return textMatch && statusMatch;
+// });
+
+//   const columns = [
+//     {
+//       title: "Student",
+//       dataIndex: ["userId", "name"],
+//       key: "student",
+//       render: (_, record) => record.userId?.name || record.userId?.email || "Unknown",
+//     },
+//     {
+//       title: "Doctor",
+//       dataIndex: ["doctorId", "name"],
+//       key: "doctor",
+//       render: (_, record) => record.doctorId?.name || record.doctorId?.email || "Unknown",
+//     },
+//     {
+//       title: "Average Rating",
+//       key: "avgRating",
+//       render: (_, record) => {
+//         const docId = String(record.doctorId?._id || "");
+//         const avgData = doctorAvgStars.get(docId) || { avgStars: 0, count: 0 };
+//         return (
+//           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+//             <StarRating rating={avgData.avgStars} editable={false} size={16} />
+//             <span style={{ fontSize: 12, color: "#555" }}>
+//               {Number(avgData.avgStars).toFixed(1)} ({avgData.count})
+//             </span>
+//           </div>
+//         );
+//       }
+//     },
+//     {
+//       title: "Status",
+//       dataIndex: "status",
+//       key: "status",
+//       render: (_, record) => {
+//         const color = record.status === "flagged" ? "red" : (record.status === "approved" ? "green" : "orange");
+//         return <Tag color={color}>{record.status || "pending"}</Tag>;
+//       }
+//     },
+//     {
+//       title: "Raw Comment",
+//       key: "raw",
+//       render: (_, record) => {
+//         if (!currentUser || currentUser.role !== "admin") return null;
+//         const text = record.rawFeedback || "-";
+//         return (
+//           <div
+//             style={{
+//               whiteSpace: "pre-wrap",
+//               wordBreak: "break-word",
+//               color: record.containsBadWords ? "red" : "inherit",
+//               backgroundColor: record.containsBadWords ? "#fff3f3" : "transparent",
+//               padding: 4,
+//               borderRadius: 4,
+//               maxWidth: 300,
+//             }}
+//             title={text}
+//           >
+//             {text}
+//           </div>
+//         );
+//       },
+//     },
+//     {
+//       title: "Date",
+//       dataIndex: "createdAt",
+//       key: "date",
+//       render: (_, record) => new Date(record.createdAt).toLocaleDateString(),
+//     },
+//     {
+//       title: "Actions",
+//       key: "actions",
+//       render: (_, record) => {
+//         const menu = (
+//           <Menu>
+//             <Menu.Item key="view" onClick={() => { setSelectedFeedback(record); setModalOpen(true); }}>View</Menu.Item>
+//             <Menu.Item key="approve" onClick={() => updateFeedbackStatus(record._id, "approved")}>Approve</Menu.Item>
+//             <Menu.Item key="flag" onClick={() => updateFeedbackStatus(record._id, "flagged")}>Flag</Menu.Item>
+//             <Menu.Item key="delete" danger onClick={() => handleDelete(record._id)}>Delete</Menu.Item>
+//           </Menu>
+//         );
+//         return <Dropdown overlay={menu} trigger={['click']}><Button icon={<EllipsisOutlined />} /></Dropdown>;
+//       }
+//     },
+//   ];
+
+//   if (loading) return <Spin tip="Loading feedbacks..." style={{ marginTop: 50 }} />;
+
+//   return (
+//     <div className="dash-main" style={{ display: "flex", flexDirection: "column", height: "80vh" }}>
+//       <h2>Doctor Feedback Dashboard</h2>
+
+//       <div className="filters" style={{ marginBottom: 16 }}>
+//         <Input
+//           placeholder="Search doctor or student"
+//           value={filterText}
+//           onChange={(e) => { setFilterText(e.target.value); setPagination((prev) => ({ ...prev, current: 1 })); }}
+//           style={{ width: 300, marginRight: 10 }}
+//         />
+//         <Select
+//           placeholder="Filter by status"
+//           value={filterStatus}
+//           onChange={(val) => setFilterStatus(val)}
+//           allowClear
+//           style={{ width: 160 }}
+//         >
+//           <Option value="approved">Approved</Option>
+//           <Option value="flagged">Flagged</Option>
+//           <Option value="pending">Pending</Option>
+//         </Select>
+//       </div>
+
+//       <div style={{ overflowY: "auto", minHeight: "210px" }}>
+//         <Table
+//           rowKey="_id"
+//           columns={columns}
+//           dataSource={filteredFeedbacks.slice(
+//             (pagination.current - 1) * pagination.pageSize,
+//             pagination.current * pagination.pageSize
+//           )}
+//           pagination={false}
+//           locale={{ emptyText: "No feedback found." }}
+//           scroll={{ x: "max-content" }}
+//         />
+//       </div>
+
+//       <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
+//         <Pagination
+//           current={pagination.current}
+//           pageSize={pagination.pageSize}
+//           total={filteredFeedbacks.length}
+//           showSizeChanger
+//           pageSizeOptions={["5", "10", "20", "50"]}
+//           onChange={(page, pageSize) => setPagination({ ...pagination, current: page, pageSize })}
+//         />
+//       </div>
+
+//       <Modal
+//         title="Feedback Details"
+//         open={modalOpen}
+//         onCancel={() => setModalOpen(false)}
+//         footer={[<Button key="close" onClick={() => setModalOpen(false)}>Close</Button>]}
+//         width={700}
+//       >
+//         {selectedFeedback && (
+//           <>
+//             <p><strong>Student:</strong> {selectedFeedback.userId?.email || selectedFeedback.userId?.name || "Unknown"}</p>
+//             <p><strong>Doctor:</strong> {selectedFeedback.doctorId?.name || selectedFeedback.doctorId?.email || "Unknown"}</p>
+
+//              <p><strong>Comment:</strong> {selectedFeedback.additionalFeedback || "No comment"}</p>
+
+//              {currentUser?.role === "admin" && (
+//               <div style={{ marginTop: 8 }}>
+//                 <strong>Raw Comment (admin only):</strong>
+//                 <div
+//                   style={{
+//                     whiteSpace: "pre-wrap",
+//                     background: "#fff3f3",
+//                     padding: 8,
+//                     borderRadius: 4,
+//                     color: selectedFeedback.containsBadWords ? "red" : "inherit",
+//                   }}
+//                 >
+//                   {selectedFeedback.rawFeedback || "—"}
+//                 </div>
+//               </div>
+//             )}
+
+
+
+//             <p>
+//               <strong>Status:</strong>{" "}
+//               <Tag color={selectedFeedback.status === "flagged" ? "red" : (selectedFeedback.status === "approved" ? "green" : "orange")}>
+//                 {selectedFeedback.status || "pending"}
+//               </Tag>
+//             </p>
+
+//             <p><strong>Date:</strong> {new Date(selectedFeedback.createdAt).toLocaleString()}</p>
+//             <PerformanceSection
+//               ratings={{
+//                 communication: selectedFeedback.communication,
+//                 support: selectedFeedback.support,
+//                 guidance: selectedFeedback.guidance,
+//                 availability: selectedFeedback.availability,
+//               }}
+//               hideTitle={false}
+//             />
+//           </>
+//         )}
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default DoctorFeedbackDashboard;
+
 
 
 // import React, { useState, useEffect } from "react";

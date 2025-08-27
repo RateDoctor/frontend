@@ -18,7 +18,7 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
     const fetchRating = async () => {
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/ratings/details/${doctorId}/my-rating`,
+          `${process.env.REACT_APP_API_URL}/api/ratings/${doctorId}/my-rating`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserRating(res.data.userRating ?? 0);
