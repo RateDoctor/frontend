@@ -42,3 +42,61 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.4rem 1rem;
+  margin-top: 4px;
+  background-color: var(--primary-color, var(--button));
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.toggle-btn:hover {
+  background-color: #e0f0ff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.toggle-btn svg {
+  transition: transform 0.3s ease;
+}
+.toggle-btn[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+
+.answers-block {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.answer {
+  display: flex;
+  /* align-items: center; */
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.answer:last-child {
+  border-bottom: none;
+}
+
+.answer-label {
+  font-weight: 600;
+  color: #333;
+}
+
+.answer-value {
+  color: #555;
+}

@@ -50,7 +50,6 @@ function App() {
              {/* Public */}
              <Route index element={<Explore />} />
              <Route path="/university/:universityId" element={<UniversityProfile />} /> 
-
              <Route path="/login" element={<SignIn />} />
              <Route path="/singup" element={<SingUp />} />
              <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -61,7 +60,6 @@ function App() {
 
       
          <Route element={<PrivateRoutes />}>
-            
             <Route path="/checking" element={<Checking />} /> 
             {/* <Route path="/upload" element={<Upload />} />  */}
             <Route path="/welcome" element={<Welcome />} /> 
