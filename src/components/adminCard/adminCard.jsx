@@ -70,9 +70,18 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
 
   if (loading) return null;
 
+
+
+
   return (
     <div className="admin-card" onClick={handleCardClick}>
-      <img src={getAvatar(gender, image)} alt={name} className="doctor-img" />
+      {/* <img src={getAvatar(gender, image)} alt={name} className="doctor-img" /> */}
+      <img
+        src={getAvatar(gender, typeof image === "string" ? image : image?.fileUrl || "")}
+        alt={name}
+        className="doctor-img"
+      />
+
       <div className="info">
         <h3>{name}</h3>
 

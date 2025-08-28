@@ -89,13 +89,17 @@ const DoctorProfileBox = ({ doctorData }) => {
   return (
     <div className="drProfile-box">
 
-      <div className="drProfile-left">
-        <img
-          className='imgProfile'
-          src={getAvatar(doctorData.gender, doctorData.image)}
-          alt={doctorData.name}
-        />
+       <div className="drProfile-left">
+             <img
+                    className='imgProfile'
+                    src={
+                      doctorData.profileImage?.fileUrl || getAvatar(doctorData.gender)
+                    }
+                    alt={doctorData.name}
+                  />
+
       </div>
+
 
       <div className="drProfile-right">
         <div className="rating-stars">

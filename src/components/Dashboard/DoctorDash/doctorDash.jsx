@@ -62,24 +62,24 @@ const fetchDoctors = async () => {
   try {
     setLoading(true);
 
-    // 1. Fetch doctors
-    const { data: doctorsList } = await axios.get(`${BASE_URL}/api/doctors`);
-    const doctors = Array.isArray(doctorsList) ? doctorsList : doctorsList.doctors || [];
+    const { data: doctorsData } = await axios.get(`${BASE_URL}/api/doctors`);
+    const doctors = Array.isArray(doctorsData) ? doctorsData : doctorsData.doctors || [];
 
-    // 2. Get doctor IDs
     const doctorIds = doctors.map(d => d._id);
 
-    // 3. Fetch media for these doctors
-    const { data: mediaList } = await axios.post(`${BASE_URL}/api/media/get-by-doctorIds`, { doctorIds });
+    const mediaRes = await axios.post(`${BASE_URL}/api/media/get-by-doctorIds`, { doctorIds });
+    console.log("Media response:", mediaRes.data); // تحقق من شكل البيانات
+    const mediaList = Array.isArray(mediaRes.data) ? mediaRes.data : mediaRes.data.media || [];
 
-    // 4. Map media by doctorId
     const mediaMap = {};
-    mediaList.forEach(m => { if (m.type === "image") mediaMap[m.doctor] = m; });
+    mediaList.forEach(m => {
+      const doctorId = typeof m.doctor === "string" ? m.doctor : m.doctor._id || m.doctor.$oid;
+      if (m.type === "image") mediaMap[doctorId] = m;
+    });
 
-    // 5. Combine doctors with profile images
     const doctorsWithMedia = doctors.map(d => ({
       ...d,
-      profileImage: mediaMap[d._id] || null
+      profileImage: mediaMap[d._id.toString()] || null
     }));
 
     setDoctors(doctorsWithMedia);
@@ -90,6 +90,8 @@ const fetchDoctors = async () => {
     setLoading(false);
   }
 };
+
+
 
 
 

@@ -121,7 +121,7 @@ const handleSubmit = async () => {
       questionnaire
     };
 
-    await axios.post(`${BASE_URL}/api/ratings/detailed`, payload, {
+    await axios.post(`${BASE_URL}/api/ratings`, payload, {
       headers: {
         Authorization: `Bearer ${token}`
       }
