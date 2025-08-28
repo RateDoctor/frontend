@@ -95,9 +95,9 @@
 
 .answer-label {
   font-weight: 600;
-  color: #333;
+  color: var(--button);
 }
 
 .answer-value {
-  color: #555;
+  color: var(--button);
 }
