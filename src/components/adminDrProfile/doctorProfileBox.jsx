@@ -16,29 +16,60 @@ const DoctorProfileBox = ({ doctorData }) => {
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("authToken");
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const [feedbackRes, avgRes] = await Promise.all([
+  //         axios.get(`${BASE_URL}/api/ratings`, { headers: { Authorization: `Bearer ${token}` } }),
+  //         axios.get(`${BASE_URL}/api/ratings/average-ratings`, { headers: { Authorization: `Bearer ${token}` } })
+  //       ]);
+
+  //       setFeedbacks(feedbackRes.data || []);
+
+  //       const doctorAvg = avgRes.data.find(item => item._id === doctorData._id);
+  //       setDoctorAvgStars(doctorAvg ? doctorAvg.avgStars : 0);
+  //     } catch (err) {
+  //       console.error("Error fetching feedbacks or averages:", err);
+  //       Swal.fire("Error", "Failed to load data", "error");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   if (doctorData?._id) fetchData();
+  // }, [doctorData, token]);
+
+
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [feedbackRes, avgRes] = await Promise.all([
-          axios.get(`${BASE_URL}/api/ratings`, { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get(`${BASE_URL}/api/ratings/average-ratings`, { headers: { Authorization: `Bearer ${token}` } })
-        ]);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // 1. Feedbacks (protected, need login)
+      const feedbackPromise = token
+        ? axios.get(`${BASE_URL}/api/ratings`, { headers: { Authorization: `Bearer ${token}` } })
+        : Promise.resolve({ data: [] });
 
-        setFeedbacks(feedbackRes.data || []);
+      // 2. Average ratings (public, no login required)
+      const avgPromise = axios.get(`${BASE_URL}/api/ratings/average-ratings`);
 
-        const doctorAvg = avgRes.data.find(item => item._id === doctorData._id);
-        setDoctorAvgStars(doctorAvg ? doctorAvg.avgStars : 0);
-      } catch (err) {
-        console.error("Error fetching feedbacks or averages:", err);
-        Swal.fire("Error", "Failed to load data", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
+      const [feedbackRes, avgRes] = await Promise.all([feedbackPromise, avgPromise]);
 
-    if (doctorData?._id) fetchData();
-  }, [doctorData, token]);
+      setFeedbacks(feedbackRes.data || []);
+
+      const doctorAvg = avgRes.data.find(item => item._id === doctorData._id);
+      setDoctorAvgStars(doctorAvg ? doctorAvg.avgStars : 0);
+    } catch (err) {
+      console.error("Error fetching feedbacks or averages:", err);
+      Swal.fire("Error", "Failed to load data", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (doctorData?._id) fetchData();
+}, [doctorData, token]);
 
   const handleRateClick = () => {
     navigate(`/my-ratings/${doctorData._id}`);

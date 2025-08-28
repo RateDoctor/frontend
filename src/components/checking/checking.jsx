@@ -57,11 +57,6 @@ useEffect(() => {
         <div className="circle-container">  
            <div className="circle-right"></div>
               <div className="singup-arrowButton">
-
-              
-      
-
-
                 <h1 className="signup"></h1>
                     <button
                       className="circle-button"

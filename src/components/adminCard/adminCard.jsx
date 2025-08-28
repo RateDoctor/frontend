@@ -14,23 +14,53 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
   const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // useEffect(() => {
+  //   const fetchRating = async () => {
+  //     try {
+  //       const res = await axios.get(
+  //         `${process.env.REACT_APP_API_URL}/api/ratings/${doctorId}/my-rating`,
+  //         { headers: { Authorization: `Bearer ${token}` } }
+  //       );
+  //       setUserRating(res.data.userRating ?? 0);
+  //       setAverageRating(res.data.averageRating ?? 0);
+  //     } catch (err) {
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchRating();
+  // }, [doctorId, token]);
+
+
   useEffect(() => {
-    const fetchRating = async () => {
-      try {
+  const fetchRatings = async () => {
+    try {
+      if (token) {
+        // Logged-in user → fetch personal rating + average
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}/api/ratings/${doctorId}/my-rating`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserRating(res.data.userRating ?? 0);
         setAverageRating(res.data.averageRating ?? 0);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+      } else {
+        // Guest user → only fetch average rating (public)
+        const avgRes = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/ratings/average-ratings`
+        );
+        const doctorAvg = avgRes.data.find(item => item._id === doctorId);
+        setAverageRating(doctorAvg ? doctorAvg.avgStars : 0);
       }
-    };
-    fetchRating();
-  }, [doctorId, token]);
+    } catch (err) {
+      console.error("Error fetching ratings:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchRatings();
+}, [doctorId, token]);
 
   const handleCardClick = () => {
     navigate(`/admin-dr-profile/${doctorId}`);
@@ -46,7 +76,7 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
       <div className="info">
         <h3>{name}</h3>
 
-        <div className="rating-section" onClick={(e) => e.stopPropagation()}>
+        {/* <div className="rating-section" onClick={(e) => e.stopPropagation()}>
           <div className="user-rating">
             <EditableStarRating
               rating={userRating}
@@ -60,7 +90,29 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
           <div className="average-rating">
             <AverageStarRating rating={averageRating} /> <span className="average-label">average</span>
           </div>
+
+
+        </div> */}
+
+        <div className="rating-section" onClick={(e) => e.stopPropagation()}>
+          {token && (
+            <div className="user-rating">
+              <EditableStarRating
+                rating={userRating}
+                doctorId={doctorId}
+                token={token}
+                editable={true}
+                onRatingSaved={(newRating) => setUserRating(newRating)}
+              />
+            </div>
+          )}
+
+          <div className="average-rating">
+            <AverageStarRating rating={averageRating} /> 
+            <span className="average-label">average</span>
+          </div>
         </div>
+
 
         <p className="university">
           {university?._id ? (
