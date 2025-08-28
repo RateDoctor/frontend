@@ -105,9 +105,9 @@ const DoctorRatingSummary = ({ doctorId }) => {
             <div className="drProfile-box" style={{ justifyContent: "space-between", maxWidth: "400px" }}>
               {Object.entries(ratings || {}).map(([label, percent]) => (
                 <div key={label} style={{ textAlign: "center" }}>
-                  <div className="percentage-text">{percent}%</div>
-                  <div className="overallRating">{label}</div>
-                  <div style={{ fontSize: "1.2rem", marginTop: "0.3rem" }}>{getEmojiForLabel(label)}</div>
+                   <div style={{ fontSize: "1.2rem", marginTop: "0.3rem" }}>{getEmojiForLabel(label)}</div>
+                   <div className="overallRatingSummary">{label}</div>
+                   <div className="percentage-text">{percent}%</div>
                 </div>
               ))}
             </div>
