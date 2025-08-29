@@ -1,10 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
-
-const DoctorName = ({ formData, setFormData, doctorId, token }) => {
+const DoctorName = ({ formData, setFormData }) => {
   const fileInputRef = useRef(null);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -18,37 +14,18 @@ const DoctorName = ({ formData, setFormData, doctorId, token }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // فقط نخزن الملف للرفع لاحقاً
-      setFormData(prev => ({ ...prev, profileFile: file }));
+      setFormData((prev) => ({ ...prev, profileFile: file }));
       setPreviewImage(URL.createObjectURL(file));
     }
   };
 
   const handleNameChange = (e) => {
-    setFormData(prev => ({ ...prev, doctorName: e.target.value }));
-  };
-
-  // دالة لرفع الصورة عند الحفظ (مثل Dashboard)
-  const uploadProfileImage = async (doctorIdToUse) => {
-    if (!formData.profileFile) return null;
-
-    try {
-      const mediaForm = new FormData();
-      mediaForm.append("file", formData.profileFile);
-      mediaForm.append("doctorId", doctorIdToUse);
-      const res = await axios.post(`${BASE_URL}/api/media/upload`, mediaForm, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
-      });
-      return res.data;
-    } catch (err) {
-      console.error("Image upload failed:", err.response?.data || err.message);
-      Swal.fire("Error", "Failed to upload profile image", "error");
-      return null;
-    }
+    setFormData((prev) => ({ ...prev, doctorName: e.target.value }));
   };
 
   return (
     <div className="form-left">
+      {/* Doctor Name */}
       <label className="top-one-line label-addDoctor">Doctor Name *</label>
       <input
         className="inputAddDoctor"
@@ -58,6 +35,7 @@ const DoctorName = ({ formData, setFormData, doctorId, token }) => {
         onChange={handleNameChange}
       />
 
+      {/* Profile Upload */}
       <label className="top-one-line label-addDoctor profile--name">
         Profile <span id="notRequired">(Not required)*</span>
       </label>
@@ -94,6 +72,7 @@ const DoctorName = ({ formData, setFormData, doctorId, token }) => {
 };
 
 export default DoctorName;
+
 
 
 

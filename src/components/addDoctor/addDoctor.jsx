@@ -9,6 +9,7 @@ import Supervision from "./Supervision";
 import Experience from "./Experience";
 // import StarsRating from "./StarsRating";
 import { ensureEntityId } from "../../utils/ensureEntityId";
+import { uploadDoctorImage } from "../../utils/mediaService.js";
 import { FiArrowLeft } from "react-icons/fi";
 import './addDoctor.css';
 
@@ -165,6 +166,15 @@ const handleSubmit = async () => {
     const newDoctor = res.data?.doctor;
     if (!newDoctor || !newDoctor._id)
       throw new Error("Doctor creation failed.");
+
+     if (formData.profileFile) {
+      try {
+        const uploadResult = await uploadDoctorImage(formData.profileFile, newDoctor._id, token);
+        console.log("Image uploaded:", uploadResult);
+      } catch (err) {
+        console.error("Image upload failed:", err);
+      }
+    }
 
     navigate(`/rate-admin?doctorId=${newDoctor._id}`);
   } catch (err) {

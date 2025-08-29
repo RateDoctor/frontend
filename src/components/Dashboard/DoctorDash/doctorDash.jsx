@@ -5,6 +5,8 @@ import Swal from "sweetalert2";
 import Loader from "../../../layouts/load/load.jsx";
 import Backgrounds from "../../addDoctor/Backgrounds.jsx"; 
 import Teaching from "../../addDoctor/Teaching.jsx";       
+import { uploadDoctorImage } from "../../../utils/mediaService.js";
+
 import "./doctorDash.css";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -232,14 +234,23 @@ const handleSubmit = async () => {
     }
 
     // Upload profile image separately via Media API
+    // if (formData.profileFile) {
+    //   const mediaForm = new FormData();
+    //   mediaForm.append("file", formData.profileFile);
+    //   mediaForm.append("doctorId", doctorRes.data.doctor?._id || doctorRes.data._id);
+    //   await axios.post(`${BASE_URL}/api/media/upload`, mediaForm, {
+    //     headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
+    //   });
+    // }
+
     if (formData.profileFile) {
-      const mediaForm = new FormData();
-      mediaForm.append("file", formData.profileFile);
-      mediaForm.append("doctorId", doctorRes.data.doctor?._id || doctorRes.data._id);
-      await axios.post(`${BASE_URL}/api/media/upload`, mediaForm, {
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
-      });
+      await uploadDoctorImage(
+        formData.profileFile,
+        doctorRes.data.doctor?._id || doctorRes.data._id,
+        token
+      );
     }
+
 
     Swal.fire("Success", `Doctor ${isEditing ? "updated" : "added"} successfully!`, "success");
     fetchDoctors();  // Refresh doctor list
