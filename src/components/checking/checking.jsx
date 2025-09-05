@@ -18,7 +18,6 @@ useEffect(() => {
   const verify = async () => {
     const token = location.state?.token;
     console.log("Using token to verify:", token); // ✅ Add this log
-
     try {
       const res = await axios.get(`${BASE_URL}/api/users/verify/${token}`);
       console.log("Email verified:", res.data);

@@ -18,7 +18,7 @@ const Settings = () => {
       logout(); // Clear token + role in context + localStorage
       localStorage.removeItem("currentUser"); 
       setIsLoggingOut(false);
-      navigate("/login"); // Navigate to login screen
+      navigate("/"); // Navigate to login screen
     }, 1000);
   };
 
