@@ -10,17 +10,36 @@ const Settings = () => {
   const { logout } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    setIsLoggingOut(true);
+  // const handleLogout = () => {
+  //   setIsLoggingOut(true);
 
-    // Small delay for UX (optional)
-    setTimeout(() => {
-      logout(); // Clear token + role in context + localStorage
-      localStorage.removeItem("currentUser"); 
-      setIsLoggingOut(false);
-      navigate("/"); // Navigate to login screen
-    }, 1000);
-  };
+  //   // Small delay for UX (optional)
+  //   setTimeout(() => {
+  //     navigate("/logout", { replace: true });
+  //     logout(); // Clear token + role in context + localStorage
+  //     localStorage.removeItem("currentUser"); 
+  //     setIsLoggingOut(false);
+  //   }, 500);
+  // };
+
+
+
+  const handleLogout = () => {
+  setIsLoggingOut(true);
+
+  // Step 1: navigate away from the protected route
+  navigate("/logout", { replace: true });
+
+  // Step 2: clear auth AFTER navigation
+  setTimeout(() => {
+    logout(); // clears token + role
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    setIsLoggingOut(false);
+  }, 50); // small delay ensures navigate happens first
+};
+
+
 
   return (
     <div className="settings-container">
