@@ -2,11 +2,11 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../utils/AuthProvider"; // adjust path
 
 const PrivateRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, loggingOut} = useAuth();
    const location = useLocation();
 
   if (loading) return <p>Loading auth...</p>;
-  if (!isAuthenticated) {
+  if (!isAuthenticated  && !loggingOut) {
     // Redirect to login with "from" so user can be redirected back after login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
