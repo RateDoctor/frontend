@@ -153,7 +153,7 @@ const Login = () => {
             <div className="button-register-box">
               <h1 className="label-signin">Sign in</h1>
               <button className="buttonSubmit-login" type="submit" disabled={isLoading}>
-                {isLoading ? "Signing in..." : <FaArrowRight className="arrowRight" />}
+                 <FaArrowRight className="arrowRight" />
               </button>
             </div>
           </div>
