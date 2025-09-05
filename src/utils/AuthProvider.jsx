@@ -6,6 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
 
 
    // Load auth from localStorage on page refresh
@@ -34,6 +35,7 @@ const login = (userToken, userRole) => {
 
 
   const logout = () => {
+    setLoggingOut(true); 
     setToken(null);
     setRole(null);
 
