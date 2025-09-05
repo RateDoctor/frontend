@@ -1,9 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import "./logout.css";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 
 const Logout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => navigate("/", { replace: true }), 2000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
+
+
   return (
   <div className="signup-wrapper">
        <MdOutlineKeyboardArrowLeft  className="wrapper-arrow-left"/>
