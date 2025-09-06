@@ -262,7 +262,7 @@ if (loading || !currentUser) {
 
 
   return (
-    <div className="dash-main" style={{ display: "flex", flexDirection: "column", height: "80vh" }}>
+    <div className="dash-main" style={{ display: "flex", flexDirection: "column", height: "80vh", overflow: "auto" }}>
       <h2>Doctor Feedback Dashboard</h2>
 
       {/* Filters */}
