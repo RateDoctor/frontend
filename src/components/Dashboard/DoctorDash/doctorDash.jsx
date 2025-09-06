@@ -306,7 +306,7 @@ const handleSubmit = async () => {
                           <img 
                             src={doctor.profileImage.fileUrl} 
                             alt="doctor" 
-                            style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "8px" }} 
+                            style={{ width: "100px", height: "100px", objectFit: "contain", borderRadius: "8px", objectPosition: "top" }} 
                           />
                         ) : <span>No Image</span>}
                       </td>
