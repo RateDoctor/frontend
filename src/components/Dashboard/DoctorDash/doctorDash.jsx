@@ -306,17 +306,17 @@ function DoctorTable() {
               <label>Doctor Name *</label>
               <input value={formData.doctorName || ""} onChange={e => setFormData(prev => ({ ...prev, doctorName: e.target.value }))} />
 
-              <label>University</label>
+              {/* <label>University</label>
               <select value={formData.universityId || ""} onChange={e => setFormData(prev => ({ ...prev, universityId: e.target.value }))}>
                 <option value="">Select University</option>
                 {universities.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
-              </select>
+              </select> */}
 
               <label>Profile Image</label>
               <input type="file" onChange={handleFileChange} />
               {previewImage && <img src={previewImage} width="100px" alt="preview" />}
 
-              <label>Affiliations</label>
+              {/* <label>Affiliations</label>
               {safeArray(formData.affiliations).map((aff, idx) => (
                 <div key={idx} className="affiliation-item">
                   <input
@@ -332,7 +332,32 @@ function DoctorTable() {
                   <button type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
                 </div>
               ))}
-              <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>Add Affiliation</button>
+              <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>Add Affiliation</button> */}
+                <label>Affiliation</label>
+                {safeArray(formData.affiliations).map((aff, idx) => (
+                  <div key={idx} className="affiliation-item">
+                    <select
+                      value={aff.name || ""}
+                      onChange={e => updateArrayField("affiliations", idx, { ...aff, name: e.target.value })}
+                    >
+                      <option value="">Select University</option>
+                      {universities.map(u => (
+                        <option key={u._id} value={u.name}>
+                          {u.name}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="date"
+                      value={aff.joined || ""}
+                      onChange={e => updateArrayField("affiliations", idx, { ...aff, joined: e.target.value })}
+                    />
+                    <button type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>
+                  Add Affiliation
+                </button>
 
               <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
               <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fieldOfStudyId={formData.fieldOfStudyId} />
