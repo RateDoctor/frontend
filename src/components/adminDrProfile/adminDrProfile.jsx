@@ -80,7 +80,7 @@ const AdminDrProfile = () => {
         )}
 
         {/* Experience Section */}
-        {doctorData.experience?.length > 0 && (
+        {/* {doctorData.experience?.length > 0 && (
           <section className="section-superdrprofile">
             <h3>Experience</h3>
             <ul>
@@ -89,7 +89,22 @@ const AdminDrProfile = () => {
               ))}
             </ul>
           </section>
+        )} */}
+
+       {doctorData.experience?.length > 0 && (
+          <section className="section-superdrprofile">
+            <h3>Experience</h3>
+            <ul>
+              {doctorData.experience.map((item, index) => (
+                <li key={index}>
+                  • {item?.description || "No description"} {item?.date ? `(Date: ${item.date})` : ""}
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
+
+
 
         <DoctorRatingSummary doctorId={doctorId} />
 

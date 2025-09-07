@@ -29,7 +29,9 @@ const AddDoctorForm = () => {
     teaching: [''],
     topicIds: [],
     supervision: [''],
-    experience: [''],
+    // experience: [''],
+    experience: [{ description: "", date: "" }]
+
   });
 
   const [universities, setUniversities] = useState([]);
@@ -150,9 +152,16 @@ const handleSubmit = async () => {
     supervision: formData.supervision
       .filter(s => s.trim())
       .map(s => capitalizeFirstWord(s.trim())),
+    // experience: formData.experience
+    //   .filter(e => e.trim())
+    //   .map(e => capitalizeFirstWord(e.trim())),
+
     experience: formData.experience
-      .filter(e => e.trim())
-      .map(e => capitalizeFirstWord(e.trim())),
+    .filter(e => e.description?.trim())
+    .map(e => ({
+      description: e.description.trim(),
+      date: e.date || ""
+    })),
     researchInterests: [],
     // initialRating: rating,
     // stars: rating,
