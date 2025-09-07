@@ -1,4 +1,3 @@
-// universityProfile.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import uni from "../../imgs/uni.png";
@@ -6,18 +5,18 @@ import SearchBar from "../searchBar/searchBar";
 import axios from "axios";
 import UniversityStarRating from "../starRating/UniversityStarRating";
 import "./universityPage.css";
+
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Utilities
-const groupByFirstLetter = (doctors) => {
-  return doctors.reduce((groups, doctor) => {
+const groupByFirstLetter = (doctors) =>
+  doctors.reduce((groups, doctor) => {
     const letter = doctor?.name?.[0]?.toUpperCase();
     if (!letter) return groups;
     groups[letter] = groups[letter] || [];
     groups[letter].push(doctor);
     return groups;
   }, {});
-};
 
 const getDisplayPhone = (phone) => {
   if (!phone || phone.trim() === "" || phone === "Unknown") return "N/A";
@@ -32,43 +31,33 @@ const normalizeDoctor = (doc) => ({
 const UniversityProfile = () => {
   const { universityId } = useParams();
   const navigate = useNavigate();
-
   const [university, setUniversity] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  const fetchUniversityAndDoctors = async () => {
-    try {
-      const [uniRes, docRes] = await Promise.all([
-        axios.get(`${BASE_URL}/api/universities/${universityId}`),
-        axios.get(`${BASE_URL}/api/universities/${universityId}/doctors`)
-      ]);
-      console.log("University API response:", uniRes.data);
-      console.log("Doctors API response:", docRes.data);
-      setUniversity(uniRes.data);
-      setDoctors(docRes.data.map(normalizeDoctor));
-    } catch (err) {
-      console.error("Error fetching university or doctors", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchUniversityAndDoctors();
-}, [universityId]);
-
-useEffect(() => {
-  if (university) {
-    console.log("University location field:", university.location);
-  }
-}, [university]);
-
+  useEffect(() => {
+    const fetchUniversityAndDoctors = async () => {
+      try {
+        const [uniRes, docRes] = await Promise.all([
+          axios.get(`${BASE_URL}/api/universities/${universityId}`),
+          axios.get(`${BASE_URL}/api/universities/${universityId}/doctors`),
+        ]);
+        setUniversity(uniRes.data);
+        setDoctors(docRes.data.map(normalizeDoctor));
+      } catch (err) {
+        console.error("Error fetching university or doctors", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUniversityAndDoctors();
+  }, [universityId]);
 
   const handleSearchChange = (e) => setQuery(e.target.value);
   const handleDoctorClick = (id) => navigate(`/my-ratings/${id}`);
 
-  const filteredDoctors = doctors.filter(doc =>
+  const filteredDoctors = doctors.filter((doc) =>
     doc.name.toLowerCase().includes(query.toLowerCase())
   );
 
@@ -77,63 +66,65 @@ useEffect(() => {
   if (loading) return <div>Loading...</div>;
   if (!university) return <div>University not found.</div>;
 
-let locationDisplay = "N/A";
-
-if (university.location) {
-  if (typeof university.location === "string" && university.location.trim()) {
-    locationDisplay = university.location;
-  } else if (typeof university.location === "object") {
-    const parts = [university.location.city, university.location.country].filter(Boolean);
-    locationDisplay = parts.length ? parts.join(", ") : "N/A";
+  // Format location
+  let locationDisplay = "N/A";
+  if (university.location) {
+    if (typeof university.location === "string" && university.location.trim()) {
+      locationDisplay = university.location;
+    } else if (typeof university.location === "object") {
+      const parts = [university.location.city, university.location.country].filter(Boolean);
+      locationDisplay = parts.length ? parts.join(", ") : "N/A";
+    }
   }
-}
-
-
 
   return (
-    <div className='universityProfile-parent-box'>
+    <div className="universityProfile-parent-box">
       <div className="university-container">
         <div className="universityProfile-box">
           <div className="universityProfile-left">
             <img
-              className='universityImgProfile'
+              className="universityImgProfile"
               src={university.logo || uni}
               alt="University"
             />
           </div>
           <div className="drProfile-right">
-           <div className="rating-stars">
+            {/* University overall rating */}
+            <div className="rating-stars">
               <UniversityStarRating
                 universityId={universityId}
                 token={localStorage.getItem("authToken")}
-                editable={true} // allow user to rate
+                editable={true} // allow user to rate university itself
                 onRatingSaved={(newRating) => {
                   setUniversity((prev) => ({ ...prev, rating: newRating }));
                 }}
               />
-              <span className='overallRating'>Overall rating</span>
+              <span className="overallRating">University rating</span>
             </div>
+
             <h2 className="admin-doctor-name">{university.name}</h2>
             <p className="university-fields">{locationDisplay}</p>
-            <h5 className='phone-university'>Phone: <span>{getDisplayPhone(university.phone)}</span></h5>
-            <button className="uni-rate-btn">
-              <span className='rate-button-university-span'>Rate</span>
-            </button>
+            <h5 className="phone-university">
+              Phone:{" "}
+              <span className="exactNumber">{getDisplayPhone(university.phone)}</span>
+            </h5>
           </div>
         </div>
         <div className="universityProfile-line"></div>
       </div>
 
+      {/* Search doctors inside university */}
       <div className="searching-box">
         <h5 className="searching-title">PhD Doctors</h5>
         <SearchBar
-            placeholder="Search Doctors..."
-            value={query}
-            onChange={handleSearchChange}
-            onSearch={(val) => setQuery(val)}
+          placeholder="Search Doctors..."
+          value={query}
+          onChange={handleSearchChange}
+          onSearch={(val) => setQuery(val)}
         />
       </div>
 
+      {/* Grouped doctors */}
       <div className="grouped-gdoctor-list">
         {Object.entries(groupedDoctors).map(([letter, docs]) => (
           <div key={letter} className="doctor-group">

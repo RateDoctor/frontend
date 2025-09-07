@@ -58,3 +58,65 @@
 .dropdown-menu li:hover {
   background-color: #f2f2f2;
 }
+
+
+.nav-links,
+.dropdown-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Mobile: show toggle, hide desktop nav */
+.mobile-only {
+  display: block;
+}
+.desktop-only {
+  display: none;
+}
+
+/* Desktop: show nav-links always */
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+  .desktop-only {
+    display: flex;
+    gap: 16px;
+  }
+
+.nav-links li {
+  position: relative;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+}
+
+/* Hover text color */
+.nav-links li:hover {
+  color: #f2f2f2;
+}
+
+/* Smooth underline animation */
+.nav-links li::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-links li:hover::after {
+  width: 100%;
+}
+
+.scrollable-section{
+  overflow-y: hidden;
+}
+
+}

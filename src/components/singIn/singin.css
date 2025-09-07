@@ -370,3 +370,69 @@
   align-items: center;
   z-index: 9999;         /* above everything */
 }
+
+
+@media (min-width: 768px) {
+.top-circle {
+    position: absolute;
+    width: 398px;
+    height: 398px;
+    background-color: #80B9F1;
+    border-radius: 50%;
+    top: -280px;
+    transform: translateX(-105%);
+    z-index: 3;
+}
+
+.big-circle {
+    position: absolute;
+    width: 1467px;
+    height: 901px;
+    background-color: #0074E4;
+    border-radius: 50%;
+    top: -120%;
+    left: 63%;
+    transform: translateX(-78%);
+    z-index: 1;
+}
+.down-circle {
+    position: absolute;
+    width: 398px;
+    height: 398px;
+    background-color: #E5F1FC;
+    border-radius: 50%;
+    top: -38%;
+    transform: translateX(95%);
+    z-index: 0;
+}
+
+.enter-id-password {
+    z-index: 999;
+}
+
+.button-register-box {
+    top: 1.4rem;
+}
+.register-login-box {
+    top: 3rem;
+}
+.login-input{
+  height: 50px;
+}
+
+.input-label {
+    top: 32px;
+}
+
+.form-wrapper{
+    z-index: 999;
+}
+
+.title-headLogin {
+    font-size: 32px;
+}
+
+.title-headLogin{
+  text-wrap: nowrap;
+}
+}

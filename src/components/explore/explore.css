@@ -400,7 +400,12 @@
   }
 }
 
-
+/* Responsive */
+@media (min-width: 778px) {
+  .card-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+}
 
 /* old css */
 /* 

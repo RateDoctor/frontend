@@ -225,3 +225,10 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+@media screen and (min-width: 768px) {
+.drProfile-box{
+  margin: 24px 0;
+}
+  
+}

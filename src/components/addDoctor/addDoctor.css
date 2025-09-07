@@ -276,3 +276,12 @@ margin-bottom: 6rem;
     justify-content: space-between;
     gap: 4rem;
 }
+
+@media screen and (min-width: 768px) {
+ .form-container {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+}
+  
+}

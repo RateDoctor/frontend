@@ -588,3 +588,24 @@
     opacity: 0.6;
   }
 }
+
+@media screen and (min-width: 768px) {
+ .rating-options {
+    display: flex;
+    justify-content: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.questionnaire-section{
+  width: 600px;
+}
+
+.feedback-section textarea, .feedback-section p{
+  width: 600px;
+}
+
+.doctor-info{
+  justify-content: flex-start;
+}
+}

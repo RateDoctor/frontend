@@ -26,13 +26,46 @@ const Navbar = ({ title = "Explore", onBack, userRole }) => {
 
 
   return (
-    <div className="navbar">
+    // <div className="navbar">
+    //   <div className="nav-left" onClick={onBack}>
+    //     <FiArrowLeft className="icon" />
+    //     <span>{title}</span>
+    //   </div>
+
+    //   <div className="menu-wrapper" ref={menuRef}>
+    //     <FiMoreVertical
+    //       className="icon more-icon"
+    //       onClick={() => setMenuOpen((prev) => !prev)}
+    //     />
+    //     {menuOpen && (
+    //       <ul className="dropdown-menu">
+    //         <li onClick={() => navigate("/settings")}>Settings</li>
+    //         <li onClick={() => navigate("/saved-doctors")}>Saved Doctors</li>
+    //         <li onClick={() => navigate("/my-ratings")}>My Ratings</li>
+    //         <li onClick={() => navigate("/addDoctor")}>Add Doctor</li>
+    //         <li onClick={() => navigate("/contact")}>Contact Us</li>
+    //       </ul>
+    //     )}
+    //   </div>
+    // </div>
+
+     <div className="navbar">
       <div className="nav-left" onClick={onBack}>
         <FiArrowLeft className="icon" />
         <span>{title}</span>
       </div>
 
-      <div className="menu-wrapper" ref={menuRef}>
+      {/* Desktop Navbar (always visible) */}
+      <ul className="nav-links desktop-only">
+        <li onClick={() => navigate("/settings")}>Settings</li>
+        <li onClick={() => navigate("/saved-doctors")}>Saved Doctors</li>
+        <li onClick={() => navigate("/my-ratings")}>My Ratings</li>
+        <li onClick={() => navigate("/addDoctor")}>Add Doctor</li>
+        <li onClick={() => navigate("/contact")}>Contact Us</li>
+      </ul>
+
+      {/* Mobile Dropdown Menu */}
+      <div className="menu-wrapper mobile-only" ref={menuRef}>
         <FiMoreVertical
           className="icon more-icon"
           onClick={() => setMenuOpen((prev) => !prev)}

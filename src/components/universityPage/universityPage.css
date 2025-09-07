@@ -6,7 +6,9 @@
   flex-direction: column;
   padding-bottom: 7rem;
 }
-
+.exactNumber{
+  opacity: 0.6;
+}
 .searching-title{
     margin-left: 20px;
     font-size: 22px;
@@ -40,6 +42,8 @@ margin: 1rem auto 1.2rem auto;
     border-radius: 10px;
     aspect-ratio: auto 3 / 4;
     background: black;
+    object-fit: cover;
+    object-position: top;
 }
 
 .universityProfile-left{
@@ -60,11 +64,15 @@ margin: 1rem auto 1.2rem auto;
     width: 63px;
     height: 27px;
     margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .university-fields {
     font-size: 14px;
     color: #000000;
     font-weight: bold;
+    opacity: 0.6;
 }
 
 .phone-university {
@@ -101,6 +109,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 flex-direction: row;
+cursor: pointer;
 }
 
 /* Doctor name */
@@ -114,6 +123,8 @@ flex-direction: row;
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  object-fit: contain;
+  object-position: top;
 }
 /* Underline */
 .underline {
@@ -136,4 +147,13 @@ flex-direction: row;
   .doctor-card {
     padding: 0.6rem;
   }
+}
+
+
+@media screen and (min-width: 768px) {
+  .universityProfile-box{
+    justify-content: flex-start;
+    margin: 24px 10px;
+  }
+  
 }
