@@ -609,3 +609,21 @@
   justify-content: flex-start;
 }
 }
+
+.ratings-list {
+  flex: 1;                /* fill remaining space */
+  overflow-y: auto;
+  padding-right: 0.5rem;  /* avoid scrollbar overlap */
+}
+
+.ratings-item {
+  cursor: pointer;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.spinner {
+  margin: auto;
+}

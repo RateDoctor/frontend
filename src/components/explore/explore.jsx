@@ -7,6 +7,7 @@ import SearchBar from "../searchBar/searchBar";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 import Loader from "../../layouts/load/load.jsx";
 import "../explore/explore.css";
+import "../../components/DoctorList/doctorList.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 const getUnique = (arr, key) => {
@@ -58,6 +59,9 @@ const Explore = () => {
   const fieldRef = useRef(null);
   const topicRef = useRef(null);
   const overlayRef = useRef(null);
+  const listRef = useRef(null);
+
+
 
   useOutsideClick(overlayRef, () => setIsSearchFocused(false));
   useOutsideClick(universityRef, () => setIsUniversityOpen(false));
@@ -106,6 +110,13 @@ const Explore = () => {
   useEffect(() => {
   fetchExploreData();
 }, [location.pathname]);
+
+
+useEffect(() => {
+  if (listRef.current) {
+    listRef.current.scrollTop = listRef.current.scrollHeight;
+  }
+}, [listViewResults]);
 
 useEffect(() => {
     const role = localStorage.getItem("userRole");
@@ -228,19 +239,19 @@ const fetchExploreData = async () => {
 };
 
  
-  useEffect(() => {
-    if (isUniversityOpen || isFieldOpen || isTopicOpen) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [isUniversityOpen, isFieldOpen, isTopicOpen]);
+  // useEffect(() => {
+  //   if (isUniversityOpen || isFieldOpen || isTopicOpen) {
+  //     document.body.style.overflow = "hidden";
+  //     document.documentElement.style.overflow = "hidden";
+  //   } else {
+  //     document.body.style.overflow = "";
+  //     document.documentElement.style.overflow = "";
+  //   }
+  //   return () => {
+  //     document.body.style.overflow = "";
+  //     document.documentElement.style.overflow = "";
+  //   };
+  // }, [isUniversityOpen, isFieldOpen, isTopicOpen]);
 
 
 
@@ -435,7 +446,7 @@ const handleDoctorClick = (doctorId) => {
           </div>
 
           {/* Doctor List Results */}
-       <div className="doctor-results">
+       <div className="scrollable-content doctor-results" ref={listRef}>
           {listViewResults.length > 0 ? (
             <DoctorList
               doctors={listViewResults}
@@ -475,36 +486,6 @@ const handleDoctorClick = (doctorId) => {
             <h2>Rate Your PhD Experience:<br />Explore and Evaluate Admins</h2>
             <p>Explore PhD Admins and share your academic experiences by rating your PhD admin</p>
           </div>
-
-          {/* <div className="scrollable-section">
-            <div className="card-grid">
-              {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
-                applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).map((sup, index) => (
-                  <AdminCard
-                    key={index}
-                    doctorId={sup._id}
-                    name={sup.name}
-                    rating={sup.rating}
-                    university={sup.university}
-                    field={sup.fieldOfStudy || sup.field}
-                    topics={sup.teaching}
-                    image={sup.image}
-                    onClick={() => handleDoctorClick(sup._id)}
-                  />
-                ))
-              ) : (
-                <p style={{ marginTop: "1rem" }}>
-                  Admin not found.{" "}
-                  <span
-                    style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
-                    onClick={() => navigate("/addDoctor")}
-                  >
-                    Add doctor
-                  </span>
-                </p>
-              )}
-            </div>
-          </div> */}
 
          <div className="scrollable-section">
           {loading ? (

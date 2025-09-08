@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import "./doctorList.css";
 import { useNavigate } from "react-router-dom";
 import female from "../../imgs/female.svg";
@@ -8,6 +8,7 @@ import BookmarkButton from "../bookmark/BookmarkButton.jsx";
 
 const DoctorList = ({ doctors = [], showRank = false, onSaveDoctor }) => {
   const navigate = useNavigate();
+  const listRef = useRef(null);
 
   const getAvatarForDoctor = ({ image, gender } = {}) => {
     if (image) return image;
@@ -21,32 +22,40 @@ const DoctorList = ({ doctors = [], showRank = false, onSaveDoctor }) => {
     navigate(`/admin-dr-profile/${doc._id}`);
   };
 
+  // Optional: Scroll to top when list updates
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+  }, [doctors]);
+
   return (
-    <ul className="doctor-list">
-      {doctors.map((doc, index) => (
-        <li
-          key={doc._id || index}
-          onClick={() => handleSelect(doc)}
-          className="lists doctor-item"
-        >
-          {showRank && <span className="doctor-rank">{index + 1}</span>}
-          <img
-            className='doctor-list-img'
-            src={doc.profileImage?.fileUrl || getAvatarForDoctor(doc)}
-            alt={doc.name || "Doctor Avatar"}
-          />
-          <span className="doctor-name">{doc.name || "Unnamed Doctor"}</span>
-          <BookmarkButton doctor={doc} onSave={onSaveDoctor} />
-        </li>
-      ))}
-    </ul>
+    <div className="doctor-list-wrapper" ref={listRef}>
+      <ul className="doctor-list">
+        {doctors.map((doc, index) => (
+          <li
+            key={doc._id || index}
+            onClick={() => handleSelect(doc)}
+            className="lists doctor-item"
+          >
+            {showRank && <span className="doctor-rank">{index + 1}</span>}
+            <img
+              className='doctor-list-img'
+              src={doc.profileImage?.fileUrl || getAvatarForDoctor(doc)}
+              alt={doc.name || "Doctor Avatar"}
+            />
+            <span className="doctor-name">{doc.name || "Unnamed Doctor"}</span>
+            <BookmarkButton doctor={doc} onSave={onSaveDoctor} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
 export default DoctorList;
 
 
-// // DoctorList.jsx — replace your current file with this
 // import React from "react";
 // import "./doctorList.css";
 // import { useNavigate } from "react-router-dom";
@@ -55,7 +64,7 @@ export default DoctorList;
 // import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 // import BookmarkButton from "../bookmark/BookmarkButton.jsx";
 
-// const DoctorList = ({ doctors = [], onSelect, onDoctorClick, showRank = false, onSaveDoctor }) => {
+// const DoctorList = ({ doctors = [], showRank = false, onSaveDoctor }) => {
 //   const navigate = useNavigate();
 
 //   const getAvatarForDoctor = ({ image, gender } = {}) => {
@@ -66,9 +75,8 @@ export default DoctorList;
 //   };
 
 //   const handleSelect = (doc) => {
-//     // prefer explicit onSelect, fallback to onDoctorClick for backward compatibility
-//     const cb = onSelect || onDoctorClick;
-//     if (typeof cb === "function") cb(doc);
+//     if (!doc?._id) return;
+//     navigate(`/admin-dr-profile/${doc._id}`);
 //   };
 
 //   return (
@@ -81,9 +89,9 @@ export default DoctorList;
 //         >
 //           {showRank && <span className="doctor-rank">{index + 1}</span>}
 //           <img
-//             src={getAvatarForDoctor(doc)}
+//             className='doctor-list-img'
+//             src={doc.profileImage?.fileUrl || getAvatarForDoctor(doc)}
 //             alt={doc.name || "Doctor Avatar"}
-//             className="doctor-list-img"
 //           />
 //           <span className="doctor-name">{doc.name || "Unnamed Doctor"}</span>
 //           <BookmarkButton doctor={doc} onSave={onSaveDoctor} />
@@ -94,5 +102,4 @@ export default DoctorList;
 // };
 
 // export default DoctorList;
-
 

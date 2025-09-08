@@ -116,7 +116,7 @@ const DoctorRatingSummary = ({ doctorId }) => {
       </div>
 
       {/* Feedback Section */}
-      <div className="section-superdrprofile">
+      <div className="section-superdrprofile feedback-scroll-wrapper">
         <h3 className="section-feedback">Students Feedback</h3>
         <ul className="feedback-lists">
           {feedback.map(item => (

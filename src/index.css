@@ -1,16 +1,16 @@
 
 
 body {
-
-  /* background: linear-gradient(to right, rgba(0, 113, 180, 1), rgba(0, 113, 180, 0.5)); */
   margin: 0;
   font-family: "Fredoka", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
+  /* -webkit-user-select: none; */
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
    overflow: hidden; /* Adjust for content */
-   overflow-y: auto;
+   overflow-y: hidden;
 }
 
 

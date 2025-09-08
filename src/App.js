@@ -52,19 +52,18 @@ function App() {
              <Route path="/university/:universityId" element={<UniversityProfile />} /> 
              <Route path="/login" element={<SignIn />} />
              <Route path="/logout" element={<Logout />} /> 
-
              <Route path="/singup" element={<SingUp />} />
              <Route path="/forgot-password" element={<ForgotPassword />} />
              <Route path="/reset-password/:token" element={<ResetPassword />} />
              <Route path="/unauthorized" element={<Unauthorized />} />
              <Route path="/terms" element={<TermsFr />} />
              <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} />
-             <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
              <Route path="/my-ratings" element={<MyRatings />} />
               
 
       
          <Route element={<PrivateRoutes />}>
+
             <Route path="/checking" element={<Checking />} /> 
             {/* <Route path="/upload" element={<Upload />} />  */}
             <Route path="/welcome" element={<Welcome />} /> 
@@ -75,7 +74,8 @@ function App() {
             <Route path="/create-university" element={<CreateUniversity />} /> 
             <Route path="/request-admin-access" element={<RequestAdminAccess />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
-            <Route path="/rate-admin" element={<RateAdmins />} /> 
+            <Route path="/rate-admin" element={<RateAdmins />} />
+            <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/change-email" element={<ChangeEmail />} /> 
             <Route path="/settings/change-password" element={<ChangePassword />} />

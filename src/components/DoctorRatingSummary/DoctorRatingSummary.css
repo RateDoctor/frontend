@@ -1,3 +1,44 @@
+.feedback-scroll-wrapper {
+  max-height: 400px; /* ارتفاع مناسب حسب تصميمك */
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) rgba(0,0,0,0.05);
+}
+
+.feedback-scroll-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.feedback-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+  border-radius: 3px;
+}
+
+.feedback-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+
+
+.container-superdrprofile {
+  height: 100vh;              
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* منع overflow خارج الصفحة */
+}
+
+.profile-superdrprofile {
+  flex: 1;
+  overflow-y: auto; /* يسمح بالتمرير عند زيادة المحتوى */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling على iOS */
+  border-radius: 1rem;
+  padding: 1rem 1rem 7rem 1rem; /* bottom padding ليتجنب حجب المحتوى الأخير */
+}
+
+
 .emoji-stats {
   display: flex;
   justify-content: space-around;
@@ -101,3 +142,5 @@
 .answer-value {
   color: var(--button);
 }
+
+
