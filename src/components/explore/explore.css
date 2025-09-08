@@ -72,6 +72,7 @@
 .header-text.sticky {
   padding: 0.5rem 1rem; /* shrink smoothly */
   box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* subtle separation */
+  z-index: -1;
 }
 
 
