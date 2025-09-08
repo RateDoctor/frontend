@@ -58,7 +58,9 @@ function App() {
              <Route path="/reset-password/:token" element={<ResetPassword />} />
              <Route path="/unauthorized" element={<Unauthorized />} />
              <Route path="/terms" element={<TermsFr />} />
-             
+             <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} />
+             <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
+             <Route path="/my-ratings" element={<MyRatings />} />
               
 
       
@@ -71,7 +73,6 @@ function App() {
             <Route path="/addDoctor" element={<AddDoctor />} /> 
             <Route path="/helpFAQ" element={<HelpFAQ />} /> 
             <Route path="/create-university" element={<CreateUniversity />} /> 
-            <Route path="/admin-dr-profile/:doctorId" element={<AdminDrProfile />} />
             <Route path="/request-admin-access" element={<RequestAdminAccess />} /> 
             <Route path="/leaderboard" element={<LeaderBoard />} /> 
             <Route path="/rate-admin" element={<RateAdmins />} /> 
@@ -80,8 +81,7 @@ function App() {
             <Route path="/settings/change-password" element={<ChangePassword />} />
             <Route path="/saved-doctors" element={<SavedDoctors />} />
             <Route path="/contact" element={<ContactUs />} />
-            <Route path="/my-ratings/:doctorId" element={<MyRatings />} />
-            <Route path="/my-ratings" element={<MyRatings />} />
+
             <Route path="/edit-rating/:doctorId" element={<EditRating />} />
 
               {/* Dashboard */}

@@ -256,13 +256,12 @@ useEffect(() => {
 const handleDoctorClick = (doctorId) => {
  const userRole = localStorage.getItem("userRole");
    console.log("userRole is:", userRole);
-    console.log("doctorId is:", doctorId);
+   console.log("doctorId is:", doctorId);
 
-     if (!userRole) {
-    // Not logged in → redirect to login page or show message
-      navigate("/login");
-      return;
-    }
+    //  if (!userRole) {
+    //   navigate("/login");
+    //   return;
+    // }
 
     if (userRole === "admin") {
         navigate(`/admin-dr-profile/${doctorId}`);
