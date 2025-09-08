@@ -484,7 +484,7 @@ const handleDoctorClick = (doctorId) => {
         <>
           <div className="header-text">
             <h2>Rate Your PhD Experience:<br />Explore and Evaluate Admins</h2>
-            <p>Explore PhD Admins and share your academic experiences by rating your PhD admin</p>
+            <p>Explore PhD Admins and share your academic experiences by rating your PhD supervisor</p>
           </div>
 
          <div className="scrollable-section">
