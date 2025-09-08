@@ -130,7 +130,15 @@ function DoctorTable() {
     setIsEditing(true);
     setFormData({
       doctorName: doctor.name || "",
-      affiliations: safeArray(doctor.affiliations).map(a => ({ name: a.name || "", joined: a.joined || "" })),
+      affiliations: safeArray(doctor.affiliations).map(a => ({
+        universityId: a.university?._id || a.universityId || "",
+        name: a.university?.name || a.name || "", // نخزن الاسم أيضاً
+        joined: a.joined || "",
+      })),
+
+
+
+      // affiliations: safeArray(doctor.affiliations).map(a => ({ name: a.name || "", joined: a.joined || "" })),
       backgrounds: safeArray(doctor.background),
       teaching: safeArray(doctor.teaching),
       supervision: safeArray(doctor.supervision),
@@ -184,6 +192,8 @@ function DoctorTable() {
     }));
   };
 
+  
+
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -192,11 +202,16 @@ function DoctorTable() {
         return;
       }
 
+      const mainUniversityId =
+        safeArray(formData.affiliations).find(a => a.universityId)?.universityId ||
+        formData.universityId;
+
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const payload = {
         name: formData.doctorName.trim(),
         fieldOfStudyId: formData.fieldOfStudyId || "",
-        universityId: formData.universityId || null,
+        // universityId: formData.universityId,
+        universityId: mainUniversityId,
         topic: safeArray(formData.topicIds),
         affiliations: safeArray(formData.affiliations),
         background: safeArray(formData.backgrounds),
@@ -316,37 +331,31 @@ function DoctorTable() {
               <input type="file" onChange={handleFileChange} />
               {previewImage && <img src={previewImage} width="100px" alt="preview" />}
 
-              {/* <label>Affiliations</label>
-              {safeArray(formData.affiliations).map((aff, idx) => (
-                <div key={idx} className="affiliation-item">
-                  <input
-                    placeholder="Affiliation name"
-                    value={aff.name || ""}
-                    onChange={e => updateArrayField("affiliations", idx, { ...aff, name: e.target.value })}
-                  />
-                  <input
-                    type="date"
-                    value={aff.joined || ""}
-                    onChange={e => updateArrayField("affiliations", idx, { ...aff, joined: e.target.value })}
-                  />
-                  <button type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
-                </div>
-              ))}
-              <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>Add Affiliation</button> */}
                 <label>Affiliation</label>
                 {safeArray(formData.affiliations).map((aff, idx) => (
                   <div key={idx} className="affiliation-item">
-                    <select
-                      value={aff.name || ""}
-                      onChange={e => updateArrayField("affiliations", idx, { ...aff, name: e.target.value })}
-                    >
-                      <option value="">Select University</option>
-                      {universities.map(u => (
-                        <option key={u._id} value={u.name}>
-                          {u.name}
-                        </option>
-                      ))}
-                    </select>
+                  <select
+                    value={aff.universityId || ""}
+                    onChange={e => {
+                      const selectedUni = universities.find(u => u._id === e.target.value);
+                      updateArrayField("affiliations", idx, {
+                        ...aff,
+                        universityId: selectedUni?._id || "",
+                        name: selectedUni?.name || aff.name, // احتفظ بالاسم القديم إذا لم يتغير
+                      });
+                    }}
+                  >
+                    <option value="">{aff.name || "Select University"}</option> {/* عرض الاسم القديم */}
+                    {universities.map(u => (
+                      <option key={u._id} value={u._id}>{u.name}</option>
+                    ))}
+                  </select>
+
+
+
+
+
+
                     <input
                       type="date"
                       value={aff.joined || ""}
@@ -355,7 +364,7 @@ function DoctorTable() {
                     <button type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
                   </div>
                 ))}
-                <button type="button" onClick={() => addArrayItem("affiliations", { name: "", joined: "" })}>
+               <button type="button" onClick={() => addArrayItem("affiliations", { universityId: "", joined: "" })}>
                   Add Affiliation
                 </button>
 
