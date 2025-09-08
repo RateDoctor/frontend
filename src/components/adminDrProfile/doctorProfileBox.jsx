@@ -71,9 +71,33 @@ const DoctorProfileBox = ({ doctorData }) => {
   if (doctorData?._id) fetchData();
 }, [doctorData, token]);
 
+  // const handleRateClick = () => {
+  //   navigate(`/my-ratings/${doctorData._id}`);
+  // };
+
   const handleRateClick = () => {
-    navigate(`/my-ratings/${doctorData._id}`);
-  };
+  if (!token) {
+    Swal.fire({
+      title: "Login Required",
+      text: "You need to log in before rating a doctor.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Login",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/login");
+      }
+    });
+    return;
+  }
+
+  // If logged in, proceed to rating page
+  navigate(`/my-ratings/${doctorData._id}`);
+};
+
 
   // Centered loader in the middle of the component
   if (loading) {
