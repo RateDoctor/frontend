@@ -2,7 +2,7 @@
 .doctor-list-wrapper {
   max-height: calc(100vh - 200px); /* Adjust for header/footer */
   overflow-y: auto;
-  padding-bottom: 120px; /* ensures last items are visible */
+  padding-bottom: 170px; /* ensures last items are visible */
 }
 
 /* Doctor list */
