@@ -44,12 +44,9 @@ const Explore = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [matchedUniversity, setMatchedUniversity] = useState(null);
   const [universities, setUniversities] = useState([]);
+  const [isSticky, setIsSticky] = useState(false);
   const [listViewResults, setListViewResults] = useState(admins);
   const [userRole, setUserRole] = useState(localStorage.getItem("userRole"));
- 
-
-
-
   const [isUniversityOpen, setIsUniversityOpen] = useState(false);
   const [isFieldOpen, setIsFieldOpen] = useState(false);
   const [isTopicOpen, setIsTopicOpen] = useState(false);
@@ -105,6 +102,33 @@ const Explore = () => {
 
     return result;
   };
+
+
+
+useEffect(() => {
+  const handleScroll = () => {
+    if (window.scrollY > 150) {
+      setIsSticky(true);
+    } else {
+      setIsSticky(false);
+    }
+  };
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
+useEffect(() => {
+  const section = document.querySelector('.scrollable-section');
+  const handleScroll = () => {
+    if (section.scrollTop > 150) {
+      setIsSticky(true);
+    } else {
+      setIsSticky(false);
+    }
+  };
+  section.addEventListener('scroll', handleScroll);
+  return () => section.removeEventListener('scroll', handleScroll);
+}, []);
 
 
   useEffect(() => {
@@ -482,10 +506,11 @@ const handleDoctorClick = (doctorId) => {
       {/* Explore Cards when search is not focused */}
       {!isSearchFocused && (
         <>
-          <div className="header-text">
-            <h2>Rate Your PhD Experience:<br />Explore and Evaluate Admins</h2>
-            <p>Explore PhD Admins and share your academic experiences by rating your PhD supervisor</p>
-          </div>
+        <div className={`header-text ${isSticky ? "sticky" : ""}`}>
+          <h2>Rate Your PhD Experience:<br />Explore and Evaluate Admins</h2>
+          <p>Explore PhD Admins and share your academic experiences by rating your PhD supervisor</p>
+        </div>
+
 
          <div className="scrollable-section">
           {loading ? (
