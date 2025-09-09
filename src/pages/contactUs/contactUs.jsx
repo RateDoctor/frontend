@@ -2,6 +2,7 @@ import React from "react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router";
+import SmartBackButton from "../../components/SmartBackButton/smartbackButton";
 import "./contactUs.css";
 
 const ContactUs = () => {
@@ -10,7 +11,9 @@ const ContactUs = () => {
   return (
     <div className="contact-us-container">
       <div className="contact-us-header">
-        <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} />
+        {/* <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} /> */}
+        <SmartBackButton fallback="/" />
+     
         <h2>Contact Us</h2>
       </div>
 

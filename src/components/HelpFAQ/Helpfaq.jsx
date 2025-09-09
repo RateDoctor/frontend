@@ -2,6 +2,7 @@ import React from 'react';
 import './Helpfaq.css';
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import SmartBackButton from "../SmartBackButton/smartbackButton";
 
 
 const HelpFAQ = () => {
@@ -10,8 +11,10 @@ const HelpFAQ = () => {
   return (
     <div className="faq-container  ">
        <div className="settings-header">
-                    <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
-                    <h2>Help/FAQ</h2>
+          {/* <FiArrowLeft className="back-icon" onClick={() => navigate("/")} /> */}
+           <SmartBackButton fallback="/" />
+          
+          <h2>Help/FAQ</h2>
        </div>
 
      <section className="faq-child-container">

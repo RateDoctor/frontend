@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import female from "../../imgs/female.svg";
 import man from "../../imgs/man-ezgif.com-gif-maker.svg";
 import defaultAvatar from "../../imgs/defaultAvatar.jpg";
+import SmartBackButton from "../../components/SmartBackButton/smartbackButton";
 import "./savedDoctors.css";
 
 const SavedDoctors = ({name, gender, image}) => {
@@ -41,7 +42,8 @@ const getAvatarForDoctor = (doctor) => {
   return (
     <div className="saved-doctors-container">
       <div className="saved-doctors-header">
-        <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} />
+        {/* <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} /> */}
+        <SmartBackButton fallback="/" />
         <h2>Saved Doctors</h2>
       </div>
 

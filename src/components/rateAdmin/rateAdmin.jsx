@@ -5,6 +5,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useSearchParams } from "react-router-dom";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from '../myRatings/data.js';
+import SmartBackButton from "../SmartBackButton/smartbackButton.jsx";
 import "./rateAdmin.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -145,7 +146,9 @@ const handleSubmit = async () => {
   return (
     <div className="ratings-container  ">
       <div className="ratings-header">
-        <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} />
+        {/* <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} /> */}
+       <SmartBackButton fallback="/" />
+
       </div>
 
       <div className="edit-section-scrollable edit-section">

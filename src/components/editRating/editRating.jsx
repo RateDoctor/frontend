@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiArrowLeft, FiTrash2, FiEdit } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
+import SmartBackButton from "../SmartBackButton/smartbackButton";
 import "./editRating.css";
 
 
@@ -16,7 +17,9 @@ const EditRating = () => {
   return (
     <div className="edit-rating-container">
       <div className="edit-header">
-        <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} />
+        {/* <FiArrowLeft className="back-icon" onClick={() => navigate(-1)} /> */}
+              <SmartBackButton fallback="/" />
+
         <h2>My Ratings</h2>
       </div>
 

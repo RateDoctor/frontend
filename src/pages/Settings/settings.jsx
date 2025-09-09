@@ -3,6 +3,7 @@ import { FiMail, FiLock, FiLogOut, FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/AuthProvider";
 import Loader from "../../layouts/load/load";
+import SmartBackButton from "../../components/SmartBackButton/smartbackButton";
 import "./settings.css";
 
 const Settings = () => {
@@ -52,7 +53,8 @@ const Settings = () => {
 
       {/* Header */}
       <div className="settings-header">
-        <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+        {/* <FiArrowLeft className="back-icon" onClick={() => navigate("/")} /> */}
+        <SmartBackButton fallback="/" />
         <h2>Settings</h2>
       </div>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import DoctorList from "../DoctorList/DoctorList.jsx";
 import SearchBar from "../searchBar/searchBar";
+import SmartBackButton from "../SmartBackButton/smartbackButton.jsx";
 import axios from "axios";
 import "./leaderboard.css";
 import { FiArrowLeft } from "react-icons/fi";
@@ -210,7 +211,8 @@ const LeaderBoard = () => {
   return (
     <div className="search-overlay">
       <div className="settings-header">
-        <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+        {/* <FiArrowLeft className="back-icon" onClick={() => navigate("/")} /> */}
+        <SmartBackButton fallback="/" />
         <h2>Leaderboard</h2>
       </div>
 

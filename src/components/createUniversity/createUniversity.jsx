@@ -6,6 +6,7 @@ import DoctorList from "../DoctorList/DoctorList.jsx";
 import female from "../../imgs/female.svg";
 import man from "../../imgs/man-ezgif.com-gif-maker.svg";
 import defaultAvatar from "../../imgs/defaultAvatar.jpg";
+import SmartBackButton from "../SmartBackButton/smartbackButton";
 import axios from "axios";
 import './createUniversity.css';
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -129,7 +130,9 @@ useEffect(() => {
   return (
     <div className="form-container">
         <div className="settings-header">
-            <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />
+            {/* <FiArrowLeft className="back-icon" onClick={() => navigate("/")} /> */}
+                <SmartBackButton fallback="/" />
+
             <h2>Create University</h2>
         </div>
       <div className="form-createUniversity">

@@ -11,7 +11,9 @@ import Experience from "./Experience";
 // import StarsRating from "./StarsRating";
 import { ensureEntityId } from "../../utils/ensureEntityId";
 import { uploadDoctorImage } from "../../utils/mediaService.js";
-import { FiArrowLeft } from "react-icons/fi";
+// import { FiArrowLeft } from "react-icons/fi";
+import SmartBackButton from "../SmartBackButton/smartbackButton";
+
 import './addDoctor.css';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -246,7 +248,8 @@ const handleSubmit = async () => {
   <div className="parent--form-container">
   {/* Header */}
   <div className="settings--header">
-    {navigate && <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />}
+    {/* {navigate && <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />} */}
+    <SmartBackButton fallback="/" />
     <h2>Add Doctor</h2>
   </div>
 
