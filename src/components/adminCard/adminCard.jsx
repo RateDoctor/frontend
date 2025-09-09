@@ -137,12 +137,31 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
           )}
         </p>
         <p className="field">{field?.name || field || "No field"}</p>
-        <p className="topics">
+        {/* <p className="topics">
           {Array.isArray(topics) && topics.length > 0
             ? topics.map(t => capitalize(typeof t === "string" ? t : t.name || "")).join(", ")
             : <span>No topic</span>
           }
-        </p>
+        </p> */}
+
+        <p className="topics">
+            {Array.isArray(topics) && topics.length > 0 ? (
+              <>
+                {topics.slice(0, 1).map((t, i) => (
+                  <React.Fragment key={i}>
+                    {capitalize(typeof t === "string" ? t : t.name)}
+                    {i < 1 && i < topics.slice(0, 1).length - 1 ? ", " : ""}
+                  </React.Fragment>
+                ))}
+                {topics.length > 1 && (
+                  <span className="topic-more"> +{topics.length - 1} more</span>
+                )}
+              </>
+            ) : (
+              <span>No topic</span>
+            )}
+          </p>
+
       </div>
     </div>
   );

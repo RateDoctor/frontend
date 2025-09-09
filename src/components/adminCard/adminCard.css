@@ -9,6 +9,21 @@
   gap: 12px;
   cursor: pointer;
 }
+.topics {
+  font-size: 0.85rem;
+  color: #333;
+  text-align: center;       /* center the whole line */
+  white-space: nowrap;       /* keep inline */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topic-more {
+  color: #0074E4;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 4px;
+}
 
 
 .rating {
