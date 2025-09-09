@@ -59,7 +59,7 @@ const Experience = ({ formData, setFormData }) => {
           />
 
           <span
-            className="calendarExperience-icon"
+            className="calendar-icon"
             onClick={() =>
               setShowCalendarFor(showCalendarFor === index ? null : index)
             }
@@ -78,7 +78,7 @@ const Experience = ({ formData, setFormData }) => {
           )}
 
           <span
-            className="trashExperience-icon"
+            className="trash-icon"
             onClick={() => removeExperience(index)}
           >
             <FaTrash />

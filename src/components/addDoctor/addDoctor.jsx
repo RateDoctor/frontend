@@ -213,13 +213,6 @@ const handleSubmit = async () => {
         {/* <StarsRating rating={rating} setRating={setRating} /> */}
 
         <div className='flex'>
-          <button className="rate-button" type="button">Rate Doctor</button>
-          <button className="confirm-button" type="button" onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Confirm"}
-          </button>
-        </div>
-
-        <div className='flex'>
         <button className="rate-button" type="button">
           Rate Doctor
         </button>
