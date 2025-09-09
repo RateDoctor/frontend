@@ -317,7 +317,7 @@
     position: fixed;
     top: 10%;
     left: 50%;
-    transform: translateX(-56%);
+    transform: translateX(-50%);
     width: min(100%, 380px);
     max-height: 80vh;
     background-color: white;
