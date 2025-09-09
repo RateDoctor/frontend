@@ -4,7 +4,7 @@ import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-const Teaching = ({ formData, setFormData, topics, setTopics }) => {
+const Teaching = ({ formData, setFormData, topics, setTopics, onFocus }) => {
   const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
   const saveTopic = async (value, index) => {
@@ -95,6 +95,7 @@ const Teaching = ({ formData, setFormData, topics, setTopics }) => {
             onChange={e => handleChange(e.target.value, index)}
             onBlur={e => handleBlur(e.target.value, index)}
             onKeyDown={e => e.key === "Enter" && saveTopic(e.target.value, index)}
+            onFocus={onFocus}
           />
           {topic && <button className="removingIcon-rating" type="button" onClick={() => handleRemoveTopic(index)}> 
             <FaTrash />

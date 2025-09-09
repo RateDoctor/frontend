@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useRef } from "react";
 import axios from "axios";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import DoctorName from "./DoctorName";
@@ -19,6 +20,8 @@ const AddDoctorForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const scrollRef = useRef(null);
+  
 
   const doctorId = location.state?.doctorId || searchParams.get("doctorId");
 
@@ -41,6 +44,16 @@ const AddDoctorForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const role = localStorage.getItem('userRole');
+
+    const scrollIntoView = (e) => {
+    // Only for mobile devices
+    if (window.innerWidth <= 768) {
+      const offset = 100; // adjust so input is above keyboard
+      const top = e.target.getBoundingClientRect().top + window.scrollY - offset;
+      scrollRef.current.scrollTo({ top, behavior: "smooth" });
+    }
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -238,7 +251,7 @@ const handleSubmit = async () => {
   </div>
 
   {/* Scrollable content */}
-  <div className="form-scrollable">
+  <div className="form-scrollable" ref={scrollRef}>
     {/* <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} />
     <Affiliations formData={formData} setFormData={setFormData} universities={universities} />
     <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
@@ -247,27 +260,27 @@ const handleSubmit = async () => {
     <Experience formData={formData} setFormData={setFormData} /> */}
 
     <div className="form-section">
-    <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} />
+    <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} onFocus={scrollIntoView} />
   </div>
 
   <div className="form-section">
-    <Affiliations formData={formData} setFormData={setFormData} universities={universities} />
+    <Affiliations formData={formData} setFormData={setFormData} universities={universities} onFocus={scrollIntoView}/>
   </div>
 
   <div className="form-section">
-    <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
+    <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} onFocus={scrollIntoView}/>
   </div>
 
   <div className="form-section">
-    <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} />
+    <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} onFocus={scrollIntoView}/>
   </div>
 
   <div className="form-section">
-    <Supervision formData={formData} setFormData={setFormData} />
+    <Supervision formData={formData} setFormData={setFormData} onFocus={scrollIntoView}/>
   </div>
 
   <div className="form-section">
-    <Experience formData={formData} setFormData={setFormData} />
+    <Experience formData={formData} setFormData={setFormData} onFocus={scrollIntoView}/>
   </div>
   </div>
 

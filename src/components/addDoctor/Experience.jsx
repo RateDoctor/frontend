@@ -2,7 +2,7 @@ import { FaPlus, FaTrash } from "react-icons/fa6";
 import { RxCalendar } from "react-icons/rx";
 import { useState, useEffect } from "react";
 
-const Experience = ({ formData, setFormData }) => {
+const Experience = ({ formData, setFormData, onFocus}) => {
   const [showCalendarFor, setShowCalendarFor] = useState(null);
 
   // Normalize experience array if it contains strings
@@ -75,6 +75,7 @@ const Experience = ({ formData, setFormData }) => {
                 type="date"
                 value={exp.date || ""}
                 onChange={e => updateExperience(index, "date", e.target.value)}
+                 onFocus={onFocus}         
               />
             </div>
           )}

@@ -4,7 +4,7 @@ import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-const Backgrounds = ({ formData, setFormData, fields, setFields }) => {
+const Backgrounds = ({ formData, setFormData, fields, setFields,onFocus }) => {
   const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
   const saveBackground = async (value, index) => {
@@ -86,6 +86,8 @@ const Backgrounds = ({ formData, setFormData, fields, setFields }) => {
             onChange={e => handleChange(e.target.value, index)}
             onBlur={e => saveBackground(e.target.value, index)}
             onKeyDown={e => e.key === "Enter" && saveBackground(e.target.value, index)}
+            onFocus={onFocus}
+
           />
           {bg && (
             <button

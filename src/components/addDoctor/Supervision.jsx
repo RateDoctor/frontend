@@ -1,6 +1,6 @@
 import { FaPlus, FaTrash } from "react-icons/fa6";
 
-const Supervision = ({ formData, setFormData }) => {
+const Supervision = ({ formData, setFormData,onFocus }) => {
   const handleAddSupervision = () => {
     setFormData(prev => ({
       ...prev,
@@ -36,6 +36,7 @@ const Supervision = ({ formData, setFormData }) => {
               updated[index] = e.target.value;
               setFormData({ ...formData, supervision: updated });
             }}
+            onFocus={onFocus}
           />
           {supervision && (
             <button

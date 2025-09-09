@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { FiTrash2 } from "react-icons/fi"; // Trash icon
 
-const DoctorName = ({ formData, setFormData }) => {
+const DoctorName = ({ formData, setFormData, onFocus}) => {
   const fileInputRef = useRef(null);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -46,6 +46,7 @@ const DoctorName = ({ formData, setFormData }) => {
           placeholder="Text"
           value={formData.doctorName || ""}
           onChange={handleNameChange}
+           onFocus={onFocus}
         />
         {formData.doctorName && (
           <FiTrash2

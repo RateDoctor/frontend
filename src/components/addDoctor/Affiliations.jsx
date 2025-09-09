@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa6";
 import { RxCalendar } from "react-icons/rx";
 
-const Affiliations = ({ formData, setFormData, universities }) => {
+const Affiliations = ({ formData, setFormData, universities, onFocus }) => {
   const universityRef = useRef(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(null);
   const [showCalendarFor, setShowCalendarFor] = useState(null);
@@ -106,6 +106,7 @@ const Affiliations = ({ formData, setFormData, universities }) => {
                     updateAffiliation(index, "joined", e.target.value);
                     setShowCalendarFor(null);
                   }}
+                   onFocus={onFocus}
                 />
               </div>
             )}
