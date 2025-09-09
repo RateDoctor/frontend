@@ -1,5 +1,5 @@
 .feedback-scroll-wrapper {
-  max-height: 400px; /* ارتفاع مناسب حسب تصميمك */
+  max-height: 400px;
   overflow-y: auto;
   padding-right: 0.5rem;
   -webkit-overflow-scrolling: touch;
@@ -27,15 +27,14 @@
   height: 100vh;              
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* منع overflow خارج الصفحة */
+  overflow: hidden; /*   */
 }
 
 .profile-superdrprofile {
   flex: 1;
-  overflow-y: auto; /* يسمح بالتمرير عند زيادة المحتوى */
-  -webkit-overflow-scrolling: touch; /* smooth scrolling على iOS */
+  overflow-y: auto;
   border-radius: 1rem;
-  padding: 1rem 1rem 7rem 1rem; /* bottom padding ليتجنب حجب المحتوى الأخير */
+  padding: 1rem 1rem 12rem 1rem; 
 }
 
 
