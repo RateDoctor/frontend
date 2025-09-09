@@ -426,6 +426,7 @@ textarea.inputAddDoctor {
   flex: 1; /* take remaining space */
   overflow-y: auto;
   padding: 1rem;
+  padding-bottom: 4.4rem;
   display: flex;
   flex-direction: column;
 }
