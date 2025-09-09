@@ -3,10 +3,10 @@
 .form-container {
   display: flex;
   gap: 20px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   background: var(--bg-light);
   height: 100vh; 
-  /* overflow-y: auto; */
+  overflow-y: auto;
 }
 
 .settings--header{
