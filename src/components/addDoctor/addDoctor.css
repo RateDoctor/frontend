@@ -181,7 +181,7 @@ textarea.inputAddDoctor {
 .input-with-icon .plus-icon {
   position: absolute;
   right: 12px;
-  top: 30%;
+  top: 45%;
   transform: translateY(-50%);
   font-size: 18px;
   cursor: pointer;
