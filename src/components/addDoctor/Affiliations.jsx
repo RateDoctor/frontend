@@ -54,7 +54,6 @@ const Affiliations = ({ formData, setFormData, universities }) => {
 
       {formData.affiliations.map((aff, index) => (
         <div key={index} className="input-with-icon" ref={universityRef}>
-          {/* Input for affiliation name */}
           <input
             className="inputAddDoctor"
             placeholder="Search or type affiliation"
@@ -65,37 +64,7 @@ const Affiliations = ({ formData, setFormData, universities }) => {
             }}
           />
 
-          {/* Calendar for joined date */}
-          <span
-            className="calendar-icon"
-            onClick={() =>
-              setShowCalendarFor(showCalendarFor === index ? null : index)
-            }
-          >
-            <RxCalendar />
-          </span>
-          {showCalendarFor === index && (
-            <div className="calendar-popup">
-              <input
-                type="date"
-                value={aff.joined?.slice(0, 10) || ""}
-                onChange={(e) => {
-                  updateAffiliation(index, "joined", e.target.value);
-                  setShowCalendarFor(null);
-                }}
-              />
-            </div>
-          )}
-
-          {/* Delete icon */}
-          <span
-            className="trash-icon"
-            onClick={() => removeAffiliation(index)}
-          >
-            <FaTrash />
-          </span>
-
-          {/* Autocomplete dropdown */}
+          {/* Dropdown */}
           {isDropdownOpen === index && (
             <ul className="autocomplete-dropdown">
               {universities
@@ -116,6 +85,42 @@ const Affiliations = ({ formData, setFormData, universities }) => {
                 ))}
             </ul>
           )}
+
+          {/* Bottom section with icons */}
+          <div className="bottom-icons">
+            {/* Calendar */}
+            <span
+              className="calendar-icon"
+              onClick={() =>
+                setShowCalendarFor(showCalendarFor === index ? null : index)
+              }
+            >
+              <RxCalendar />
+            </span>
+            {showCalendarFor === index && (
+              <div className="calendar-popup">
+                <input
+                  type="date"
+                  value={aff.joined?.slice(0, 10) || ""}
+                  onChange={(e) => {
+                    updateAffiliation(index, "joined", e.target.value);
+                    setShowCalendarFor(null);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Trash - show only when there is data */}
+            {(aff.name || aff.joined) && (
+              <button
+                className="removingIcon-rating"
+                type="button"
+                onClick={() => removeAffiliation(index)}
+              >
+                <FaTrash />
+              </button>
+            )}
+          </div>
         </div>
       ))}
     </div>
@@ -123,6 +128,8 @@ const Affiliations = ({ formData, setFormData, universities }) => {
 };
 
 export default Affiliations;
+
+
 
 
 // import { useState, useRef, useEffect } from "react";

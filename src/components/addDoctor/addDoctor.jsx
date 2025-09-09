@@ -195,40 +195,91 @@ const handleSubmit = async () => {
 
 
   return (
-    <div className="parent--form-container">
-      <div className="settings--header">
-        {navigate && <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />}
-        <h2>Add Doctor</h2>
-      </div>
+  //   <div className="parent--form-container">
+  //     <div className="settings--header">
+  //       {navigate && <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />}
+  //       <h2>Add Doctor</h2>
+  //     </div>
     
-      <div className="form-container">
+  //     <div className="form-container">
 
         
-        <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} />
-        <Affiliations formData={formData} setFormData={setFormData} universities={universities} />
-        <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
-        <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} />
-        <Supervision formData={formData} setFormData={setFormData} />
-        <Experience formData={formData} setFormData={setFormData} />
-        {/* <StarsRating rating={rating} setRating={setRating} /> */}
+  //       <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} />
+  //       <Affiliations formData={formData} setFormData={setFormData} universities={universities} />
+  //       <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
+  //       <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} />
+  //       <Supervision formData={formData} setFormData={setFormData} />
+  //       <Experience formData={formData} setFormData={setFormData} />
+  //       {/* <StarsRating rating={rating} setRating={setRating} /> */}
 
-        <div className='flex'>
-        <button className="rate-button" type="button">
-          Rate Doctor
-        </button>
+  //       <div className='flex sticky-bottom-actions'>
+  //       <button className="rate-button" type="button">
+  //         Rate Doctor
+  //       </button>
 
-        <button
-          className="confirm-button"
-          type="button"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Confirm"}
-        </button>
-      </div>
+  //       <button
+  //         className="confirm-button"
+  //         type="button"
+  //         onClick={handleSubmit}
+  //         disabled={isSubmitting}
+  //       >
+  //         {isSubmitting ? "Submitting..." : "Confirm"}
+  //       </button>
+  //     </div>
 
-      </div>
+  //     </div>
+  // </div>
+
+  <div className="parent--form-container">
+  {/* Header */}
+  <div className="settings--header">
+    {navigate && <FiArrowLeft className="back-icon" onClick={() => navigate("/")} />}
+    <h2>Add Doctor</h2>
   </div>
+
+  {/* Scrollable content */}
+  <div className="form-scrollable">
+    {/* <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} />
+    <Affiliations formData={formData} setFormData={setFormData} universities={universities} />
+    <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
+    <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} />
+    <Supervision formData={formData} setFormData={setFormData} />
+    <Experience formData={formData} setFormData={setFormData} /> */}
+
+    <div className="form-section">
+    <DoctorName formData={formData} setFormData={setFormData} navigate={navigate} />
+  </div>
+
+  <div className="form-section">
+    <Affiliations formData={formData} setFormData={setFormData} universities={universities} />
+  </div>
+
+  <div className="form-section">
+    <Backgrounds formData={formData} setFormData={setFormData} fields={fields} setFields={setFields} />
+  </div>
+
+  <div className="form-section">
+    <Teaching formData={formData} setFormData={setFormData} topics={topics} setTopics={setTopics} fields={fields} />
+  </div>
+
+  <div className="form-section">
+    <Supervision formData={formData} setFormData={setFormData} />
+  </div>
+
+  <div className="form-section">
+    <Experience formData={formData} setFormData={setFormData} />
+  </div>
+  </div>
+
+  {/* Sticky bottom buttons */}
+  <div className="sticky-bottom-actions">
+    <button className="rate-button" type="button">Rate Doctor</button>
+    <button className="confirm-button" type="button" onClick={handleSubmit} disabled={isSubmitting}>
+      {isSubmitting ? "Submitting..." : "Confirm"}
+    </button>
+  </div>
+</div>
+
   );
 };
 

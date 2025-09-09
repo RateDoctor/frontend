@@ -46,7 +46,9 @@ const Experience = ({ formData, setFormData }) => {
     <div className="experience-container">
       <label className="top-one-line label-addDoctor">
         <span className="title">Experience</span>
-        <span className="plus-icon" onClick={addExperience}><FaPlus /></span>
+        <span className="plus-icon" onClick={addExperience}>
+          <FaPlus />
+        </span>
       </label>
 
       {formData.experience.map((exp, index) => (
@@ -77,12 +79,16 @@ const Experience = ({ formData, setFormData }) => {
             </div>
           )}
 
-          <span
-            className="trash-icon"
-            onClick={() => removeExperience(index)}
-          >
-            <FaTrash />
-          </span>
+          {/* ✅ Show remove button only if description OR date exists */}
+          {(exp.description || exp.date) && (
+             <button
+              type="button"
+              className="removingIcon-rating"
+              onClick={() => removeExperience(index)}
+            >
+              <FaTrash />
+            </button>
+          )}
         </div>
       ))}
     </div>
@@ -90,6 +96,7 @@ const Experience = ({ formData, setFormData }) => {
 };
 
 export default Experience;
+
 
 
 

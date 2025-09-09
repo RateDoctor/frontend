@@ -1,5 +1,5 @@
 import React from "react";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaTrash } from "react-icons/fa6";
 import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -96,7 +96,10 @@ const Teaching = ({ formData, setFormData, topics, setTopics }) => {
             onBlur={e => handleBlur(e.target.value, index)}
             onKeyDown={e => e.key === "Enter" && saveTopic(e.target.value, index)}
           />
-          {topic && <button type="button" onClick={() => handleRemoveTopic(index)}>Remove</button>}
+          {topic && <button className="removingIcon-rating" type="button" onClick={() => handleRemoveTopic(index)}> 
+            <FaTrash />
+          
+          </button>}
         </div>
       ))}
     </div>
