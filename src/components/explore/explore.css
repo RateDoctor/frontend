@@ -251,24 +251,7 @@
 }
 
 
-/* Footer */
-.footer {
-  background-color: var(--primary-color);
-  padding: 0.7rem;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  color: #fff;
-  margin-top: auto;
-  height: 80px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
 
-.footer .icon {
-  font-size: 30px;
-}
 
 .search-overlay {
   display: flex;
@@ -660,20 +643,6 @@
 
 
 
-.footer {
-  background-color: var(--primary-color);
-  padding: 0.7rem;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  color: #fff;
-  margin-top: auto;
-  height: 80px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-
-}
 
 
 .filter-card {
@@ -691,9 +660,6 @@
 }
 
 
-.footer .icon {
-  font-size: 30px;
-}
 
 
 .recent-searches-dropdown {

@@ -1,13 +1,16 @@
 .container-superdrprofile {
-  height: 100vh;              
-  display: flex;
-  flex-direction: column;
+ position: relative;  /*   */
+  padding-bottom: 94px; /*   */
+  overflow-y: auto;     /* scroll   */
+  min-height: 100vh;
 }
 
 .profile-superdrprofile {
   flex: 1;
   border-radius: 1rem;
-  padding: 1rem 1rem 17rem 1rem;
+  padding: 1rem;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+
 }
 
 .doctor-name-superdrprofile {
