@@ -9,8 +9,9 @@
   flex: 1;
   border-radius: 1rem;
   padding: 1rem;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
-    overflow-y: auto;    
+  /* padding-bottom: calc(80px + env(safe-area-inset-bottom)); */
+  padding-bottom: 16rem;
+  overflow-y: auto;    
 
 
 }
