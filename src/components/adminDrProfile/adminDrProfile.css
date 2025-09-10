@@ -1,7 +1,7 @@
 .container-superdrprofile {
- position: relative;  /*   */
-  padding-bottom: 94px; /*   */
-  overflow-y: auto;     /* scroll   */
+ position: relative;  
+  padding-bottom: 94px; 
+  overflow-y: auto;    
   min-height: 100vh;
 }
 
@@ -10,6 +10,8 @@
   border-radius: 1rem;
   padding: 1rem;
   padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    overflow-y: auto;    
+
 
 }
 
