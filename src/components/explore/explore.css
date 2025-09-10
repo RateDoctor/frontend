@@ -180,7 +180,7 @@
   .card-grid {
      grid-template-columns: repeat(2, 1fr);
     justify-content: center; 
-    padding-bottom: 6rem;
+    padding-bottom: 8rem;
   }
 }
 
