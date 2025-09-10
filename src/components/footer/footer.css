@@ -6,7 +6,7 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 80px;
+  height: 120px;
   z-index: 10;  /* lower than dropdown overlays */
 }
 

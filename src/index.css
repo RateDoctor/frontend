@@ -31,8 +31,6 @@ body {
   --text-dark: #222;
   --bg-light: #ffffff;
   --border-color: #ccc;
-
-
   --primary-color: #0074e4;
   --secondary-color: #80b9f1;
   --background-color: #f7fbff;
@@ -42,4 +40,6 @@ body {
   --error-color: #ff6b6b;
   --input-radius: 12px;
   --transition: all 0.2s ease-out;
+
+   --footer-height: 340px;
 }
