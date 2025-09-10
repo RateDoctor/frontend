@@ -94,5 +94,80 @@
   font-size: 13px;
   color: #555;
   font-weight: 500;
-  /* min-width: 80px; */
+}
+
+.doctor-card--name {
+  line-height: 2.2;
+  font-size: 12px;
+  color: var(--button);
+}
+
+
+.info p.topics{
+  font-size: 8px;
+  color: #6C757D;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 14px;
+}
+
+ .info p {
+  margin: 5px 0;
+  font-size: 10px;
+  text-align: center;
+  height: 12px;
+} 
+
+/* doctor-card--name {
+  word-break: break-word; 
+  margin: 0;
+ font-size: 12px;
+ color: var(--button);
+} */
+
+
+
+@media (max-width: 376px) {
+  /* .doctor-card--name {
+    font-size: 14px;
+    height: 34px;
+  } */
+
+  .info p,
+  .topics {
+    font-size: 8px;
+  }
+
+  .doctor-img {
+    width: 50px;
+  }
+
+  .scrollable-section {
+    padding-bottom: 120px;
+  }
+}
+
+@media (max-width: 376px){
+  /* doctor-card--name {
+    font-size: 14px;
+  } */
+
+  .scrollable-section {
+    padding-bottom: 140px;
+  }
+}
+
+/* For very small screens up to 390px */
+@media (max-width: 390px) {
+  .doctor-card--name {
+    font-size: 9px;
+  }
+}
+
+/* For small screens up to 412px */
+@media (min-width: 391px) and (max-width: 412px) {
+  .doctor-card--name{
+    font-size: 9px;
+  }
 }

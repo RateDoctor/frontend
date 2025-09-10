@@ -70,6 +70,21 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
 
   if (loading) return null;
 
+function shortenUniversityName(name) {
+  // Example: show first 3 words only
+  const words = name.split(" ");
+  if (words.length <= 3) return name;
+  return words.slice(0, 3).join(" ") + "...";
+}
+
+function shortenDoctorName(fullName) {
+  const parts = fullName.split(" ");
+  if (parts.length <= 2) return fullName;
+  const first = parts[0];
+  const last = parts[parts.length - 1];
+  const hiddenCount = parts.length - 2; // middle names hidden
+  return `${first} ${last} +${hiddenCount} more`;
+}
 
 
 
@@ -83,7 +98,9 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
       />
 
       <div className="info">
-        <h3>{name}</h3>
+        {/* <h3>{name}</h3> */}
+
+        <h3 className="doctor-card--name" title={name}>{name}</h3>
 
         {/* <div className="rating-section" onClick={(e) => e.stopPropagation()}>
           <div className="user-rating">
@@ -123,7 +140,7 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
         </div>
 
 
-        <p className="university">
+        {/* <p className="university">
           {university?._id ? (
             <span
               onClick={(e) => { e.stopPropagation(); navigate(`/university/${university._id}`); }}
@@ -135,7 +152,25 @@ const AdminCard = ({ doctorId, name, university, field, topics, gender, image })
           ) : (
             university || "No university"
           )}
+        </p> */}
+
+        <p className="university">
+          {university?._id ? (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/university/${university._id}`);
+              }}
+              style={{ color: "#0074E4", cursor: "pointer", textDecoration: "underline" }}
+              title={university.name} // full name appears on hover
+            >
+              {shortenUniversityName(university.name)}
+            </span>
+          ) : (
+            university || "No university"
+          )}
         </p>
+
         <p className="field">{field?.name || field || "No field"}</p>
         {/* <p className="topics">
           {Array.isArray(topics) && topics.length > 0
