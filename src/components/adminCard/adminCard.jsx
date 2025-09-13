@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAvatar } from "../../utils/getAvatar";
 import EditableStarRating from '../starRating/StarRating';
 import AverageStarRating from "../starRating/average/AverageStarRating";
+import TopicsPreview from "./TopicsPreview";
 import axios from "axios";
 
 const AdminCard = ({ doctorId, name, university, field, topics, gender, image }) => {
@@ -172,14 +173,9 @@ function shortenDoctorName(fullName) {
         </p>
 
         <p className="field">{field?.name || field || "No field"}</p>
-        {/* <p className="topics">
-          {Array.isArray(topics) && topics.length > 0
-            ? topics.map(t => capitalize(typeof t === "string" ? t : t.name || "")).join(", ")
-            : <span>No topic</span>
-          }
-        </p> */}
+      
 
-        <p className="topics">
+        {/* <p className="topics">
             {Array.isArray(topics) && topics.length > 0 ? (
               <>
                 {topics.slice(0, 1).map((t, i) => (
@@ -195,7 +191,9 @@ function shortenDoctorName(fullName) {
             ) : (
               <span>No topic</span>
             )}
-          </p>
+          </p> */}
+
+          <TopicsPreview topics={topics} />
 
       </div>
     </div>
@@ -279,12 +277,14 @@ export default AdminCard;
 //             )}
 //           </p>
 //           <p className="field">{field?.name || field || "No field"}</p>
-//           <p className="topics">
-//             {Array.isArray(topics) && topics.length > 0
-//               ? topics.map(t => capitalize(typeof t === "string" ? t : t.name || "")).join(", ")
-//               : <span>No topic</span>
-//             }
-//           </p>
+
+
+              //  <p className="topics">
+              //   {Array.isArray(topics) && topics.length > 0
+              //     ? topics.map(t => capitalize(typeof t === "string" ? t : t.name || "")).join(", ")
+              //     : <span>No topic</span>
+              //   }
+              // </p> 
 //         </div>
 //       </div>
 //     </div>

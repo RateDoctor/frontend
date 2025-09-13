@@ -70,8 +70,8 @@
 }
 
 .header-text.sticky {
-  padding: 0.5rem 1rem; /* shrink smoothly */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* subtle separation */
+  padding: 0.2rem 1rem; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
   z-index: -1;
 }
 
@@ -107,8 +107,8 @@
     display: flex;
     align-items: center;
     background-color: #fff;
-    padding: 0.4rem 1rem;
-    margin: 1rem;
+    padding: 0.2rem 1rem;
+    margin: 0.4rem;
     border-radius: 10px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     background-color: #6C757D1A;
@@ -144,7 +144,9 @@
 }
 
 .header-text.sticky h2 {
-  font-size: 16px;
+  /* font-size: 16px; */
+  font-size: 12px;
+
 }
 
 
@@ -156,9 +158,14 @@
   transition: font-size 0.25s ease, opacity 0.25s ease;
 }
 
-.header-text.sticky p {
+/* .header-text.sticky p {
   font-size: 12px;
-  opacity: 0.8; /* subtle fade */
+  opacity: 0.8; 
+} */
+
+.header-text.sticky p{
+  font-size: 8px;
+  opacity: 0.8; 
 }
 
 /* Cards Grid */
@@ -297,13 +304,28 @@
   flex: 1;
 }
 
-.custom-dropdown {
+/* .custom-dropdown {
     position: fixed;
     top: 10%;
     left: 50%;
     transform: translateX(-50%);
     width: min(100%, 380px);
     max-height: 80vh;
+    background-color: white;
+    padding: 12px;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    z-index: 9999;
+} */
+
+.custom-dropdown {
+    position: fixed;
+    top: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100%, 360px);
+    max-height: 74vh;
     background-color: white;
     padding: 12px;
     overflow-y: auto;
