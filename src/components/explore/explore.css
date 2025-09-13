@@ -325,7 +325,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: min(100%, 360px);
-    max-height: 74vh;
+    max-height: 64vh;
     background-color: white;
     padding: 12px;
     overflow-y: auto;
