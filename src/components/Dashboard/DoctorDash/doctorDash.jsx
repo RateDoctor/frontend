@@ -24,6 +24,8 @@ function DoctorTable() {
   const [filter, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+ 
+
   function getEmptyForm() {
     return {
       doctorName: "",
@@ -246,7 +248,20 @@ function DoctorTable() {
     }
   };
 
-  const filteredDoctors = doctors.filter(d => d.name?.toLowerCase().includes(filter.toLowerCase()));
+  
+
+  // const filteredDoctors = doctors.filter(d => d.name?.toLowerCase().includes(filter.toLowerCase()));
+    const filteredDoctors = doctors.filter(d =>
+      d.name?.toLowerCase().includes(filter.toLowerCase())
+    );
+
+    const pageSize = 5;
+    const totalDoctors = filteredDoctors.length;
+
+    const paginatedDoctors = filteredDoctors.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize
+    );
 
   return (
     <>
@@ -256,13 +271,17 @@ function DoctorTable() {
 
           <div className="add-button">
             <Button type="primary" onClick={handleAddClick}>Add Doctor</Button>
-            <input
+           <input
               type="text"
               placeholder="Search by doctor name"
               value={filter}
-              onChange={e => setFilter(e.target.value)}
+              onChange={e => {
+                setFilter(e.target.value);
+                setCurrentPage(1); // always reset to page 1 on search
+              }}
               style={{ marginLeft: 10 }}
             />
+
           </div>
 
           <div className="table-fixing">
@@ -278,8 +297,9 @@ function DoctorTable() {
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {filteredDoctors.map(doctor => (
+                {/* <tbody>
+                  {paginatedDoctors && filteredDoctors.map(doctor => (
+                    
                     <tr key={doctor._id}>
                       <td>{doctor.name}</td>
                       <td>{doctor.university?.name || "-"}</td>
@@ -300,12 +320,52 @@ function DoctorTable() {
                       </td>
                     </tr>
                   ))}
-                </tbody>
+                </tbody> */}
+
+               <tbody>
+                {paginatedDoctors.length === 0 ? (
+                  <tr>
+                    <td colSpan={6}>No doctors found.</td>
+                  </tr>
+                ) : (
+                  paginatedDoctors.map(doctor => (
+                    <tr key={doctor._id}>
+                      <td>{doctor.name}</td>
+                      <td>{doctor.university?.name || "-"}</td>
+                      <td>{safeArray(doctor.background).join(", ") || "-"}</td>
+                      <td>{safeArray(doctor.teaching).join(", ") || "-"}</td>
+                      <td>
+                        {doctor.profileImage?.fileUrl ? (
+                          <img 
+                            src={doctor.profileImage.fileUrl} 
+                            alt="doctor" 
+                            style={{ width: "100px", height: "100px", objectFit: "contain", borderRadius: "8px", objectPosition: "top" }} 
+                          />
+                        ) : <span>No Image</span>}
+                      </td>
+                      <td>
+                        <Button onClick={() => handleEditClick(doctor)}>Edit</Button>
+                        <Button danger onClick={() => handleDelete(doctor._id)}>Delete</Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+
+
               </table>
             )}
           </div>
 
-          <Pagination onChange={setCurrentPage} current={currentPage} total={filteredDoctors.length} />
+          {/* <Pagination onChange={setCurrentPage} current={currentPage} total={filteredDoctors.length} /> */}
+         <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={totalDoctors}
+            onChange={page => setCurrentPage(page)}
+            showSizeChanger={false}
+          />
+
 
           <Modal
             title={isEditing ? "Edit Doctor" : "Add Doctor"}
