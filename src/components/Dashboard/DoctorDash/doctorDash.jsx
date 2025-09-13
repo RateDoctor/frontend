@@ -379,7 +379,7 @@ function DoctorTable() {
           >
             <div className="form-left">
               <label>Doctor Name *</label>
-              <input value={formData.doctorName || ""} onChange={e => setFormData(prev => ({ ...prev, doctorName: e.target.value }))} />
+              <input  className="doctorName--input" value={formData.doctorName || ""} onChange={e => setFormData(prev => ({ ...prev, doctorName: e.target.value }))} />
 
               {/* <label>University</label>
               <select value={formData.universityId || ""} onChange={e => setFormData(prev => ({ ...prev, universityId: e.target.value }))}>
@@ -395,17 +395,18 @@ function DoctorTable() {
                 {safeArray(formData.affiliations).map((aff, idx) => (
                   <div key={idx} className="affiliation-item">
                   <select
+                  className="uni--select"
                     value={aff.universityId || ""}
                     onChange={e => {
                       const selectedUni = universities.find(u => u._id === e.target.value);
                       updateArrayField("affiliations", idx, {
                         ...aff,
                         universityId: selectedUni?._id || "",
-                        name: selectedUni?.name || aff.name, // احتفظ بالاسم القديم إذا لم يتغير
+                        name: selectedUni?.name || aff.name, 
                       });
                     }}
                   >
-                    <option value="">{aff.name || "Select University"}</option> {/* عرض الاسم القديم */}
+                    <option value="">{aff.name || "Select University"}</option> 
                     {universities.map(u => (
                       <option key={u._id} value={u._id}>{u.name}</option>
                     ))}
@@ -417,14 +418,15 @@ function DoctorTable() {
 
 
                     <input
+                      className="affiliations--input"
                       type="date"
                       value={aff.joined || ""}
                       onChange={e => updateArrayField("affiliations", idx, { ...aff, joined: e.target.value })}
                     />
-                    <button type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
+                    <button className="btn-remove"  type="button" onClick={() => removeArrayItem("affiliations", idx)}>Remove</button>
                   </div>
                 ))}
-               <button type="button" onClick={() => addArrayItem("affiliations", { universityId: "", joined: "" })}>
+               <button  className="btn-add" type="button" onClick={() => addArrayItem("affiliations", { universityId: "", joined: "" })}>
                   Add Affiliation
                 </button>
 
@@ -434,29 +436,31 @@ function DoctorTable() {
               <label>Supervision</label>
               {safeArray(formData.supervision).map((item, idx) => (
                 <div key={idx} className="array-item">
-                  <input value={item || ""} onChange={e => updateArrayField("supervision", idx, e.target.value)} />
-                  <button type="button" onClick={() => removeArrayItem("supervision", idx)}>Remove</button>
+                  <input className="supervision--input" value={item || ""} onChange={e => updateArrayField("supervision", idx, e.target.value)} />
+                  <button className="btn-remove" type="button" onClick={() => removeArrayItem("supervision", idx)}>Remove</button>
                 </div>
               ))}
-              <button type="button" onClick={() => addArrayItem("supervision", "")}>Add Supervision</button>
+              <button className="btn-add" type="button" onClick={() => addArrayItem("supervision", "")}>Add Supervision</button>
 
               <label>Experience</label>
               {safeArray(formData.experience).map((item, idx) => (
                 <div key={idx} className="array-item">
                   <input
+                    className="experience--input"
                     placeholder="Description"
                     value={item.description || ""}
                     onChange={e => updateArrayField("experience", idx, { ...item, description: e.target.value })}
                   />
                   <input
+                    className="experience--input"
                     type="date"
                     value={item.date || ""}
                     onChange={e => updateArrayField("experience", idx, { ...item, date: e.target.value })}
                   />
-                  <button type="button" onClick={() => removeArrayItem("experience", idx)}>Remove</button>
+                  <button className="btn-remove" type="button" onClick={() => removeArrayItem("experience", idx)}>Remove</button>
                 </div>
               ))}
-              <button type="button" onClick={() => addArrayItem("experience", { description: "", date: "" })}>Add Experience</button>
+              <button className="btn-add" type="button" onClick={() => addArrayItem("experience", { description: "", date: "" })}>Add Experience</button>
             </div>
           </Modal>
         </div>
