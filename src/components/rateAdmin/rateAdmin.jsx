@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiArrowLeft } from "react-icons/fi";
+import { toast } from "sonner";
 import { useSearchParams } from "react-router-dom";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from '../myRatings/data.js';
@@ -20,6 +20,7 @@ const RateAdmin = () => {
   const [feedback, setFeedback] = useState("");
   const [questionnaire, setQuestionnaire] = useState({});
   const [searchParams] = useSearchParams();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const doctorId = searchParams.get("doctorId");
 
 
@@ -110,54 +111,82 @@ useEffect(() => {
     );
   }
   
-  // console.log("Loading:", loading);
-  // console.log("DoctorData:", doctorData);
 
 
+// const handleSubmit = async () => {
+//    if (
+//     !ratings.communication ||
+//     !ratings.support ||
+//     !ratings.guidance ||
+//     !ratings.availability
+//   ) {
+//     // alert("Please rate all categories before submitting.");
+//     toast.error("Please rate all categories before submitting.");
+//     return;
+//   }
 
-const handleSubmit = async () => {
-   if (
-    !ratings.communication ||
-    !ratings.support ||
-    !ratings.guidance ||
-    !ratings.availability
-  ) {
-    alert("Please rate all categories before submitting.");
-    return;
-  }
+//   try {
+//     const token = localStorage.getItem("authToken");
 
-  try {
-    const token = localStorage.getItem("authToken");
+//     const payload = {
+//       doctorId,
+//       communication: ratings.communication,
+//       support: ratings.support,
+//       guidance: ratings.guidance,
+//       availability: ratings.availability,
+//       additionalFeedback: feedback,
+//       questionnaire
+//     };
 
-    const payload = {
-      doctorId,
-      communication: ratings.communication,
-      support: ratings.support,
-      guidance: ratings.guidance,
-      availability: ratings.availability,
-      additionalFeedback: feedback,
-      questionnaire
-    };
+//     await axios.post(`${BASE_URL}/api/ratings`, payload, {
+//       headers: {
+//         Authorization: `Bearer ${token}`
+//       }
+//     });
 
-    await axios.post(`${BASE_URL}/api/ratings`, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    alert("Rating submitted successfully.");
-    navigate("/");
+//     // alert("Rating submitted successfully.");
+//     toast.success("Rating submitted successfully.");
+//     navigate("/");
     
-  } catch (err) {
-    if (err.response?.status === 409) {
-      alert("You've already submitted a rating for this doctor.");
-    } else {
-      console.error("Rating submission failed:", err);
-      alert("Failed to submit rating. Try again.");
-    }
-  }
-};
+//   } catch (err) {
+//     if (err.response?.status === 409) {
+//       // alert("You've already submitted a rating for this doctor.");
+//       toast.success("You've already submitted a rating for this doctor.");
+//     } else {
+//       console.error("Rating submission failed:", err);
+//       // alert("Failed to submit rating. Try again.");
+//       toast.error("Failed to submit rating. Please try again.");
+//     }
+//   }
+// };
 
+
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    const { communication, support, guidance, availability } = ratings;
+    if (!communication || !support || !guidance || !availability) {
+      toast.error("Please rate all categories before submitting.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const payload = { doctorId, communication, support, guidance, availability, additionalFeedback: feedback, questionnaire };
+      await axios.post(`${BASE_URL}/api/ratings`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success("Rating submitted successfully!");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to submit rating. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
 
   return (
@@ -192,51 +221,28 @@ const handleSubmit = async () => {
           onRatingChange={handleRatingChange}
         />
 
-        {/* <div className="feedback-section">
-          <div className="rate-feedback-header">
-            <h4 className="rate-header-title">Additional Feedback</h4>
-          </div>
-          <p className="rate-paragraph-box">{feedback}</p>
-        </div>
-
-        {feedbackEditable && (
-          <div className="modal-overlay">
-            <button
-              className="floating-done-button"
-              onClick={() => setFeedbackEditable(true)}
-            >
-              Done
-            </button>
-            <div className="modal-content">
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="modal-rate-textarea"
-              />
-            </div>
-          </div>
-        )} */}
+ 
 
         <div className="feedback-section">
-  <div className="rate-feedback-header">
-    <h4 className="rate-header-title">Additional Feedback</h4>
-    <button 
-      className="edit-feedback-btn"
-      onClick={() => setFeedbackEditable(true)}
-    >
-      Edit
-    </button>
-  </div>
+        <div className="rate-feedback-header">
+          <h4 className="rate-header-title">Additional Feedback</h4>
+          <button 
+            className="edit-feedback-btn"
+            onClick={() => setFeedbackEditable(true)}
+          >
+            Edit
+          </button>
+        </div>
 
-  {feedbackEditable ? (
-    <textarea
-      className="inline-feedback-textarea"
-      value={feedback}
-      onChange={(e) => setFeedback(e.target.value)}
-      onBlur={() => setFeedbackEditable(false)}  // ✅ Exit edit mode when user clicks outside
-      autoFocus
-    />
-  ) : (
+        {feedbackEditable ? (
+          <textarea
+            className="inline-feedback-textarea"
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            onBlur={() => setFeedbackEditable(false)}  // ✅ Exit edit mode when user clicks outside
+            autoFocus
+          />
+        ) : (
     <p 
       className="rate-paragraph-box"
       onClick={() => setFeedbackEditable(true)}  // ✅ Clicking text enables editing
@@ -282,8 +288,10 @@ const handleSubmit = async () => {
               ))}
             </div>
           ))}
-       <button className="save-rate-edits-btn" onClick={handleSubmit}>
-          Submit
+       <button className="save-rate-edits-btn" 
+           onClick={handleSubmit} 
+           disabled={isSubmitting} >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
        
         </div>

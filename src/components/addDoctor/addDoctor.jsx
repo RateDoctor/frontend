@@ -8,10 +8,9 @@ import Backgrounds from "./Backgrounds";
 import Teaching from "./Teaching";
 import Supervision from "./Supervision";
 import Experience from "./Experience";
-// import StarsRating from "./StarsRating";
+import { toast } from "sonner";
 import { ensureEntityId } from "../../utils/ensureEntityId";
 import { uploadDoctorImage } from "../../utils/mediaService.js";
-// import { FiArrowLeft } from "react-icons/fi";
 import SmartBackButton from "../SmartBackButton/smartbackButton";
 
 import './addDoctor.css';
@@ -44,7 +43,8 @@ const AddDoctorForm = () => {
   const [topics, setTopics] = useState([]);
   // const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [showRateButton, setShowRateButton] = useState(false);
+  const [newDoctorId, setNewDoctorId] = useState(null);
   const role = localStorage.getItem('userRole');
 
     const scrollIntoView = (e) => {
@@ -128,21 +128,6 @@ const handleSubmit = async () => {
         )
     );
 
-    // ✅ 5) Build clean payload
-    // const payload = {
-    //   name: doctorName,
-    //   universityId,
-    //   fieldOfStudyId,
-    //   affiliations: formData.affiliations.filter(a => a.name?.trim()), // skip empties
-    //   background: formData.backgrounds.filter(b => b.trim()),
-    //   teaching: formData.teaching.filter(t => t.trim()),
-    //   topicIds,
-    //   supervision: formData.supervision.filter(s => s.trim()),
-    //   experience: formData.experience.filter(e => e.trim()),
-    //   researchInterests: [],
-    //   initialRating: rating,
-    // };
-
     console.log("universityId:", universityId);
     console.log("fieldOfStudyId:", fieldOfStudyId);
     console.log("topicIds:", topicIds);
@@ -191,6 +176,8 @@ const handleSubmit = async () => {
     if (!newDoctor || !newDoctor._id)
       throw new Error("Doctor creation failed.");
 
+    
+
      if (formData.profileFile) {
       try {
         const uploadResult = await uploadDoctorImage(formData.profileFile, newDoctor._id, token);
@@ -199,10 +186,12 @@ const handleSubmit = async () => {
         console.error("Image upload failed:", err);
       }
     }
-
-    navigate(`/rate-admin?doctorId=${newDoctor._id}`);
+    toast.success("Doctor added! Now click 'Rate Doctor' to continue.");
+    setNewDoctorId(newDoctor._id);
+    setShowRateButton(true);
+    // navigate(`/rate-admin?doctorId=${newDoctor._id}`);
   } catch (err) {
-    alert(err.message || "An error occurred while submitting.");
+    toast.error("Something went wrong. Please try again.");
   } finally {
     setIsSubmitting(false);
   }
@@ -289,7 +278,18 @@ const handleSubmit = async () => {
 
   {/* Sticky bottom buttons */}
   <div className="sticky-bottom-actions">
-    <button className="rate-button" type="button">Rate Doctor</button>
+     {showRateButton && newDoctorId && (
+        <>
+          <p className="rate-notice">Please click below to rate this doctor.</p>
+          <button
+            className="rate-button highlight"
+            type="button"
+            onClick={() => navigate(`/rate-admin?doctorId=${newDoctorId}`)}
+          >
+            Rate Doctor
+          </button>
+        </>
+      )}
     <button className="confirm-button" type="button" onClick={handleSubmit} disabled={isSubmitting}>
       {isSubmitting ? "Submitting..." : "Confirm"}
     </button>

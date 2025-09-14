@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from 'sonner';
 import Layout from './layouts/layout.jsx';
 import SignIn from './components/singIn/singin.jsx';
 import SingUp from './components/singUp/singup.jsx';
@@ -45,6 +46,7 @@ function App() {
   return (
 <Router>
   <AuthProvider>
+     <Toaster position="top-right" richColors />
       <Routes>
          <Route path="/" element={<Layout />}>
              {/* Public */}
