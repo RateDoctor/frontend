@@ -117,7 +117,7 @@
   font-weight: 600;
   font-size: 16px;
   color: #6F7482;
-  margin-bottom: 6px;
+  margin-bottom: 11px;
 }
 
 .inputAddDoctor {
@@ -372,7 +372,7 @@ textarea.inputAddDoctor {
 /* Sticky bottom buttons for form submission */
 .sticky-bottom-actions {
   position: sticky;
-  bottom: 0;
+  bottom: 78px;
   left: 0;
   width: 100%;
   background: white;
@@ -421,12 +421,13 @@ textarea.inputAddDoctor {
   background: transparent;
 }
 
+
 /* Scrollable content */
 .form-scrollable {
   flex: 1; /* take remaining space */
   overflow-y: auto;
   padding: 1rem;
-  padding-bottom: 4.4rem;
+  padding-bottom: 6.4rem;
   display: flex;
   flex-direction: column;
 }
