@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import female from "../../imgs/female.svg";
 import man from "../../imgs/man-ezgif.com-gif-maker.svg";
 import defaultAvatar from "../../imgs/defaultAvatar.jpg";
+import { toast } from "sonner";
 import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import Loader from "../../layouts/load/load.jsx";
@@ -181,7 +182,7 @@ useEffect(() => {
       setSelectedRating(null);
     } catch (err) {
       console.error("Failed to delete rating:", err);
-      alert("Failed to delete rating.");
+      toast.error("Failed to delete rating.");
     }
   };
 
@@ -258,7 +259,9 @@ const handleSaveFeedback = async () => {
         
       );
 
-
+      toast.success("Feedback saved successfully!");
+       setFeedbackEditable(false);
+        // navigate(-1);
     
       const updatedRating = {
         ...selectedRating,
@@ -282,7 +285,7 @@ const handleSaveFeedback = async () => {
 
   } catch (err) {
     console.error("Failed to save feedback:", err);
-    alert("Failed to save feedback.");
+    toast.error("Failed to save feedback.");
     setIsSaving(false);
   }
 };
@@ -425,9 +428,23 @@ if (loading) {
           </div>
         );
       })}
-      <button className="save-edits-btn" onClick={handleSaveFeedback} >
+      {/* <button className="save-edits-btn" onClick={handleSaveFeedback} disabled={isSaving} >
         Save Edits
+      </button> */}
+
+      <button 
+        className="save-edits-btn"
+        onClick={handleSaveFeedback} 
+        disabled={isSaving}
+      >
+        {isSaving ? (
+          <>
+          <span className="spinner-small" /> 
+          Saving...
+            </>
+        ) : "Save Edits"}
       </button>
+
       
     </div>
   );
@@ -478,21 +495,7 @@ if (loading) {
         <div className="ratings-header">
           <SmartBackButton fallback="/" />
             <h2>My Ratings</h2>
-      {/* <FiArrowLeft
-        className="back-icon"
-        onClick={() => {
-          if (selectedRating) {
-            setSelectedRating(null);
-            setFeedbackEditable(false);
-          } else {
-            navigate(-1);
-          }
-
-          
-        }}
-      />
-      <h2>My Ratings</h2> */}
-    </div>
+      </div>
 
     
 
@@ -505,7 +508,7 @@ if (loading) {
     )}
 
     {/* ✅ Saving and Success Popups */}
-    {isSaving && (
+    {/* {isSaving && (
       <div className="popup-overlay">
         <div className="popup-box">
           <div className="spinner" />
@@ -521,7 +524,7 @@ if (loading) {
           <p>Saved successfully!</p>
         </div>
       </div>
-    )}
+    )} */}
   </div>
 );
 
