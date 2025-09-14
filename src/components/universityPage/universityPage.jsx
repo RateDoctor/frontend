@@ -4,6 +4,8 @@ import uni from "../../imgs/uni.png";
 import SearchBar from "../searchBar/searchBar";
 import axios from "axios";
 import UniversityStarRating from "../starRating/UniversityStarRating";
+import Loader from "../../layouts/load/load.jsx";
+
 import "./universityPage.css";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -63,7 +65,14 @@ const UniversityProfile = () => {
 
   const groupedDoctors = groupByFirstLetter(filteredDoctors);
 
-  if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>Loading...</div>;
+   if (loading) {
+    return (
+      <div className="ratings-container">
+        <Loader type={1} />
+      </div>
+    );
+  }
   if (!university) return <div>University not found.</div>;
 
   // Format location

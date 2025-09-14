@@ -6,6 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
 import { sections } from '../myRatings/data.js';
 import SmartBackButton from "../SmartBackButton/smartbackButton.jsx";
+import Loader from "../../layouts/load/load.jsx";
 import "./rateAdmin.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -91,10 +92,26 @@ useEffect(() => {
   fetchDoctor();
 }, [doctorId]);
 
-if (loading) return <p>Loading...</p>;
-if (!doctorData) return <p>Doctor not found.</p>;
-console.log("Loading:", loading);
-console.log("DoctorData:", doctorData);
+// if (loading) return <p>Loading...</p>;
+// ✅ Centralized Loading + Error Handling
+  if (loading) {
+    return (
+      <div className="ratings-container">
+        <Loader type={1} />
+      </div>
+    );
+  }
+ if (!doctorData) {
+    return (
+      <div className="ratings-container">
+        <p className="error-text">❌ Doctor not found.</p>
+        <SmartBackButton fallback="/" />
+      </div>
+    );
+  }
+  
+  // console.log("Loading:", loading);
+  // console.log("DoctorData:", doctorData);
 
 
 
