@@ -451,6 +451,15 @@
 }
 }
 
+
+.load---explore{
+  margin: auto auto;
+  transform: translateY(45%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* old css */
 /* 
 

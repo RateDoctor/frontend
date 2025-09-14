@@ -514,7 +514,9 @@ const handleDoctorClick = (doctorId) => {
 
          <div className="scrollable-section">
           {loading ? (
-            <Loader type={1} />  // type prop can be customized if you want multiple styles
+            <div className="load---explore">
+              <Loader  type={1} />
+            </div>
           ) : (
             <div className="card-grid">
               {applyFilters(admins, query, selectedUniversity, selectedField, selectedTopic).length > 0 ? (
