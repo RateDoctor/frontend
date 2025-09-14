@@ -10,7 +10,7 @@
   border-radius: 1rem;
   padding: 1rem;
   /* padding-bottom: calc(80px + env(safe-area-inset-bottom)); */
-  padding-bottom: 14rem;
+  padding-bottom: 10rem;
   overflow-y: auto;    
 
 

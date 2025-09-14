@@ -7,7 +7,9 @@ import man from "../../imgs/man-ezgif.com-gif-maker.svg";
 import defaultAvatar from "../../imgs/defaultAvatar.jpg";
 import axios from "axios";
 import PerformanceSection from "../myRatings/PerformanceSection.jsx";
-// import StarsRating from "../starRating/StarRating.jsx"
+import Loader from "../../layouts/load/load.jsx";
+import SmartBackButton from "../SmartBackButton/smartbackButton.jsx";
+
 import { sections } from "./data";
 import "./myRatings.css";
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -70,54 +72,6 @@ useEffect(() => {
 
       const ratingsData = response.data;
 
-      // Hydrate and normalize doctor data in one step
-      // const hydratedAndNormalizedRatings = await Promise.all(
-      //   ratingsData.map(async (rating) => {
-      //     let doctor = rating.doctorId;
-
-      //     // if (typeof doctor === "string" || !doctor?.name) {
-      //     //   try {
-      //     //     const res = await axios.get(
-      //     //       `${BASE_URL}/api/doctors/${doctor}`,
-      //     //       { headers: { Authorization: `Bearer ${token}` } }
-      //     //     );
-      //     //     doctor = res.data.doctor;
-      //     //   } catch (err) {
-      //     //     console.warn("Failed to fetch doctor:", doctor, err);
-      //     //     doctor = { name: "Unknown Doctor", _id: doctor };
-      //     //   }
-      //     // }
-
-      //     //  setRatings(
-      //     //     hydratedAndNormalizedRatings.filter((r) => r.doctorId?._id)
-      //     //   );
-      //     if (!doctor) {
-      //         console.warn("Missing doctorId for rating:", rating._id);
-      //         doctor = { name: "Unknown Doctor", _id: null };
-
-      //       } else if (typeof doctor === "string" || !doctor?.name) {
-      //         try {
-      //           const res = await axios.get(`${BASE_URL}/api/doctors/${doctor}`, {
-      //             headers: { Authorization: `Bearer ${token}` },
-      //           });
-      //           doctor = res.data.doctor;
-      //         } catch (err) {
-      //           console.warn("Failed to fetch doctor:", doctor, err);
-      //           doctor = { name: "Unknown Doctor", _id: doctor };
-      //         }
-      //       }
-
-
-      //     // Ensure valid doctor name fallback
-      //     if (!doctor.name || typeof doctor.name !== "string" || doctor.name.trim() === "") {
-      //       doctor.name = "Unnamed Doctor";
-      //     }
-
-      //     return { ...rating, doctorId: doctor };
-      //   })
-      // );
-
-      // setRatings(hydratedAndNormalizedRatings);
 
       const hydratedAndNormalizedRatings = await Promise.all(
         ratingsData.map(async (rating) => {
@@ -343,7 +297,8 @@ if (loading) {
   return (
     <div className="ratings-loading-center">
       <div className="spinner" />
-      <p>Loading doctors...</p>
+      {/* <p>Loading doctors...</p> */}
+       <Loader type={1} />
     </div>
   );
 }
@@ -425,7 +380,7 @@ if (loading) {
         const showTrash = ["Teaching Style", "Responsiveness", "Mentorship"].includes(section.title);
         return (
           <div key={index} className="question-block">
-            <h5>{section.title}</h5>
+            <h5 className="question---head-block">{section.title}</h5>
             <p className="section-description">{section.description}</p>
             <div className="textarea-with-trash">
               <textarea
@@ -453,7 +408,7 @@ if (loading) {
             
             {section.questions.map((q, i) => (
               <div key={i} className="question-field">
-                <p>{q}</p>
+                <p className="question--field--paragraph">{q}</p>
                 <textarea
                   className="question-fieldParagraph"
                   value={editableQuestionnaire[q] || ""}
@@ -519,9 +474,11 @@ if (loading) {
   );
 
     return (
-  <div className="ratings-container">
-    <div className="ratings-header">
-      <FiArrowLeft
+      <div className="ratings-container">
+        <div className="ratings-header">
+          <SmartBackButton fallback="/" />
+            <h2>My Ratings</h2>
+      {/* <FiArrowLeft
         className="back-icon"
         onClick={() => {
           if (selectedRating) {
@@ -534,12 +491,12 @@ if (loading) {
           
         }}
       />
-      <h2>My Ratings</h2>
+      <h2>My Ratings</h2> */}
     </div>
 
     
 
-    {loading && <p>Loading ratings...</p>}
+    {loading &&  <Loader type={1} />}
     {error && <p className="error">{error}</p>}
 
     {/* ✅ This is the main conditional rendering block */}
