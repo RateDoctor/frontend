@@ -23,7 +23,7 @@ const HelpFAQ = () => {
         <div className="faq-item">
           <p className="faq-question">Q: How can I contact support?</p>
           <p className="faq-answer">
-            A: Use the "Contact Us" page or email <a href="doctorsrate@gmail.com">doctorsrate@gmail.com</a>. Our support team is ready to assist you.
+            A: Use the "Contact Us" page or email <a type='email' href="doctorsrate@gmail.com">doctorsrate@gmail.com</a>. Our support team is ready to assist you.
           </p>
         </div>
         <div className="faq-item">
